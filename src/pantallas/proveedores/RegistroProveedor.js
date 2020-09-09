@@ -15,11 +15,8 @@ const RegistroProveedor = ({ datosProveedor }) => {
 					<h4 >
 						<span className="text-uppercase">{datosProveedor.name}</span>
 						<small className="ml-4 text-muted">{datosProveedor.cif}</small>
-					</h4>
-					
+					</h4>					
 				</Card.Title>
-
-
 
 				<Card.Subtitle className="mb-2">
 					<img alt={datosProveedor.country_name} src={`https://www.countryflags.io/` + datosProveedor.id_country + `/flat/24.png`} className="pr-2" />
