@@ -18,7 +18,7 @@ export const useApiCall = (url, token) => {
 	}
 	*/
 
-	const [resultado, setResultado] = useState({ datos: null, error: null, cargando: false, respuesta: null, query: null })
+	const [resultado, setResultado] = useState({ ok: undefined, datos: null, error: null, cargando: false, respuesta: null, query: null })
 
 	// Para no perder el ultimo resultado entre cargas de mas resultados
 	const ultimoResultado = useRef(resultado);
