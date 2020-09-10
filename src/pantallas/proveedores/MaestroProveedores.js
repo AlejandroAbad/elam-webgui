@@ -40,8 +40,15 @@ const PantallaMaestroProveedores = () => {
 			<h5>Sin resultados</h5>
 		</Alert>
 	} else {
-		let proveedores = resultado.datos.map((datosProveedor, i) => {
-			return <RegistroProveedor key={i} datosProveedor={datosProveedor} />
+
+		console.log(resultado.datos)
+
+		let proveedores = resultado.datos.data.map((datosProveedor, i) => {
+			return <RegistroProveedor 
+				key={i} 
+				datosProveedor={datosProveedor} 
+				onProveedorBorrado={() => ejecutarConsulta()}
+			/>
 		})
 
 		contenido = <>
@@ -73,7 +80,7 @@ const PantallaMaestroProveedores = () => {
 						<InputGroup>
 							<FormControl size="sm" placeholder="Buscar" />
 							<InputGroup.Append>
-								<Button size="sm" variant="outline-secondary"><Icono icono={FaSearch} posicion={[14,2]} /></Button>
+								<Button size="sm" variant="outline-secondary"><Icono icono={FaSearch} posicion={[14, 2]} /></Button>
 							</InputGroup.Append>
 						</InputGroup>
 					</Form>
@@ -83,6 +90,7 @@ const PantallaMaestroProveedores = () => {
 			<ModalCreacionProveedor
 				show={mostrarModalCreacion}
 				onHide={() => setMostrarModalCreacion(false)}
+				onUpdate={() => { setMostrarModalCreacion(false); ejecutarConsulta();  }}
 			/>
 
 			{proveedores}

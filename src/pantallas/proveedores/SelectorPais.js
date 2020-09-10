@@ -1,9 +1,10 @@
 import React, { useEffect, useContext } from 'react';
 import { ContextoAplicacion } from 'contexto';
 import { useApiCall } from 'hooks/useApiCall';
-import { Spinner, Form, Alert } from 'react-bootstrap';
+import { Spinner, Form, Button } from 'react-bootstrap';
 
-const SelectorPais = ({ referencia }) => {
+
+const SelectorPais = ({ referencia, disabled }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado, ejecutarConsulta } = useApiCall('/country', jwt.token);
@@ -15,17 +16,17 @@ const SelectorPais = ({ referencia }) => {
 	if (resultado.cargando) {
 		return <>
 			<input type="hidden" value="" ref={referencia} />
-			<Alert variant="info"><Spinner /> Obteniendo lista de paises</Alert>
+			<Spinner animation="grow" size="sm" variant="info" /> <small className="text-info">Cargando paises</small> 
 		</>
 	} else if (resultado.error) {
 		return <>
 			<input type="hidden" value="" ref={referencia} />
-			<Alert variant="danger">Ha fallado la carga de paises</Alert>
+			<small className="text-danger">Ha fallado la carga de paises.</small> <Button variant="link" onClick={ejecutarConsulta} size="sm">Reintentar</Button>
 		</>
 	} else if (!resultado.datos || resultado.datos?.length === 0) {
 		return <>
 			<input type="hidden" value="" ref={referencia} />
-			<Alert variant="warning">No se han encontrado paises</Alert>
+			<small className="text-danger">No se han encontrado paises.</small> <Button variant="link" onClick={ejecutarConsulta} size="sm">Reintentar</Button>
 		</>
 	} else {
 
@@ -33,7 +34,7 @@ const SelectorPais = ({ referencia }) => {
 			return <option key={i} value={datosPais.id}>{datosPais.name}</option>
 		});
 
-		return <Form.Control as="select" ref={referencia} >
+		return <Form.Control as="select" ref={referencia} disabled={disabled} >
 			{opcionesPaises}
 		</Form.Control >
 

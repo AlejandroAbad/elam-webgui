@@ -4,7 +4,10 @@ import 'react-app-polyfill/stable';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-toastify/dist/ReactToastify.css';
+
 import './bootstrapExtensions.scss';
+import './toastifyExtensions.scss';
 
 import App from 'App';
 import * as serviceWorker from 'serviceWorker';

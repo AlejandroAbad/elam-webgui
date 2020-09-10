@@ -1,7 +1,7 @@
 import K from 'K';
 
 import React, { useContext } from 'react';
-import { HashRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
 
 import 'App.scss';
 
@@ -19,6 +19,7 @@ import Pantallas from 'pantallas/Pantallas';
 
 
 import { ContextoAplicacion } from 'contexto';
+import { ToastContainer } from 'react-toastify';
 
 const App = () => {
 
@@ -36,7 +37,6 @@ const App = () => {
 	} else {
 		content = (
 			<Switch>
-
 
 				<Route path="/usuario">
 					<h3>Tu JWT</h3>
@@ -65,6 +65,18 @@ const App = () => {
 			<ContenedorDeTostadas>
 				<TostadaExpiracionJwt />
 			</ContenedorDeTostadas>
+
+			<ToastContainer
+				position="bottom-right"
+				autoClose={5000}
+				hideProgressBar
+				newestOnTop
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+			/>
 
 		</Router>
 	);

@@ -1,22 +1,8 @@
 import K from 'K';
 import { useState, useRef, useCallback } from 'react';
 
-export const useApiCall = (url, token) => {
+export const useApiCall = (ourl, token) => {
 
-	// A diferencia de 'url' y 'token' que son Strings y se comparan por valor, 
-	// opciones es un objeto y se comparará por referencia. Por tanto, debemos 
-	// hacer una comprobación profunda para comprobar si el objeto ha cambiado
-	// realmente o no.
-	/*
-	const refOpciones = useRef();
-	if (!refOpciones.current) {
-		refOpciones.current = opciones || { method: 'GET' }
-	} else {
-		if (!valueEquals(opciones, refOpciones.current)) {
-			refOpciones.current = opciones
-		}
-	}
-	*/
 
 	const [resultado, setResultado] = useState({ ok: undefined, datos: null, error: null, cargando: false, respuesta: null, query: null })
 
@@ -26,9 +12,10 @@ export const useApiCall = (url, token) => {
 
 	const ejecutarConsulta = useCallback((opciones, callback) => {
 
-		if (!opciones) opciones={};
+		if (!opciones) opciones = {};
 		if (!opciones.body) opciones.body = null;
-		let { body, ...opcionesHttp } = opciones;
+		if (!opciones.url) opciones.url = ourl;
+		let { body, url, ...opcionesHttp } = opciones;
 
 		setResultado({
 			datos: ultimoResultado.current?.datos,
@@ -63,7 +50,7 @@ export const useApiCall = (url, token) => {
 				if (callback) callback(error, null);
 			})
 
-	}, [setResultado, url, token])
+	}, [setResultado, ourl, token])
 
 	return {
 		ejecutarConsulta,

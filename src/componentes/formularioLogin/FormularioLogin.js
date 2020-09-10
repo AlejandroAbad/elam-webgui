@@ -2,7 +2,6 @@ import React, { useRef, useContext } from 'react';
 import { Col, Button, InputGroup, FormControl, Form, Alert, Spinner } from 'react-bootstrap';
 import { GoPerson, GoKey, GoSignIn } from 'react-icons/go';
 import { useApiCall } from 'hooks/useApiCall';
-import ReactJson from 'react-json-view';
 
 import { ContextoAplicacion } from 'contexto';
 
@@ -21,17 +20,35 @@ const FormularioLogin = () => {
         };
 
         ejecutarConsulta({ method: 'POST', body: solicitudToken }, (error, respuesta) => {
-            if (!error)
+            if (!error) {
+
                 setJwt(respuesta);
+            }
         });
     }
 
+    console.log(resultado);
+
+    let mensajeError = null;
+
+    if (resultado.error) {
+
+        mensajeError = resultado.error.msg || resultado.error.message;
+
+    }
 
     return (
         <Col md={11} lg={8} className="shadow m-auto py-5 p-sm-4 p-md-5 my-md-5">
             
             <h3 className="mb-3">Identifíquese</h3>
             <hr className="d-none d-md-block" />
+
+            {
+                mensajeError && <Alert variant="danger">
+                    <h5>Error</h5>
+                    {mensajeError}
+                </Alert>
+            }
 
             <Form>
                 <InputGroup className="mb-3">
@@ -62,36 +79,11 @@ const FormularioLogin = () => {
                     </Button>
                 }   
             </div>
-
-            <ReactJson src={resultado} />
         </Col>
         
     );
 }
 
-
-const AlertasLogin = (props) => {
-    if (!props.errores || props.errores.length === 0) return null;
-
-    let alertas = [];
-    props.errores.forEach((error, index) => {
-        if (error.codigo && error.descripcion) {
-            alertas.push(<li key={index}>{error.descripcion} <small className="text-muted">{error.codigo}</small></li>);
-        } else {
-            console.log()
-            alertas.push(<li key={index}>No se pudo alcanzar el servidor de autenticación</li>);
-        }
-    })
-
-    return (
-        <Alert variant='danger'>
-            <Alert.Heading>Fallo al autenticar</Alert.Heading>
-            <ul>
-                {alertas}
-            </ul>
-        </Alert>
-    )
-}
 
 
 export default FormularioLogin;

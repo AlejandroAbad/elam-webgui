@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Card, Col, Button, CardDeck, CardColumns } from 'react-bootstrap';
+import { Container, Row, Card, Col, Button } from 'react-bootstrap';
 import Icono from 'componentes/icono/Icono';
 import { FaUserCheck, FaRegLemon, FaParachuteBox } from 'react-icons/fa';
 import { LinkContainer } from 'react-router-bootstrap';
