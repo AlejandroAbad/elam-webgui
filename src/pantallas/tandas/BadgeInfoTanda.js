@@ -1,11 +1,10 @@
 import React from 'react';
-import { Badge } from 'react-bootstrap';
 import { MdError } from 'react-icons/md';
 import Icono from 'componentes/icono/Icono';
 import { FaAsterisk, FaPlay, FaStop, FaLock, FaLockOpen } from 'react-icons/fa';
 
 
-const BadgeInfoTanda = ({texto, ...props}) => {
+const BadgeInfoTanda = ({texto, extendido, ...props}) => {
 
 	if (!texto) texto = 'No definido';
 
@@ -35,7 +34,10 @@ const BadgeInfoTanda = ({texto, ...props}) => {
 		default: break;
 	}
 
-	return 		<Icono icono={icono} posicion={[16, 3]} className={`text-`+variante + ` ` + props.className} />
+	return 	<>
+		<Icono icono={icono} posicion={[16, 3]} className={`text-`+variante + ` ` + props.className} />
+		{extendido && <span className={`text-` + variante}>{texto}</span>}
+	</>
 	
 }
 

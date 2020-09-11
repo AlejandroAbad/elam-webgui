@@ -19,7 +19,7 @@ import Pantallas from 'pantallas/Pantallas';
 
 
 import { ContextoAplicacion } from 'contexto';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
 const App = () => {
 

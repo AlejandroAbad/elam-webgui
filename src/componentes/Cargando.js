@@ -7,7 +7,7 @@ const PanelCarga = ( {variant, texto} ) => {
 
 	return <Alert variant={variant}>
 		
-		<div class="text-center">
+		<div className="text-center">
 			<Spinner animation="border" size="lg" variant={variant} className="my-3" />
 			<br />
 			<h4 className={`text-` + variant}>{texto || 'Cargando datos ...'}</h4> 
