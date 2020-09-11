@@ -25,8 +25,8 @@ const CardProveedor = ({ datosProveedor, mostrarBotones, onEditarPulsado, onBorr
 				</Card.Subtitle>
 
 				{mostrarBotones && <>
-					<Button className="float-right ml-3" variant="outline-danger" onClick={onBorrarPulsado}>Eliminar</Button>
-					<Button className="float-right" variant="primary" onClick={onEditarPulsado}>Editar</Button>
+					<Button size="sm" className="float-right ml-3" variant="outline-danger" onClick={onBorrarPulsado}>Eliminar</Button>
+					<Button size="sm" className="float-right" variant="primary" onClick={onEditarPulsado}>Editar</Button>
 				</>}
 
 			</Card.Body>

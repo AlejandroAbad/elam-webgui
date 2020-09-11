@@ -46,19 +46,15 @@ const App = () => {
 				<Route path="/maestro/proveedores" render={(props) => <Pantallas.MaestroProveedores {...props} />} />
 				<Route path="/maestro/materiales" render={(props) => <Pantallas.MaestroMateriales {...props} />} />
 				<Route path="/maestro/usuarios" render={(props) => <Pantallas.MaestroUsuarios {...props} />} />
+
+
+				<Route path="/tandas" render={(props) => <Pantallas.Tandas {...props} />} />
+
 				<Route path="/" render={(props) => <Pantallas.Bienvenida {...props} />} />
 
 		
 			</Switch>
 		);
-
-		setTimeout(() => {
-			toast.info(<>
-				<h5>PRUEBAS</h5>
-			Se ha introducido un retardo de 1 segundo en las peticiones API
-			para probar el comportamiento de los paneles de carga.
-			</>, { hideProgressBar: false, autoClose: 20000 })
-		})
 		
 	}
 
