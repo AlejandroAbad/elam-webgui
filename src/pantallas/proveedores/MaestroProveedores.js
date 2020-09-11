@@ -1,29 +1,50 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, useCallback } from 'react';
 import { Container, Alert, Button, Navbar, Nav, Form, FormControl, Dropdown, InputGroup } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
-import ReactJson from 'react-json-view';
 
 import { ContextoAplicacion } from 'contexto';
 import PanelCarga from 'componentes/Cargando';
-import RegistroProveedor from './RegistroProveedor';
-import { FaSearch, FaPlus, FaFileExport, FaFileExcel, FaFileCsv, FaFilePdf } from 'react-icons/fa';
+
+import { FaSearch, FaPlus, FaFileExport, FaFileExcel, FaFileCsv, FaFilePdf, FaSync } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
 
 
-
-import ModalCreacionProveedor from 'pantallas/proveedores/FormularioCreacionProveedor';
+import CardProveedor from './CardProveedor';
+import ModalCrearProveedor from 'pantallas/proveedores/ModalCrearProveedor';
+import ModalEditarProveedor from 'pantallas/proveedores/ModalEditarProveedor';
+import ModalEliminarProveedor from 'pantallas/proveedores/ModalEliminarProveedor';
 
 const PantallaMaestroProveedores = () => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado, ejecutarConsulta } = useApiCall('/provider', jwt.token);
+	const { resultado, ejecutarConsulta: ejecutarConsultaListaProveedores } = useApiCall('/provider', jwt.token);
 
 
 	const [mostrarModalCreacion, setMostrarModalCreacion] = useState(false);
 
+
+	// Control del dialogo de edicion del proveedor
+	const [mostrarModalEditar, setMostrarModalEditar] = useState(false);
+	const [datosProveedorEditar, setDatosProveedorEditar] = useState(null);
+	const mostrarModalEditarProveedor = useCallback((datosProveedor) => {
+		setDatosProveedorEditar(datosProveedor);
+		setMostrarModalEditar(true);
+	}, [setDatosProveedorEditar, setMostrarModalEditar]);
+
+
+	// Control del dialogo de eliminacion del proveedor
+	const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
+	const [datosProveedorEliminar, setDatosProveedorEliminar] = useState(null);
+	const mostrarModalEliminarProveedor = useCallback((datosProveedor) => {
+		setDatosProveedorEliminar(datosProveedor);
+		setMostrarModalEliminar(true);
+	}, [setDatosProveedorEliminar, setMostrarModalEliminar]);
+
+
+
 	useEffect(() => {
-		if (ejecutarConsulta) ejecutarConsulta()
-	}, [ejecutarConsulta]);
+		if (ejecutarConsultaListaProveedores) ejecutarConsultaListaProveedores()
+	}, [ejecutarConsultaListaProveedores]);
 
 
 	let contenido = null;
@@ -32,22 +53,36 @@ const PantallaMaestroProveedores = () => {
 		contenido = <PanelCarga />
 	} else if (resultado.error) {
 		contenido = <Alert variant="danger">
-			<h5>Ha petao</h5>
-			<ReactJson src={resultado.error} />
+			<Button className="float-right" size="sm" variant="light" onClick={ejecutarConsultaListaProveedores}><Icono icono={FaSync} posicion={[17, 3]} className="mr-1" />Reintentar</Button>
+			<h5>Ocurrió un error</h5>
+			<code>{resultado.error.message}</code>
 		</Alert>
 	} else if (!resultado.datos || resultado.datos?.length === 0) {
-		contenido = <Alert variant="warning">
-			<h5>Sin resultados</h5>
-		</Alert>
+		contenido = <>
+			<Alert variant="dark">
+				<Button className="float-right" size="sm" variant="dark" onClick={ejecutarConsultaListaProveedores}><Icono icono={FaSync} posicion={[17, 3]} className="mr-1" />Recargar</Button>
+				<h5>Lista de proveedores vacía</h5>
+				<div><small>No se han encontrado proveedores. Pruebe a añadir alguno</small></div>
+
+				<Button className="float-center mt-2" size="lg" variant="dark" onClick={() => setMostrarModalCreacion(true)}>
+					<Icono icono={FaPlus} posicion={[18, 2]} /> Añadir proveedor
+			</Button>
+			</Alert>
+			<ModalCrearProveedor
+				show={mostrarModalCreacion}
+				onRespuestaNo={() => setMostrarModalCreacion(false)}
+				onRespuestaSi={() => { setMostrarModalCreacion(false); ejecutarConsultaListaProveedores(); }}
+			/>
+		</>
 	} else {
 
-		console.log(resultado.datos)
-
 		let proveedores = resultado.datos.data.map((datosProveedor, i) => {
-			return <RegistroProveedor 
-				key={i} 
-				datosProveedor={datosProveedor} 
-				onProveedorBorrado={() => ejecutarConsulta()}
+			return <CardProveedor
+				key={i}
+				datosProveedor={datosProveedor}
+				mostrarBotones={true}
+				onBorrarPulsado={() => mostrarModalEliminarProveedor(datosProveedor)}
+				onEditarPulsado={() => mostrarModalEditarProveedor(datosProveedor)}
 			/>
 		})
 
@@ -87,12 +122,26 @@ const PantallaMaestroProveedores = () => {
 				</Navbar.Collapse>
 			</Navbar>
 
-			<ModalCreacionProveedor
+			<ModalCrearProveedor
 				show={mostrarModalCreacion}
-				onHide={() => setMostrarModalCreacion(false)}
-				onUpdate={() => { setMostrarModalCreacion(false); ejecutarConsulta();  }}
+				onRespuestaNo={() => setMostrarModalCreacion(false)}
+				onRespuestaSi={() => { setMostrarModalCreacion(false); ejecutarConsultaListaProveedores(); }}
 			/>
 
+			<ModalEliminarProveedor
+				show={mostrarModalEliminar}
+				datosProveedor={datosProveedorEliminar}
+				onRespuestaNo={() => setMostrarModalEliminar(false)}
+				onRespuestaSi={() => { setMostrarModalEliminar(false); ejecutarConsultaListaProveedores(); }}
+			/>
+
+
+			<ModalEditarProveedor
+				show={mostrarModalEditar}
+				datosProveedor={datosProveedorEditar}
+				onRespuestaNo={() => setMostrarModalEditar(false)}
+				onRespuestaSi={() => { setMostrarModalEditar(false); ejecutarConsultaListaProveedores(); }}
+			/>
 			{proveedores}
 		</>
 

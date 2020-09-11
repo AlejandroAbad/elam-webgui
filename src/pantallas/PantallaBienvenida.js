@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Card, Col, Button } from 'react-bootstrap';
 import Icono from 'componentes/icono/Icono';
-import { FaUserCheck, FaRegLemon, FaParachuteBox } from 'react-icons/fa';
+import { FaUserCheck, FaParachuteBox, FaPills } from 'react-icons/fa';
 import { LinkContainer } from 'react-router-bootstrap';
 
 
@@ -34,7 +34,7 @@ const PantallaBienvenida = () => {
 									<LinkContainer to="/maestro/materiales" >
 										<Card sm={6} md={4} className="text-center cardBoton">
 											<blockquote className="blockquote mb-0 card-body">
-												<h1><Icono icono={FaRegLemon} posicion={[60]} /></h1>
+												<h1><Icono icono={FaPills} posicion={[60]} /></h1>
 												<h5>Materiales</h5>
 											</blockquote>
 										</Card>

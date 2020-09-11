@@ -1,10 +1,20 @@
 import React from 'react';
 import { Alert, Spinner } from 'react-bootstrap';
 
-const PanelCarga = () => {
+const PanelCarga = ( {variant, texto} ) => {
 
-	return <Alert variant="primary">
-		<Spinner/>
+	if (!variant) variant = 'primary';
+
+	return <Alert variant={variant}>
+		
+		<div class="text-center">
+			<Spinner animation="border" size="lg" variant={variant} className="my-3" />
+			<br />
+			<h4 className={`text-` + variant}>{texto || 'Cargando datos ...'}</h4> 
+		</div>
+		
+		
+
 	</Alert>
 }
 

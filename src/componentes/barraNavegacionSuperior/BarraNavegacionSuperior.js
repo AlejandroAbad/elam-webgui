@@ -7,7 +7,7 @@ import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import { GoInfo, GoSignOut, GoSettings, GoPerson,  } from 'react-icons/go';
-import { FaBook,  FaBoxes, FaUserCheck, FaRegLemon, FaParachuteBox, FaDatabase, FaBookDead, FaHandMiddleFinger, FaPepperHot } from 'react-icons/fa'
+import { FaBook,  FaBoxes, FaUserCheck, FaParachuteBox, FaDatabase, FaBookDead, FaPepperHot, FaPills, FaBattleNet } from 'react-icons/fa';
 
 
 import Icono from 'componentes/icono/Icono';
@@ -51,7 +51,7 @@ const BarraNavegacionSuperior = () => {
                 <Nav className="mr-auto ml-10" >
                     
                     <BotonNavegacion icono={FaDatabase} titulo="Maestros"  mostrarEn="xl" >
-                        <BotonNavegacion enlace="/maestro/materiales" icono={FaRegLemon} titulo="Materiales" />
+                        <BotonNavegacion enlace="/maestro/materiales" icono={FaPills} titulo="Materiales" />
                         <BotonNavegacion enlace="/maestro/proveedores" icono={FaParachuteBox} titulo="Proveedores" />
                         <BotonNavegacion enlace="/maestro/usuarios" icono={FaUserCheck} titulo="Usuarios" />
                     </BotonNavegacion>
@@ -61,7 +61,7 @@ const BarraNavegacionSuperior = () => {
 
                     <BotonNavegacion icono={FaBook} titulo="Informes" mostrarEn="xl" >
                         <BotonNavegacion enlace="/informes/a" icono={FaBookDead} titulo="Informe A" />
-                        <BotonNavegacion enlace="/informes/b" icono={FaHandMiddleFinger} titulo="Informe B" />
+                        <BotonNavegacion enlace="/informes/b" icono={FaBattleNet} titulo="Informe B" />
                         <BotonNavegacion enlace="/informes/c" icono={FaPepperHot} titulo="Informe C" />
                     </BotonNavegacion>
 

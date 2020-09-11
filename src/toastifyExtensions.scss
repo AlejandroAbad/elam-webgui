@@ -1,5 +1,6 @@
 /** Used to define container behavior: width, position: fixed etc... **/
 .Toastify__toast-container {
+
 }
 
 /** Used to define the position of the ToastContainer **/
@@ -54,6 +55,8 @@
 }
 .Toastify__toast-body {
 	padding-left: 1em;
+	padding-top: 1em;
+	padding-bottom: 1em;
 }
 
 /** Classes for the close button. Better use your own closeButton **/

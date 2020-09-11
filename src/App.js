@@ -19,7 +19,7 @@ import Pantallas from 'pantallas/Pantallas';
 
 
 import { ContextoAplicacion } from 'contexto';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 const App = () => {
 
@@ -51,7 +51,18 @@ const App = () => {
 		
 			</Switch>
 		);
+
+		setTimeout(() => {
+			toast.info(<>
+				<h5>PRUEBAS</h5>
+			Se ha introducido un retardo de 1 segundo en las peticiones API
+			para probar el comportamiento de los paneles de carga.
+			</>, { hideProgressBar: false, autoClose: 20000 })
+		})
+		
 	}
+
+
 
 	return (
 		<Router>
@@ -80,6 +91,8 @@ const App = () => {
 
 		</Router>
 	);
+
+	
 }
 
 

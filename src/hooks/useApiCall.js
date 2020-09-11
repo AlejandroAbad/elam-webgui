@@ -34,6 +34,7 @@ export const useApiCall = (ourl, token) => {
 
 		elamFetch(K.DESTINOS.CORE + url, opcionesHttp, token, body)
 			.then(response => {
+				setTimeout(() => {
 				if (response) {
 					if (response.ok) {
 						setResultado({ ok: true, datos: response.body, error: null, cargando: false, respuesta: response, query: body });
@@ -44,10 +45,13 @@ export const useApiCall = (ourl, token) => {
 					}
 					
 				}
+			}, 1000);
 			})
 			.catch(error => {
+				setTimeout(() => {
 				setResultado({ ok: false, datos: null, error, cargando: false, respuesta: null, query: body });
 				if (callback) callback(error, null);
+				}, 1000);
 			})
 
 	}, [setResultado, ourl, token])

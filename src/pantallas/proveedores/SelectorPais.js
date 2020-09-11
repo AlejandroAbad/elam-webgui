@@ -4,14 +4,19 @@ import { useApiCall } from 'hooks/useApiCall';
 import { Spinner, Form, Button } from 'react-bootstrap';
 
 
-const SelectorPais = ({ referencia, disabled }) => {
+const SelectorPais = ({ referencia, disabled, onPaisesCargados, defaultValue }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado, ejecutarConsulta } = useApiCall('/country', jwt.token);
 
 	useEffect(() => {
-		if (ejecutarConsulta) ejecutarConsulta();
-	}, [ejecutarConsulta]);
+		if (ejecutarConsulta) {
+			onPaisesCargados(false);
+			ejecutarConsulta({}, (error, res) => {
+				if (!error)	onPaisesCargados(true);
+			});
+		}
+	}, [ejecutarConsulta, onPaisesCargados]);
 
 	if (resultado.cargando) {
 		return <>
@@ -31,10 +36,10 @@ const SelectorPais = ({ referencia, disabled }) => {
 	} else {
 
 		let opcionesPaises = resultado.datos.map((datosPais, i) => {
-			return <option key={i} value={datosPais.id}>{datosPais.name}</option>
+			return <option key={i} value={datosPais.id} >{datosPais.name}</option>
 		});
 
-		return <Form.Control as="select" ref={referencia} disabled={disabled} >
+		return <Form.Control as="select" ref={referencia} defaultValue={defaultValue} disabled={disabled}>
 			{opcionesPaises}
 		</Form.Control >
 
