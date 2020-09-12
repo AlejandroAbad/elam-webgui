@@ -10,9 +10,9 @@ import Icono from 'componentes/icono/Icono';
 
 
 import CardTanda from './CardTanda';
-import ModalCrearProveedor from 'pantallas/proveedores/ModalCrearProveedor';
-import ModalEditarProveedor from 'pantallas/proveedores/ModalEditarProveedor';
-import ModalEliminarProveedor from 'pantallas/proveedores/ModalEliminarProveedor';
+import ModalEditarTanda from './ModalEditarTanda';
+import ModalEliminarTanda from './ModalEliminarTanda';
+import ModalCrearTanda from './ModalCrearTanda';
 
 const PantallaTandas = () => {
 
@@ -50,7 +50,7 @@ const PantallaTandas = () => {
 	let contenido = null;
 
 	if (resultado.cargando) {
-		contenido = <PanelCarga texto="Obteniendo lista de tandas ..."/>
+		contenido = <PanelCarga texto="Obteniendo lista de tandas ..." />
 	} else if (resultado.error) {
 		contenido = <Alert variant="danger">
 			<Button className="float-right" size="sm" variant="light" onClick={ejecutarConsultaListaTandas}><Icono icono={FaSync} posicion={[17, 3]} className="mr-1" />Reintentar</Button>
@@ -68,7 +68,7 @@ const PantallaTandas = () => {
 					<Icono icono={FaBoxes} posicion={[18, 2]} /> Añadir nueva tanda
 			</Button>
 			</Alert>
-			<ModalCrearProveedor
+			<ModalCrearTanda
 				show={mostrarModalCreacion}
 				onRespuestaNo={() => setMostrarModalCreacion(false)}
 				onRespuestaSi={() => { setMostrarModalCreacion(false); ejecutarConsultaListaTandas(); }}
@@ -122,23 +122,23 @@ const PantallaTandas = () => {
 				</Navbar.Collapse>
 			</Navbar>
 
-			<ModalCrearProveedor
+			<ModalCrearTanda
 				show={mostrarModalCreacion}
 				onRespuestaNo={() => setMostrarModalCreacion(false)}
 				onRespuestaSi={() => { setMostrarModalCreacion(false); ejecutarConsultaListaTandas(); }}
 			/>
 
-			<ModalEliminarProveedor
+			<ModalEliminarTanda
 				show={mostrarModalEliminar}
-				datosProveedor={datosTandaEliminar}
+				datosTanda={datosTandaEliminar}
 				onRespuestaNo={() => setMostrarModalEliminar(false)}
 				onRespuestaSi={() => { setMostrarModalEliminar(false); ejecutarConsultaListaTandas(); }}
 			/>
 
 
-			<ModalEditarProveedor
+			<ModalEditarTanda
 				show={mostrarModalEditar}
-				datosProveedor={datosTandaEditar}
+				datosTanda={datosTandaEditar}
 				onRespuestaNo={() => setMostrarModalEditar(false)}
 				onRespuestaSi={() => { setMostrarModalEditar(false); ejecutarConsultaListaTandas(); }}
 			/>

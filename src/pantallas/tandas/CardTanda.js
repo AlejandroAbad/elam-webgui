@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Col, Card, Button, Collapse, Spinner, Alert, Row, Popover, OverlayTrigger, ListGroup, Badge } from 'react-bootstrap';
@@ -6,14 +6,15 @@ import BadgeInfoTanda from './BadgeInfoTanda';
 import { useApiCall } from 'hooks/useApiCall';
 import { FaRegEye } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
-import { MdHighlightOff, MdOpenInNew } from 'react-icons/md';
+import { MdFirstPage, MdHighlightOff, MdLastPage, MdOpenInNew, MdPlayCircleFilled } from 'react-icons/md';
+import useStateLocalStorage from 'hooks/useStateLocalStorage';
 
 
 const CardTanda = ({ datosTanda, mostrarBotones, onEditarPulsado, onBorrarPulsado }) => {
 
 
 
-	const [mostrarDatosAvanzados, setMostrarDatosAvanzados] = useState(false);
+	const [mostrarDatosAvanzados, setMostrarDatosAvanzados] = useStateLocalStorage('detalleTanda.' + datosTanda.id, false, true);
 
 
 	if (!datosTanda) return null;
@@ -24,7 +25,7 @@ const CardTanda = ({ datosTanda, mostrarBotones, onEditarPulsado, onBorrarPulsad
 			<Card.Body>
 
 				<Card.Title >
-					{!mostrarDatosAvanzados &&
+					{(!mostrarDatosAvanzados || !mostrarBotones) &&
 						<div className="float-right" >
 							<BadgeInfoTanda texto={datosTanda.status} className="mr-2" />
 							<BadgeInfoTanda texto={datosTanda.type} />
@@ -37,22 +38,26 @@ const CardTanda = ({ datosTanda, mostrarBotones, onEditarPulsado, onBorrarPulsad
 
 				</Card.Title>
 
-				<Collapse in={mostrarDatosAvanzados}>
-					<div className="mx-0 pb-2">
-						<DatosAvanzados idTanda={datosTanda.id} mostrando={mostrarDatosAvanzados} />
+				
+
+				<Collapse in={mostrarDatosAvanzados && mostrarBotones}>
+						<div className="mx-0 pb-2">
+							<DatosAvanzadosTanda idTanda={datosTanda.id} mostrando={mostrarDatosAvanzados} />
+						</div>
+					</Collapse>
+
+				{mostrarBotones && <>
+					<div className="mt-2"></div>
+
+					<div className="float-left mt-2">
+						<BotonDetalles mostrandoDetalles={mostrarDatosAvanzados} onPulsado={setMostrarDatosAvanzados} />
 					</div>
-				</Collapse>
+					<div className="float-right">
 
-				<div className="mt-2"></div>
-
-				<div className="float-left mt-2">
-					<BotonDetalles mostrandoDetalles={mostrarDatosAvanzados} onPulsado={setMostrarDatosAvanzados} />
-				</div>
-				<div className="float-right">
-					<Button size="sm" className="mx-1" variant="success">Liberar</Button>
-					<Button size="sm" className="mx-1" variant="primary">Editar</Button>
-					<Button size="sm" className="mx-1" variant="outline-danger">Borrar</Button>
-				</div>
+						<Button size="sm" className="mx-1" variant="primary">Editar</Button>
+						<Button size="sm" className="mx-1" variant="outline-danger" onClick={onBorrarPulsado}>Borrar</Button>
+					</div>
+				</>}
 			</Card.Body>
 		</Card>
 	</Col>
@@ -74,13 +79,10 @@ const BotonDetalles = ({ mostrandoDetalles, onPulsado, ...props }) => {
 }
 
 
-const DatosAvanzados = ({ mostrando, idTanda, ...props }) => {
+const DatosAvanzadosTanda = ({ mostrando, idTanda, ...props }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado, ejecutarConsulta } = useApiCall('/', jwt.token);
-
-
-
 
 	useEffect(() => {
 		if (!resultado.cargando && mostrando && !resultado.datos) {
@@ -133,6 +135,27 @@ const DatosAvanzados = ({ mostrando, idTanda, ...props }) => {
 							Tanda sin lecturas
 						</Button>
 					}
+					{
+						datos.id_status === 1 &&
+						<Button size="sm" className="mx-1" variant="outline-success">
+							<Icono icono={MdPlayCircleFilled} posicion={[18, 4]} className="mr-1" />
+							Liberar tanda
+						</Button>
+					}
+					{
+						datos.id_status === 2 &&
+						<Button size="sm" className="mx-1" variant="outline-primary">
+							<Icono icono={MdLastPage} posicion={[18, 4]} className="mr-1" />
+							Finalizar tanda
+						</Button>
+					}
+					{
+						datos.id_status === 3 &&
+						<Button size="sm" className="mx-1" variant="outline-primary">
+							<Icono icono={MdFirstPage} posicion={[18, 4]} className="mr-1" />
+							Re-liberar tanda
+						</Button>
+					}
 				</Col>
 			</Row>
 			<Row className="mt-3">
@@ -172,9 +195,8 @@ const ListaMaterialesTanda = ({ materiales }) => {
 			</Popover>
 		);
 
-		return <ListGroup.Item className="m-0 p-1 pt-2">
-
-			<OverlayTrigger key={i} trigger="hover" overlay={popover} placement="bottom-start">
+		return <ListGroup.Item key={i} className="m-0 p-1 pt-2">
+			<OverlayTrigger trigger={["hover", "focus"]} overlay={popover} placement="bottom-start">
 				<Button size="sm" variant="link"><Icono icono={FaRegEye} posicion={[20, 6]} /></Button>
 			</OverlayTrigger>
 			<b>{material.cn}</b> {material.name_spain}

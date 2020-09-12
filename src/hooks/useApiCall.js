@@ -28,7 +28,6 @@ export const useApiCall = (ourl, token) => {
 		console.group('EJECUTANDO CONSULTA ' + url);
 		console.log('URL', K.DESTINOS.CORE + url);
 		console.log('OPCIONES', opcionesHttp );
-		console.log('JWT', token);
 		console.log('BODY', body);
 		console.groupEnd();
 

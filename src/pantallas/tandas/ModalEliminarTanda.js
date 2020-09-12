@@ -4,25 +4,25 @@ import { ContextoAplicacion } from 'contexto';
 import { Modal, Button, Alert, Spinner } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
 import { toast } from 'react-toastify';
-import CardProveedor from './CardProveedor';
+import CardTanda from './CardTanda';
 
-const ModalEliminarProveedor = ({ onRespuestaSi, onRespuestaNo, datosProveedor, ...props }) => {
+const ModalEliminarTanda = ({ onRespuestaSi, onRespuestaNo, datosTanda, ...props }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado, ejecutarConsulta } = useApiCall('/provider', jwt.token)
+	const { resultado, ejecutarConsulta } = useApiCall('/series', jwt.token)
 
 
 
-	const llamadaEliminarProveedor = useCallback(() => {
+	const llamadaEliminarTanda = useCallback(() => {
 
 		ejecutarConsulta({
 			method: 'DELETE',
-			url: '/provider/' + datosProveedor.id,
+			url: '/series/' + datosTanda.id,
 		}, (error, res) => {
 
 			if (error) {
 				toast.error(<>
-					Ocurrió un error al eliminar el proveedor<br/>
+					Ocurrió un error al eliminar la tanda<br/>
 					<code>{error.message}</code>
 				</>);
 				onRespuestaNo();
@@ -30,14 +30,13 @@ const ModalEliminarProveedor = ({ onRespuestaSi, onRespuestaNo, datosProveedor, 
 			}
 
 			toast.success(<>
-				Se ha eliminado el proveedor:
-				<h5 className="text-uppercase mt-3">{datosProveedor.name}</h5>
-				<small><img alt={datosProveedor.id_country} src={`https://www.countryflags.io/` + datosProveedor.id_country + `/flat/24.png`} className="pr-2" /> {datosProveedor.country_name}</small>
+				Se ha eliminado la tanda:
+				<h5 className="text-uppercase mt-3">{datosTanda.name}</h5>
 			</>);
 			onRespuestaSi();
 
 		})
-	}, [datosProveedor, ejecutarConsulta, onRespuestaSi, onRespuestaNo]);
+	}, [datosTanda, ejecutarConsulta, onRespuestaSi, onRespuestaNo]);
 
 
 	let contenidoModal = null;
@@ -47,20 +46,20 @@ const ModalEliminarProveedor = ({ onRespuestaSi, onRespuestaNo, datosProveedor, 
 		contenidoModal = <Modal.Body>
 			<Alert variant="info">
 				<Spinner animation="grow" size="sm" variant="info" className="mr-2" />
-				Eliminando proveedor
+				Eliminando tanda
 			</Alert>
 		</Modal.Body >
 	} else {
 
 		contenidoModal = <>
 			<Modal.Body>
-				<h5 className="text-danger pb-3">Se dispone a eliminar el siguiente proveedor:</h5>
-				<CardProveedor datosProveedor={datosProveedor} mostrarBotones={false} />
+				<h5 className="text-danger pb-3">Se dispone a eliminar la siguiente tanda:</h5>
+				<CardTanda datosTanda={datosTanda} mostrarBotones={false} />
 				
 			</Modal.Body>
 			<Modal.Footer>
 				<span className="font-weight-bold mr-2">¿ Está usted seguro ?</span>
-				<Button variant="danger" type="submit" onClick={llamadaEliminarProveedor}>SI, eliminar</Button>
+				<Button variant="danger" type="submit" onClick={llamadaEliminarTanda}>SI, eliminar</Button>
 				<Button variant="outline-dark" onClick={onRespuestaNo}>Cancelar</Button>
 			</Modal.Footer>
 		</>
@@ -70,7 +69,7 @@ const ModalEliminarProveedor = ({ onRespuestaSi, onRespuestaNo, datosProveedor, 
 	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
-				Eliminar proveedor
+				Eliminar tanda
         		</Modal.Title>
 		</Modal.Header>
 		{contenidoModal}
@@ -80,4 +79,4 @@ const ModalEliminarProveedor = ({ onRespuestaSi, onRespuestaNo, datosProveedor, 
 }
 
 
-export default ModalEliminarProveedor;
+export default ModalEliminarTanda;
