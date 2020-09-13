@@ -27,13 +27,12 @@ export const useApiCall = (ourl, token) => {
 
 		console.group('EJECUTANDO CONSULTA ' + url);
 		console.log('URL', K.DESTINOS.CORE + url);
-		console.log('OPCIONES', opcionesHttp );
+		console.log('OPCIONES', opcionesHttp);
 		console.log('BODY', body);
 		console.groupEnd();
 
 		elamFetch(K.DESTINOS.CORE + url, opcionesHttp, token, body)
 			.then(response => {
-				setTimeout(() => {
 				if (response) {
 					if (response.ok) {
 						setResultado({ ok: true, datos: response.body, error: null, cargando: false, respuesta: response, query: body });
@@ -42,15 +41,12 @@ export const useApiCall = (ourl, token) => {
 						setResultado({ ok: false, datos: null, error: response.body, cargando: false, respuesta: response, query: body });
 						if (callback) callback(response.body, null);
 					}
-					
+
 				}
-			}, 1000);
 			})
 			.catch(error => {
-				setTimeout(() => {
 				setResultado({ ok: false, datos: null, error, cargando: false, respuesta: null, query: body });
 				if (callback) callback(error, null);
-				}, 1000);
 			})
 
 	}, [setResultado, ourl, token])
@@ -95,7 +91,7 @@ const elamFetch = (url, options = {}, token = null, body = null) => {
 	if (token) {
 		options.headers['jwt'] = token;
 	}
-	
+
 	return jsonFetch(url, options, body);
 }
 

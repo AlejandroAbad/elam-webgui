@@ -138,7 +138,7 @@ const PantallaTandas = () => {
 
 			<ModalEditarTanda
 				show={mostrarModalEditar}
-				datosTanda={datosTandaEditar}
+				datosTanda={{...datosTandaEditar, assig_users: [{id_user: 1}]}}
 				onRespuestaNo={() => setMostrarModalEditar(false)}
 				onRespuestaSi={() => { setMostrarModalEditar(false); ejecutarConsultaListaTandas(); }}
 			/>

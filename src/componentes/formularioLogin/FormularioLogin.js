@@ -27,8 +27,6 @@ const FormularioLogin = () => {
         });
     }
 
-    console.log(resultado);
-
     let mensajeError = null;
 
     if (resultado.error) {

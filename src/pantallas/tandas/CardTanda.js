@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Col, Card, Button, Collapse, Spinner, Alert, Row, Popover, OverlayTrigger, ListGroup, Badge } from 'react-bootstrap';
@@ -8,6 +8,7 @@ import { FaRegEye } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
 import { MdFirstPage, MdHighlightOff, MdLastPage, MdOpenInNew, MdPlayCircleFilled } from 'react-icons/md';
 import useStateLocalStorage from 'hooks/useStateLocalStorage';
+import ModalLecturasTanda from './ModalLecturasTanda';
 
 
 const CardTanda = ({ datosTanda, mostrarBotones, onEditarPulsado, onBorrarPulsado }) => {
@@ -38,13 +39,14 @@ const CardTanda = ({ datosTanda, mostrarBotones, onEditarPulsado, onBorrarPulsad
 
 				</Card.Title>
 
-				
 
-				<Collapse in={mostrarDatosAvanzados && mostrarBotones}>
+				{mostrarBotones && // Evita 'Can't perform a React state update on an unmounted component'
+					<Collapse in={mostrarDatosAvanzados}>
 						<div className="mx-0 pb-2">
 							<DatosAvanzadosTanda idTanda={datosTanda.id} mostrando={mostrarDatosAvanzados} />
 						</div>
 					</Collapse>
+				}
 
 				{mostrarBotones && <>
 					<div className="mt-2"></div>
@@ -54,8 +56,8 @@ const CardTanda = ({ datosTanda, mostrarBotones, onEditarPulsado, onBorrarPulsad
 					</div>
 					<div className="float-right">
 
-						<Button size="sm" className="mx-1" variant="primary">Editar</Button>
-						<Button size="sm" className="mx-1" variant="outline-danger" onClick={onBorrarPulsado}>Borrar</Button>
+						<Button size="sm" className="mx-1" variant="primary" onClick={onEditarPulsado} >Editar</Button>
+						<Button size="sm" className="mx-1" variant="outline-danger" onClick={onBorrarPulsado} >Borrar</Button>
 					</div>
 				</>}
 			</Card.Body>
@@ -79,17 +81,17 @@ const BotonDetalles = ({ mostrandoDetalles, onPulsado, ...props }) => {
 }
 
 
-const DatosAvanzadosTanda = ({ mostrando, idTanda, ...props }) => {
+const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado, ejecutarConsulta } = useApiCall('/', jwt.token);
 
+	const [ mostarLecturas, setMostrarLecturas] = useState(false);
+
 	useEffect(() => {
 		if (!resultado.cargando && mostrando && !resultado.datos) {
-			ejecutarConsulta({
-				method: 'GET',
-				url: '/series/' + idTanda
-			})
+			console.log('consulta avanzado tanda ' + idTanda)
+			ejecutarConsulta({ method: 'GET', url: '/series/' + idTanda })
 		}
 	}, [mostrando, idTanda, resultado, ejecutarConsulta]);
 
@@ -125,7 +127,7 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda, ...props }) => {
 			<Row className="mt-3">
 				<Col>
 					{datos.reads.length ?
-						<Button size="sm" variant="info" className="px-2">
+						<Button size="sm" variant="info" className="px-2" onClick={() => setMostrarLecturas(true)}>
 							<Icono icono={MdOpenInNew} posicion={[18, 4]} className="mr-1" />
 							Mostrar detalle de lecturas: <Badge variant="light" className="ml-1">{datos.reads.length}</Badge>
 						</Button>
@@ -174,6 +176,7 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda, ...props }) => {
 				</Col>
 
 			</Row>
+			<ModalLecturasTanda show={mostarLecturas} onCerrar={() => setMostrarLecturas(false)} datosTanda={datos} />
 
 		</>
 	}

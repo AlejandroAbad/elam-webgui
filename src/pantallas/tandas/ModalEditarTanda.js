@@ -1,45 +1,63 @@
-import React, { useContext, useRef, useCallback } from 'react';
+import React, { useContext, useRef, useCallback, useState } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Modal, Button, Form, Col, Row, Alert, Spinner } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
 import { toast } from 'react-toastify';
+import SelectorTipoTanda from './SelectorTipoTanda';
+import SelectorEstadoTanda from './SelectorEstadoTanda';
+import SelectorMaterialesTanda from './SelectorMaterialesTanda';
+import SelectorUsuariosTanda from './SelectorUsuariosTanda';
 
-const ModalEditarTanda = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ...props }) => {
+const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado, ejecutarConsulta } = useApiCall('/provider', jwt.token)
+	const { resultado, ejecutarConsulta } = useApiCall('/series', jwt.token);
 
-	//const [paisesCargados, setPaisesCargados] = useState(false);
+
+	const [usuariosTandaCargados, setUsuariosTandaCargados] = useState(false);
+	const [materialesTandaCargados, setMaterialesTandaCargados] = useState(false);
+	const [tiposTandaCargados, setTiposTandaCargados] = useState(false);
+	const [estadosTandaCargados, setEstadosTandaCargados] = useState(false);
 
 	const refNombre = useRef();
-	const refCif = useRef();
-	const refPais = useRef();
+	const refTipo = useRef();
+	const refEstado = useRef();
+	const refMateriales = useRef();
+	const refUsuarios = useRef();
 
-	const ejecutarLlamadaEditarProveedor = useCallback(() => {
 
-		let peticionEditarProveedor = {
+	const ejecutarLlamadaEditarTanda = useCallback(() => {
+
+		let peticionEditarTanda = {
 			name: refNombre.current.value,
-			id_country: refPais.current.value,
-			cif: refCif.current.value
+			id_type: parseInt(refTipo.current.value),
+			id_status: parseInt(refEstado.current.value),
+			assig_materials: refMateriales.current?.value?.map((val) => { return { id_mat: val } }),
+			assig_users: refUsuarios.current?.value?.map((val) => { return { id_user: val } }),
 		}
 
-		ejecutarConsulta({ url: '/provider/' + datosProveedor.id, method: 'PUT', body: peticionEditarProveedor }, (error, res) => {
+
+
+		ejecutarConsulta({
+			url: '/series/' + datosTanda.id,
+			method: 'PUT',
+			body: peticionEditarTanda
+		}, (error, res) => {
 			if (error) {
 				return;
 			}
-
 			toast.success(<>
-				Se ha modificado el proveedor
+				Se ha modificado la tanda
 				<h5 className="text-uppercase mt-3">
-					<img alt={peticionEditarProveedor.id_country} src={`https://www.countryflags.io/` + peticionEditarProveedor.id_country + `/flat/24.png`} className="pr-2" />
-					{peticionEditarProveedor.name}
+					{peticionEditarTanda.name}
 				</h5>
 			</>);
 			onRespuestaSi();
 		})
 
-	}, [ejecutarConsulta, onRespuestaSi, datosProveedor]);
+
+	}, [datosTanda, ejecutarConsulta, onRespuestaSi]);
 
 
 	let contenidoModal = null;
@@ -50,13 +68,13 @@ const ModalEditarTanda = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ...pro
 
 		alertaSuperior = <Alert variant="info">
 			<Spinner animation="grow" size="sm" variant="info" className="mr-2" />
-			Modificando proveedor
+			Modificando datos de tanda
 		</Alert>
 
 	} else if (resultado.error) {
 
 		alertaSuperior = <Alert variant="danger">
-			<h6>Error al modificar del proveedor</h6>
+			<h6>Error al modificar la tanda</h6>
 			<code>{resultado.error.message}</code>
 		</Alert>
 
@@ -67,28 +85,44 @@ const ModalEditarTanda = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ...pro
 			{alertaSuperior}
 			<Form>
 				<Form.Group as={Row}>
-					<Form.Label column sm="2">Nombre</Form.Label>
+					<Form.Label column sm="2" >Nombre</Form.Label>
 					<Col sm="10">
-						<Form.Control type="text" placeholder="" ref={refNombre} disabled={resultado.cargando} defaultValue={datosProveedor?.name} />
+						<Form.Control type="text" placeholder="" ref={refNombre} disabled={resultado.cargando} defaultValue={datosTanda?.name} />
 					</Col>
 				</Form.Group>
 				<Form.Group as={Row}>
-					<Form.Label column sm="2">CIF</Form.Label>
+					<Form.Label column sm="2">Tipo</Form.Label>
 					<Col sm="6">
-						<Form.Control type="text" placeholder="" ref={refCif} disabled={resultado.cargando} defaultValue={datosProveedor?.cif} />
+						<SelectorTipoTanda referencia={refTipo} disabled={resultado.cargando} onTiposTandaCargados={setTiposTandaCargados} defaultValue={datosTanda?.id_type} />
 					</Col>
 				</Form.Group>
 
 				<Form.Group as={Row} className="align-items-center">
-					<Form.Label column sm="2">País</Form.Label>
-					<Col>
-					
+					<Form.Label column sm="2">Estado</Form.Label>
+					<Col sm="6">
+						<SelectorEstadoTanda referencia={refEstado} disabled={resultado.cargando} onEstadosTandaCargados={setEstadosTandaCargados} defaultValue={datosTanda?.id_status}  />
 					</Col>
 				</Form.Group>
+
+				<Form.Group as={Row} className="align-items-center">
+					<Form.Label column sm="2">Materiales</Form.Label>
+					<Col>
+						<SelectorMaterialesTanda referencia={refMateriales} disabled={resultado.cargando} onMaterialesTandaCargados={setMaterialesTandaCargados} idTanda={datosTanda?.id} />
+					</Col>
+				</Form.Group>
+
+				<Form.Group as={Row} className="align-items-center">
+					<Form.Label column sm="2">Usuarios</Form.Label>
+					<Col>
+						<SelectorUsuariosTanda referencia={refUsuarios} disabled={resultado.cargando} onUsuariosTandaCargados={setUsuariosTandaCargados} idTanda={datosTanda?.id} />
+					</Col>
+				</Form.Group>
+
+
 			</Form>
 		</Modal.Body>
 		<Modal.Footer>
-			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarProveedor} disabled={resultado.cargando } >Modificar</Button>
+			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarTanda} disabled={resultado.cargando || !tiposTandaCargados || !estadosTandaCargados || !materialesTandaCargados || !usuariosTandaCargados } >Modificar</Button>
 			<Button variant="outline-dark" onClick={onRespuestaNo} disabled={resultado.cargando} >Cancelar</Button>
 		</Modal.Footer>
 	</>
@@ -98,7 +132,7 @@ const ModalEditarTanda = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ...pro
 	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
-				Añadir nuevo proveedor
+				Editar datos de tanda
         		</Modal.Title>
 		</Modal.Header>
 		{contenidoModal}
