@@ -2,12 +2,12 @@ import React, { useEffect, useContext, useState, useCallback } from 'react';
 import { ContextoAplicacion } from 'contexto';
 import { useApiCall } from 'hooks/useApiCall';
 import { Spinner, Button } from 'react-bootstrap';
-import Select from 'react-select'
+import Select from 'react-select' 
 
 const SelectorUsuariosTanda = ({ referencia, disabled, onUsuariosTandaCargados, idTanda }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado: resultadoMaestroUsuarios, ejecutarConsulta: ejecutarConsultaMaestroUsuarios, setResultado: setResultadoMaestroUsuarios } = useApiCall('/users', jwt.token);
+	const { resultado: resultadoMaestroUsuarios, ejecutarConsulta: ejecutarConsultaMaestroUsuarios, setResultado: setResultadoMaestroUsuarios } = useApiCall('/user', jwt.token);
 	const { ejecutarConsulta: ejecutarConsultaValoresPorDefecto } = useApiCall('/series/' + idTanda, jwt.token);
 
 	const [valoresSeleccionados, _setValoresSeleccionados] = useState(null);
@@ -27,27 +27,11 @@ const SelectorUsuariosTanda = ({ referencia, disabled, onUsuariosTandaCargados, 
 		onUsuariosTandaCargados(false);
 
 		if (ejecutarConsultaMaestroUsuarios) {	
-			/*
 			ejecutarConsultaMaestroUsuarios({}, (error, res) => {
 				if (!error) {
 					setMaestroUsuariosCargado(true);
 				}
 			});
-			*/
-			// Simulamos como que llegan los usuarios en 500ms....
-			setTimeout( () => {
-				setResultadoMaestroUsuarios({
-					ok: true,
-					error: null,
-					cargando: false,
-					query: {},
-					datos: {
-						data: [ {id: 1, name: 'Danielo Canelo'}, {id: 2, name: 'Alexei Stukov'} ]
-					}
-				});
-				setMaestroUsuariosCargado(true);
-			}, 500)
-
 		}
 
 		if (ejecutarConsultaValoresPorDefecto && idTanda) {

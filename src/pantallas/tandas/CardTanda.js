@@ -6,7 +6,7 @@ import BadgeInfoTanda from './BadgeInfoTanda';
 import { useApiCall } from 'hooks/useApiCall';
 import { FaRegEye } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
-import { MdFirstPage, MdHighlightOff, MdLastPage, MdOpenInNew, MdPlayCircleFilled } from 'react-icons/md';
+import {  MdHighlightOff,  MdOpenInNew } from 'react-icons/md';
 import useStateLocalStorage from 'hooks/useStateLocalStorage';
 import ModalLecturasTanda from './ModalLecturasTanda';
 
@@ -137,6 +137,7 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 							Tanda sin lecturas
 						</Button>
 					}
+					{/*
 					{
 						datos.id_status === 1 &&
 						<Button size="sm" className="mx-1" variant="outline-success">
@@ -158,19 +159,20 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 							Re-liberar tanda
 						</Button>
 					}
+					*/}
 				</Col>
 			</Row>
 			<Row className="mt-3">
 				<Col sm={12} lg={4}>
 					<Card>
-						<Card.Header className="m-0 p-2 pl-3 font-weight-bold">Usuarios</Card.Header>
+						<Card.Header className="m-0 p-2 pl-3 font-weight-bold">Usuarios permitidos</Card.Header>
 						<ListaUsuariosTanda usuarios={datos.assig_users} />
 					</Card>
 				</Col>
 
 				<Col sm={12} lg={8} className="mt-2 mt-lg-0">
 					<Card>
-						<Card.Header className="m-0 p-2 pl-3 font-weight-bold">Materiales</Card.Header>
+						<Card.Header className="m-0 p-2 pl-3 font-weight-bold">Materiales permitidos</Card.Header>
 						<ListaMaterialesTanda materiales={datos.assig_materials} />
 					</Card>
 				</Col>
@@ -193,7 +195,7 @@ const ListaMaterialesTanda = ({ materiales }) => {
 					<Etiqueta texto="Origen:" /> {material.name_origin}<br />
 					<Etiqueta texto="España:" /> {material.name_spain}<br />
 					{material.ean && <><Etiqueta texto="EAN:" /> {material.ean}<br /></>}
-					<Etiqueta texto="Proveedor:" /> {material.id_provider} <span className="text-danger">*Mandar datos proveedor*</span><br />
+					<Etiqueta texto="Proveedor:" /> <img alt={material.id_country} src={`https://www.countryflags.io/` + material.id_country + `/flat/16.png`} className="pb-1" /> {material.name}<br />
 				</Popover.Content>
 			</Popover>
 		);

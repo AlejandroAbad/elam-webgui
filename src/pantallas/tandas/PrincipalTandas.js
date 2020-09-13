@@ -1,11 +1,11 @@
 import React, { useEffect, useContext, useState, useCallback } from 'react';
-import { Container, Alert, Button, Navbar, Nav, Form, FormControl, Dropdown, InputGroup } from 'react-bootstrap';
+import { Container, Alert, Button, Navbar, Nav } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
 
 import { ContextoAplicacion } from 'contexto';
 import PanelCarga from 'componentes/Cargando';
 
-import { FaSearch, FaPlus, FaFileExport, FaFileExcel, FaFileCsv, FaFilePdf, FaSync, FaBoxes } from 'react-icons/fa';
+import {  FaPlus, FaSync, FaBoxes } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
 
 
@@ -97,28 +97,27 @@ const PantallaTandas = () => {
 							<Icono icono={FaPlus} posicion={[18, 2]} /> Añadir tanda
 						</Button>
 
-						<Dropdown className="mr-5">
+						{/*<Dropdown className="mr-5">
 							<Dropdown.Toggle variant="outline-dark" size="sm">
 								<Icono icono={FaFileExport} posicion={[18, 2]} /> Exportar
   							</Dropdown.Toggle>
-
 							<Dropdown.Menu>
 								<Dropdown.Item href="#/action-1"><Icono icono={FaFileExcel} posicion={[18, 2]} /> Excel</Dropdown.Item>
 								<Dropdown.Item href="#/action-2"><Icono icono={FaFileCsv} posicion={[18, 2]} /> CSV</Dropdown.Item>
 								<Dropdown.Item href="#/action-3"><Icono icono={FaFilePdf} posicion={[18, 2]} /> PDF</Dropdown.Item>
 							</Dropdown.Menu>
-						</Dropdown>
+						</Dropdown> */}
 
 					</Nav>
 
-					<Form inline>
+					{/*<Form inline>
 						<InputGroup>
 							<FormControl size="sm" placeholder="Buscar" />
 							<InputGroup.Append>
 								<Button size="sm" variant="outline-secondary"><Icono icono={FaSearch} posicion={[14, 2]} /></Button>
 							</InputGroup.Append>
 						</InputGroup>
-					</Form>
+					</Form>*/}
 				</Navbar.Collapse>
 			</Navbar>
 

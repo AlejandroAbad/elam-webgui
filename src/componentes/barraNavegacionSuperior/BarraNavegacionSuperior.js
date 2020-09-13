@@ -7,7 +7,7 @@ import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import { GoInfo, GoSignOut, GoSettings, GoPerson,  } from 'react-icons/go';
-import { FaBook,  FaBoxes, FaUserCheck, FaParachuteBox, FaDatabase, FaBookDead, FaPepperHot, FaPills, FaBattleNet } from 'react-icons/fa';
+import {   FaBoxes, FaUserCheck, FaParachuteBox, FaDatabase, FaPills } from 'react-icons/fa';
 
 
 import Icono from 'componentes/icono/Icono';
@@ -58,12 +58,13 @@ const BarraNavegacionSuperior = () => {
 
                     <BotonNavegacion enlace="/tandas"  icono={FaBoxes} titulo="Tandas"  mostrarEn="xl" />
 
-
+                    {/*
                     <BotonNavegacion icono={FaBook} titulo="Informes" mostrarEn="xl" >
                         <BotonNavegacion enlace="/informes/a" icono={FaBookDead} titulo="Informe A" />
                         <BotonNavegacion enlace="/informes/b" icono={FaBattleNet} titulo="Informe B" />
                         <BotonNavegacion enlace="/informes/c" icono={FaPepperHot} titulo="Informe C" />
                     </BotonNavegacion>
+                    */}
 
                 </Nav>
                 <Nav>

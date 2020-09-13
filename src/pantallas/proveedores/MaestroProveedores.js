@@ -1,11 +1,11 @@
 import React, { useEffect, useContext, useState, useCallback } from 'react';
-import { Container, Alert, Button, Navbar, Nav, Form, FormControl, Dropdown, InputGroup } from 'react-bootstrap';
+import { Container, Alert, Button, Navbar, Nav, Form, FormControl, InputGroup } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
 
 import { ContextoAplicacion } from 'contexto';
 import PanelCarga from 'componentes/Cargando';
 
-import { FaSearch, FaPlus, FaFileExport, FaFileExcel, FaFileCsv, FaFilePdf, FaSync } from 'react-icons/fa';
+import { FaSearch, FaPlus, FaSync, FaParachuteBox } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
 
 
@@ -88,16 +88,16 @@ const PantallaMaestroProveedores = () => {
 
 		contenido = <>
 			<Navbar sticky="top" bg="light" variant="light" expand="md" className="rounded" expanded>
-				<Navbar.Brand href="#home" as="h5">Proveedores</Navbar.Brand>
+				<Navbar.Brand href="#home" as="h5"><Icono icono={FaParachuteBox} posicion={[18, 2]} /> Proveedores</Navbar.Brand>
 
 				<Navbar.Collapse id="basic-navbar-nav">
 					<Nav className="ml-auto">
 
-						<Button size="sm" variant="outline-dark" className="mr-1" onClick={() => setMostrarModalCreacion(true)}>
+						<Button size="sm" variant="outline-dark" className="mr-4" onClick={() => setMostrarModalCreacion(true)}>
 							<Icono icono={FaPlus} posicion={[18, 2]} /> Añadir proveedor
 						</Button>
 
-						<Dropdown className="mr-5">
+						{/*<Dropdown className="mr-5">
 							<Dropdown.Toggle variant="outline-dark" size="sm">
 								<Icono icono={FaFileExport} posicion={[18, 2]} /> Exportar
   							</Dropdown.Toggle>
@@ -107,13 +107,13 @@ const PantallaMaestroProveedores = () => {
 								<Dropdown.Item href="#/action-2"><Icono icono={FaFileCsv} posicion={[18, 2]} /> CSV</Dropdown.Item>
 								<Dropdown.Item href="#/action-3"><Icono icono={FaFilePdf} posicion={[18, 2]} /> PDF</Dropdown.Item>
 							</Dropdown.Menu>
-						</Dropdown>
+						</Dropdown>*/}
 
 					</Nav>
 
 					<Form inline>
 						<InputGroup>
-							<FormControl size="sm" placeholder="Buscar" />
+							<FormControl size="sm" placeholder="Filtrar" />
 							<InputGroup.Append>
 								<Button size="sm" variant="outline-secondary"><Icono icono={FaSearch} posicion={[14, 2]} /></Button>
 							</InputGroup.Append>
