@@ -1,15 +1,24 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { ContextoAplicacion } from 'contexto';
+
+
+
 
 import { Col, Card, Button, Collapse, Spinner, Alert, Row, Popover, OverlayTrigger, ListGroup, Badge, ListGroupItem } from 'react-bootstrap';
 import BadgeInfoTanda from './BadgeInfoTanda';
 import { useApiCall } from 'hooks/useApiCall';
-import { FaFileExcel, FaRegEye } from 'react-icons/fa';
+import { FaDownload, FaFileExcel, FaRegEye } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
 import { MdHighlightOff, MdOpenInNew } from 'react-icons/md';
 import useStateLocalStorage from 'hooks/useStateLocalStorage';
 import ModalLecturasTanda from './ModalLecturasTanda';
 import ReactJson from 'react-json-view';
+import { toast } from 'react-toastify';
+
+import ReactExport from "react-data-export";
+const ExcelFile = ReactExport.ExcelFile;
+const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
+const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
 
 const CardTanda = ({ datosTanda, mostrarBotones, onEditarPulsado, onBorrarPulsado }) => {
@@ -131,36 +140,11 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 			<SumarioTanda sumario={datos.summary} />
 
 			{/* BOTONES */}
-			<Row className="mt-3 mb-3">
+			{datos.summary.reads_total > 0 && <Row className="mt-3 mb-3">
 				<Col>
-					{datos.summary.reads_total &&
-						<BotonDescargaDetalle idTanda={datos.id} />
-					}
-					{/*
-					{
-						datos.id_status === 1 &&
-						<Button size="sm" className="mx-1" variant="outline-success">
-							<Icono icono={MdPlayCircleFilled} posicion={[18, 4]} className="mr-1" />
-							Liberar tanda
-						</Button>
-					}
-					{
-						datos.id_status === 2 &&
-						<Button size="sm" className="mx-1" variant="outline-primary">
-							<Icono icono={MdLastPage} posicion={[18, 4]} className="mr-1" />
-							Finalizar tanda
-						</Button>
-					}
-					{
-						datos.id_status === 3 &&
-						<Button size="sm" className="mx-1" variant="outline-primary">
-							<Icono icono={MdFirstPage} posicion={[18, 4]} className="mr-1" />
-							Re-liberar tanda
-						</Button>
-					}
-					*/}
+					<BotonDescargaDetalle idTanda={datos.id} />
 				</Col>
-			</Row>
+			</Row>}
 
 			{/* USUARIOS Y MATERIALES PERMITIDOS */}
 			<Row className="mt-2">
@@ -232,6 +216,9 @@ const ListaUsuariosTanda = ({ usuarios }) => {
 }
 
 const SumarioTanda = ({ sumario }) => {
+	console.log(sumario);
+
+
 	return <>
 		<Row>
 			<Col sm={12} lg={4}>
@@ -243,38 +230,38 @@ const SumarioTanda = ({ sumario }) => {
 
 			<Col sm={12} lg={4}>
 				<Etiqueta texto="Inicio:" />
-				<span className="ml-2">{sumario.start_at}</span>
+				<span className="ml-2">{sumario.start_at === ' ' ? <span className="text-muted">n/a</span> : sumario.start_at}</span>
 			</Col>
 			<Col sm={12} lg={4}>
 				<Etiqueta texto="Fin:" />
-				<span className="ml-2">{sumario.end_at}</span>
+				<span className="ml-2">{sumario.end_at === ' ' ? <span className="text-muted">n/a</span> : sumario.end_at}</span>
 			</Col>
 		</Row>
 
 
 		<Row>
-			{sumario.dates?.length > 0 &&
+			{sumario.dates?.length > 0 ?
 
 				<Col xs={12} xl={4}>
 					<Etiqueta texto="Fechas:" />
 					{
 						sumario.dates.map((fecha, i) => {
-							return <Badge variant="secondary" className="ml-2" key={i}>{fecha}</Badge>
+							return <Badge variant="light" className="bg-light ml-2" key={i}>{fecha}</Badge>
 						})
 					}
-				</Col>
+				</Col> : <></>
 
 			}
-			{sumario.users?.length > 0 &&
+			{sumario.users?.length > 0 ?
 
 				<Col xs={12} xl={8}>
 					<Etiqueta texto="Usuarios:" />
 					{
 						sumario.users.map((usuario, i) => {
-							return <Badge variant="secondary" className="ml-2" key={i}>{usuario}</Badge>
+							return <Badge variant="light" className="bg-light ml-2" key={i}>{usuario.split(' - ')[1]}</Badge>
 						})
 					}
-				</Col>
+				</Col> : <></>
 
 			}
 		</Row>
@@ -290,11 +277,70 @@ const Etiqueta = ({ texto }) => {
 
 
 
-const BotonDescargaDetalle = ({idTanda}) => {
-	return <Button size="sm" variant="info" className="px-2" onClick={}>
-		<Icono icono={FaFileExcel} posicion={[18, 4]} className="mr-1" />
-							Descargar detalle de lecturas
+const BotonDescargaDetalle = ({ idTanda }) => {
+
+	const { jwt } = useContext(ContextoAplicacion);
+	const { resultado, ejecutarConsulta } = useApiCall('/series/reads/' + idTanda, jwt.token);
+
+	const obtenerExcelLeturas = useCallback(() => {
+		ejecutarConsulta({}, (error, resultado) => {
+			if (error) {
+				toast.error(<>
+					<h5>
+						Error al obtener las lecturas de la tanda
+					</h5>
+					{error.message}
+				</>);
+			}
+		})
+	}, [ejecutarConsulta])
+
+	if (resultado.cargando) {
+		return <Button size="sm" variant="primary" className="px-2" disabled>
+			<Spinner size="sm" animation="border" className="mr-1" />
+			Preparando fichero
+		</Button>
+	} else if (!resultado.ok) {
+
+		return <Button size="sm" variant="primary" className="px-2" onClick={obtenerExcelLeturas} >
+			<Icono icono={FaFileExcel} posicion={[18, 4]} className="mr-1" />
+		Descargar detalle de lecturas
 	</Button>
+	} else {
+		/*
+		{
+			"id_transmission": "daniel_gb1600649759333",
+		    
+			"delete": 0,
+			"status": "Correcto",
+			"name": "Daniel Garcia",
+			"id_country": "ZW",
+			"cif": "123456789E",
+			"user": "daniel_gb"
+		},
+		*/
+		return <>
+			<ExcelFile filename={`lecturas-tanda-${idTanda}`} hideElement>
+				<ExcelSheet data={resultado.datos.reads} name="Artículos" >
+					<ExcelColumn label="USUARIO" value="user" />
+					<ExcelColumn label="FECHA" value="date_time" />
+					<ExcelColumn label="ESTADO" value="status" />
+					<ExcelColumn label="EAN LEÍDO" value="ean_read" />
+					<ExcelColumn label="EAN" value="ean" />
+					<ExcelColumn label="CN" value="cn" />
+					<ExcelColumn label="NOMBRE ORIGEN" value="name_origin" />
+					<ExcelColumn label="NOMBRE NACIONAL" value="name_spain" />
+					<ExcelColumn label="PROVEEDOR" value="name_origin" />
+					<ExcelColumn label="CIF PROVEEDOR" value="cif" />
+					<ExcelColumn label="PAIS" value="id_country" />
+				</ExcelSheet>
+			</ExcelFile>
+			<Button size="sm" variant="primary" className="px-2" onClick={obtenerExcelLeturas} >
+				<Icono icono={FaFileExcel} posicion={[18, 4]} className="mr-1" />
+				Descargar detalle de lecturas
+			</Button>
+		</>
+	}
 }
 
 export default CardTanda;

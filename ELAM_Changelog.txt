@@ -33,3 +33,7 @@ BUGS:
 
 
 W - En detalle tandas sigue apareciento "reads"
+W - Detalle lecturas:
+        - Nombre proveedor
+        - deleted a que se refieres ¿a material?
+        - "id": "ZW" WTFFF
