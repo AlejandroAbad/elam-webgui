@@ -105,7 +105,7 @@ const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ..
 	return <Modal {...props} onHide={cerrarModal} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
-				Añadir nuevo proveedor
+				Editar proveedor
         		</Modal.Title>
 		</Modal.Header>
 		{contenidoModal}
