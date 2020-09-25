@@ -5,7 +5,7 @@ import { useApiCall } from 'hooks/useApiCall';
 import { ContextoAplicacion } from 'contexto';
 import PanelCarga from 'componentes/Cargando';
 
-import { FaPlus, FaSync, FaUser, FaFilter, FaRemoveFormat, FaRedo } from 'react-icons/fa';
+import { FaPlus, FaSync, FaUser, FaFilter, FaRedo } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
 
 
@@ -53,9 +53,6 @@ const PantallaMaestroUsuarios = () => {
 	const cambiarFiltroTexto = useCallback((forzar) => {
 		let valorCampo = (refFiltroTexto.current?.value?.trim() ?? '')
 		let longitudBusqueda = valorCampo.length;
-
-		
-
 		if (forzar || longitudBusqueda === 0 || longitudBusqueda >= 3 || (filtroTexto?.length && longitudBusqueda >= filtroTexto.length))
 			_setFiltroTexto(refFiltroTexto.current.value.trim().toLowerCase());
 		else 
@@ -126,12 +123,11 @@ const PantallaMaestroUsuarios = () => {
 						<Button size="sm" variant="outline-dark" className="mr-4" onClick={() => setMostrarModalCreacion(true)}>
 							<Icono icono={FaPlus} posicion={[18, 2]} /> Añadir usuario
 						</Button>
-
 					</Nav>
 
 					<Form inline>
 						<InputGroup>
-							<FormControl size="sm" placeholder="Filtar" defaultValue={filtroTexto} ref={refFiltroTexto} onChange={() => cambiarFiltroTexto(false)} />
+							<FormControl size="sm" placeholder="Filtar" defaultValue={filtroTexto} ref={refFiltroTexto} onChange={() => cambiarFiltroTexto(false)} onKeyPress={(e) => { if(e.key === 'Enter') cambiarFiltroTexto(true) } } />
 							<InputGroup.Append>
 								<Button size="sm" variant="outline-secondary" onClick={() => cambiarFiltroTexto(true)}><Icono icono={FaFilter} posicion={[14, 2]} /></Button>
 							</InputGroup.Append>
@@ -177,15 +173,8 @@ const PantallaMaestroUsuarios = () => {
 
 	return (
 		<Container>
-
-
-
-
-
 			{contenido}
-
 		</Container>
-
 	)
 }
 

@@ -1,11 +1,11 @@
-import React, { useEffect, useContext, useState, useCallback } from 'react';
+import React, { useEffect, useContext, useState, useCallback, useRef } from 'react';
 import { Container, Alert, Button, Navbar, Nav, Form, FormControl, InputGroup } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
 
 import { ContextoAplicacion } from 'contexto';
 import PanelCarga from 'componentes/Cargando';
 
-import { FaSearch, FaPlus, FaSync, FaParachuteBox } from 'react-icons/fa';
+import { FaPlus, FaSync, FaParachuteBox, FaFilter, FaRedo } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
 
 
@@ -17,8 +17,10 @@ import ModalEliminarProveedor from 'pantallas/proveedores/ModalEliminarProveedor
 const PantallaMaestroProveedores = () => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado, ejecutarConsulta: ejecutarConsultaListaProveedores } = useApiCall('/provider', jwt.token);
+	const { resultado: resultadoConsultaListaProveedores, ejecutarConsulta: ejecutarConsultaListaProveedores } = useApiCall('/provider', jwt.token);
 
+	const refFiltroTexto = useRef();
+	const [filtroTexto, _setFiltroTexto] = useState('');
 
 	const [mostrarModalCreacion, setMostrarModalCreacion] = useState(false);
 
@@ -46,18 +48,32 @@ const PantallaMaestroProveedores = () => {
 		if (ejecutarConsultaListaProveedores) ejecutarConsultaListaProveedores()
 	}, [ejecutarConsultaListaProveedores]);
 
+	const cambiarFiltroTexto = useCallback((forzar) => {
+		let valorCampo = (refFiltroTexto.current?.value?.trim() ?? '')
+		let longitudBusqueda = valorCampo.length;
+		if (forzar || longitudBusqueda === 0 || longitudBusqueda >= 3 || (filtroTexto?.length && longitudBusqueda >= filtroTexto.length))
+			_setFiltroTexto(refFiltroTexto.current.value.trim().toLowerCase());
+		else
+			_setFiltroTexto('');
+	}, [refFiltroTexto, filtroTexto])
+
+	const eliminarFiltroTexto = useCallback(() => {
+		refFiltroTexto.current.value = '';
+		cambiarFiltroTexto(true);
+	}, [refFiltroTexto, cambiarFiltroTexto])
+
 
 	let contenido = null;
 
-	if (resultado.cargando) {
+	if (resultadoConsultaListaProveedores.cargando) {
 		contenido = <PanelCarga />
-	} else if (resultado.error) {
+	} else if (resultadoConsultaListaProveedores.error) {
 		contenido = <Alert variant="danger">
 			<Button className="float-right" size="sm" variant="light" onClick={ejecutarConsultaListaProveedores}><Icono icono={FaSync} posicion={[17, 3]} className="mr-1" />Reintentar</Button>
 			<h5>Ocurrió un error</h5>
-			<code>{resultado.error.message}</code>
+			<code>{resultadoConsultaListaProveedores.error.message}</code>
 		</Alert>
-	} else if (!resultado.datos || resultado.datos?.length === 0) {
+	} else if (!resultadoConsultaListaProveedores.datos || resultadoConsultaListaProveedores.datos?.length === 0) {
 		contenido = <>
 			<Alert variant="dark">
 				<Button className="float-right" size="sm" variant="dark" onClick={ejecutarConsultaListaProveedores}><Icono icono={FaSync} posicion={[17, 3]} className="mr-1" />Recargar</Button>
@@ -76,7 +92,19 @@ const PantallaMaestroProveedores = () => {
 		</>
 	} else {
 
-		let proveedores = resultado.datos.data.map((datosProveedor, i) => {
+
+		let arrayProveedores = resultadoConsultaListaProveedores.datos.data
+		if (filtroTexto) {
+			arrayProveedores = arrayProveedores.filter((datosProveedor) => {
+				return (datosProveedor.name?.toLowerCase().includes(filtroTexto) ||
+					datosProveedor.cif?.toLowerCase().includes(filtroTexto) ||
+					datosProveedor.id_country?.toLowerCase().includes(filtroTexto) ||
+					datosProveedor.country_name?.toLowerCase().includes(filtroTexto)
+					);
+			})
+		}
+
+		let proveedores = arrayProveedores.map((datosProveedor, i) => {
 			return <CardProveedor
 				key={i}
 				datosProveedor={datosProveedor}
@@ -96,26 +124,13 @@ const PantallaMaestroProveedores = () => {
 						<Button size="sm" variant="outline-dark" className="mr-4" onClick={() => setMostrarModalCreacion(true)}>
 							<Icono icono={FaPlus} posicion={[18, 2]} /> Añadir proveedor
 						</Button>
-
-						{/*<Dropdown className="mr-5">
-							<Dropdown.Toggle variant="outline-dark" size="sm">
-								<Icono icono={FaFileExport} posicion={[18, 2]} /> Exportar
-  							</Dropdown.Toggle>
-
-							<Dropdown.Menu>
-								<Dropdown.Item href="#/action-1"><Icono icono={FaFileExcel} posicion={[18, 2]} /> Excel</Dropdown.Item>
-								<Dropdown.Item href="#/action-2"><Icono icono={FaFileCsv} posicion={[18, 2]} /> CSV</Dropdown.Item>
-								<Dropdown.Item href="#/action-3"><Icono icono={FaFilePdf} posicion={[18, 2]} /> PDF</Dropdown.Item>
-							</Dropdown.Menu>
-						</Dropdown>*/}
-
 					</Nav>
 
 					<Form inline>
 						<InputGroup>
-							<FormControl size="sm" placeholder="Filtrar" />
+							<FormControl size="sm" placeholder="Filtar" defaultValue={filtroTexto} ref={refFiltroTexto} onChange={() => cambiarFiltroTexto(false)} onKeyPress={(e) => { if (e.key === 'Enter') cambiarFiltroTexto(true) }}/>
 							<InputGroup.Append>
-								<Button size="sm" variant="outline-secondary"><Icono icono={FaSearch} posicion={[14, 2]} /></Button>
+								<Button size="sm" variant="outline-secondary" onClick={() => cambiarFiltroTexto(true)}><Icono icono={FaFilter} posicion={[14, 2]} /></Button>
 							</InputGroup.Append>
 						</InputGroup>
 					</Form>
@@ -142,6 +157,13 @@ const PantallaMaestroProveedores = () => {
 				onRespuestaNo={() => setMostrarModalEditar(false)}
 				onRespuestaSi={() => { setMostrarModalEditar(false); ejecutarConsultaListaProveedores(); }}
 			/>
+			{filtroTexto && <Alert variant="info" className="mt-2 mx-5 py-1">
+				<Icono icono={FaFilter} posicion={[20, 2]} /> Filtrando proveedores por el texto "<em>{filtroTexto}</em>"
+				<Button size="sm" variant="dark" className="float-right py-0" onClick={eliminarFiltroTexto} style={{ marginTop: '1px' }}>
+					<Icono icono={FaRedo} posicion={[14, 3]} className="mr-1" />
+					Quitar filtro
+				</Button>
+			</Alert>}
 			{proveedores}
 		</>
 
@@ -151,15 +173,8 @@ const PantallaMaestroProveedores = () => {
 
 	return (
 		<Container>
-
-
-
-
-
 			{contenido}
-
 		</Container>
-
 	)
 }
 

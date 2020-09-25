@@ -1,11 +1,11 @@
-import React, { useEffect, useContext, useState, useCallback } from 'react';
+import React, { useEffect, useContext, useState, useCallback, useRef } from 'react';
 import { Container, Alert, Button, Navbar, Nav, Form, FormControl, InputGroup } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
 
 import { ContextoAplicacion } from 'contexto';
 import PanelCarga from 'componentes/Cargando';
 
-import { FaSearch, FaPlus,  FaSync, FaPills } from 'react-icons/fa';
+import { FaPlus,  FaSync, FaPills, FaFilter, FaRedo } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
 
 
@@ -19,6 +19,8 @@ const PantallaMaestroMateriales = () => {
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado: resultadoConsultaListaMateriales, ejecutarConsulta: ejecutarConsultaListaMateriales } = useApiCall('/material', jwt.token);
 
+	const refFiltroTexto = useRef();
+	const [filtroTexto, _setFiltroTexto] = useState('');
 
 	const [mostrarModalCreacion, setMostrarModalCreacion] = useState(false);
 
@@ -45,6 +47,20 @@ const PantallaMaestroMateriales = () => {
 	useEffect(() => {
 		if (ejecutarConsultaListaMateriales) ejecutarConsultaListaMateriales()
 	}, [ejecutarConsultaListaMateriales]);
+
+	const cambiarFiltroTexto = useCallback((forzar) => {
+		let valorCampo = (refFiltroTexto.current?.value?.trim() ?? '')
+		let longitudBusqueda = valorCampo.length;
+		if (forzar || longitudBusqueda === 0 || longitudBusqueda >= 3 || (filtroTexto?.length && longitudBusqueda >= filtroTexto.length))
+			_setFiltroTexto(refFiltroTexto.current.value.trim().toLowerCase());
+		else
+			_setFiltroTexto('');
+	}, [refFiltroTexto, filtroTexto])
+
+	const eliminarFiltroTexto = useCallback(() => {
+		refFiltroTexto.current.value = '';
+		cambiarFiltroTexto(true);
+	}, [refFiltroTexto, cambiarFiltroTexto])
 
 
 	let contenido = null;
@@ -76,7 +92,24 @@ const PantallaMaestroMateriales = () => {
 		</>
 	} else {
 
-		let proveedores = resultadoConsultaListaMateriales.datos.data.map((datosMaterial, i) => {
+
+		let arrayMateriales = resultadoConsultaListaMateriales.datos.data;
+
+		if (filtroTexto) {
+			arrayMateriales = arrayMateriales.filter((datosMaterial) => {
+				return (datosMaterial.cn?.toLowerCase().includes(filtroTexto) ||
+					datosMaterial.ean?.toLowerCase().includes(filtroTexto) ||
+					
+					datosMaterial.name_origin?.toLowerCase().includes(filtroTexto) ||
+					datosMaterial.name_spain?.toLowerCase().includes(filtroTexto) ||
+
+					datosMaterial.prov_name?.toLowerCase().includes(filtroTexto) ||
+					datosMaterial.country_name?.toLowerCase().includes(filtroTexto)
+				);
+			})
+		}
+
+		let proveedores = arrayMateriales.map((datosMaterial, i) => {
 			return <CardMaterial
 				key={i}
 				datosMaterial={datosMaterial}
@@ -96,26 +129,13 @@ const PantallaMaestroMateriales = () => {
 						<Button size="sm" variant="outline-dark" className="mr-4" onClick={() => setMostrarModalCreacion(true)}>
 							<Icono icono={FaPlus} posicion={[18, 2]} /> Añadir material
 						</Button>
-
-						{/*<Dropdown className="mr-5">
-							<Dropdown.Toggle variant="outline-dark" size="sm">
-								<Icono icono={FaFileExport} posicion={[18, 2]} /> Exportar
-  							</Dropdown.Toggle>
-
-							<Dropdown.Menu>
-								<Dropdown.Item href="#/action-1"><Icono icono={FaFileExcel} posicion={[18, 2]} /> Excel</Dropdown.Item>
-								<Dropdown.Item href="#/action-2"><Icono icono={FaFileCsv} posicion={[18, 2]} /> CSV</Dropdown.Item>
-								<Dropdown.Item href="#/action-3"><Icono icono={FaFilePdf} posicion={[18, 2]} /> PDF</Dropdown.Item>
-							</Dropdown.Menu>
-						</Dropdown>*/}
-
 					</Nav>
 
 					<Form inline>
 						<InputGroup>
-							<FormControl size="sm" placeholder="Filtrar" />
+							<FormControl size="sm" placeholder="Filtar" defaultValue={filtroTexto} ref={refFiltroTexto} onChange={() => cambiarFiltroTexto(false)} onKeyPress={(e) => { if (e.key === 'Enter') cambiarFiltroTexto(true) }}/>
 							<InputGroup.Append>
-								<Button size="sm" variant="outline-secondary"><Icono icono={FaSearch} posicion={[14, 2]} /></Button>
+								<Button size="sm" variant="outline-secondary" onClick={() => cambiarFiltroTexto(true)}><Icono icono={FaFilter} posicion={[14, 2]} /></Button>
 							</InputGroup.Append>
 						</InputGroup>
 					</Form>
@@ -141,6 +161,13 @@ const PantallaMaestroMateriales = () => {
 				onRespuestaNo={() => setMostrarModalEditar(false)}
 				onRespuestaSi={() => { setMostrarModalEditar(false); ejecutarConsultaListaMateriales(); }}
 			/>
+			{filtroTexto && <Alert variant="info" className="mt-2 mx-5 py-1">
+				<Icono icono={FaFilter} posicion={[20, 2]} /> Filtrando materiales por el texto "<em>{filtroTexto}</em>"
+				<Button size="sm" variant="dark" className="float-right py-0" onClick={eliminarFiltroTexto} style={{ marginTop: '1px' }}>
+					<Icono icono={FaRedo} posicion={[14, 3]} className="mr-1" />
+					Quitar filtro
+				</Button>
+			</Alert>}
 			{proveedores}
 		</>
 
