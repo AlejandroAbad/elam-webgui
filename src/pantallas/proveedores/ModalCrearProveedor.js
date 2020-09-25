@@ -9,13 +9,19 @@ import { toast } from 'react-toastify';
 const ModalCrearProveedor = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado, ejecutarConsulta } = useApiCall('/provider', jwt.token)
+	const { resultado, ejecutarConsulta, resetearResultado } = useApiCall('/provider', jwt.token)
 
 	const [paisesCargados, setPaisesCargados] = useState(false);
 
 	const refNombre = useRef();
 	const refCif = useRef();
 	const refPais = useRef();
+
+	const cerrarModal = useCallback((respuesta) => {
+		resetearResultado();
+		if (respuesta === true) onRespuestaSi()
+		else onRespuestaNo();
+	}, [onRespuestaNo, onRespuestaSi, resetearResultado]);
 
 	const ejecutarLlamadaCrearProveedor = useCallback(() => {
 
@@ -37,10 +43,10 @@ const ModalCrearProveedor = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 					{peticionCrearProveedor.name}
 				</h5>
 			</>);
-			onRespuestaSi();
+			cerrarModal(true);
 		})
 
-	}, [ejecutarConsulta, onRespuestaSi]);
+	}, [ejecutarConsulta, cerrarModal]);
 
 
 	let contenidoModal = null;

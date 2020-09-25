@@ -12,7 +12,7 @@ import SelectorUsuariosTanda from './SelectorUsuariosTanda';
 const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado, ejecutarConsulta } = useApiCall('/series', jwt.token);
+	const { resultado, ejecutarConsulta, resetearResultado } = useApiCall('/series', jwt.token);
 
 
 	const [usuariosTandaCargados, setUsuariosTandaCargados] = useState(false);
@@ -25,6 +25,13 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 	const refEstado = useRef();
 	const refMateriales = useRef();
 	const refUsuarios = useRef();
+
+
+	const cerrarModal = useCallback((respuesta) => {
+		resetearResultado();
+		if (respuesta === true) onRespuestaSi()
+		else onRespuestaNo();
+	}, [onRespuestaNo, onRespuestaSi, resetearResultado]);
 
 
 	const ejecutarLlamadaEditarTanda = useCallback(() => {
@@ -53,11 +60,11 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 					{peticionEditarTanda.name}
 				</h5>
 			</>);
-			onRespuestaSi();
+			cerrarModal(true)
 		})
 
 
-	}, [datosTanda, ejecutarConsulta, onRespuestaSi]);
+	}, [datosTanda, ejecutarConsulta, cerrarModal]);
 
 
 	let contenidoModal = null;
@@ -72,12 +79,10 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 		</Alert>
 
 	} else if (resultado.error) {
-
 		alertaSuperior = <Alert variant="danger">
 			<h6>Error al modificar la tanda</h6>
 			<code>{resultado.error.message}</code>
 		</Alert>
-
 	}
 
 	contenidoModal = <>
@@ -100,7 +105,7 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 				<Form.Group as={Row} className="align-items-center">
 					<Form.Label column sm="2">Estado</Form.Label>
 					<Col sm="6">
-						<SelectorEstadoTanda referencia={refEstado} disabled={resultado.cargando} onEstadosTandaCargados={setEstadosTandaCargados} defaultValue={datosTanda?.id_status}  />
+						<SelectorEstadoTanda referencia={refEstado} disabled={resultado.cargando} onEstadosTandaCargados={setEstadosTandaCargados} defaultValue={datosTanda?.id_status} />
 					</Col>
 				</Form.Group>
 
@@ -122,14 +127,14 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 			</Form>
 		</Modal.Body>
 		<Modal.Footer>
-			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarTanda} disabled={resultado.cargando || !tiposTandaCargados || !estadosTandaCargados || !materialesTandaCargados || !usuariosTandaCargados } >Modificar</Button>
-			<Button variant="outline-dark" onClick={onRespuestaNo} disabled={resultado.cargando} >Cancelar</Button>
+			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarTanda} disabled={resultado.cargando || !tiposTandaCargados || !estadosTandaCargados || !materialesTandaCargados || !usuariosTandaCargados} >Modificar</Button>
+			<Button variant="outline-dark" onClick={cerrarModal} disabled={resultado.cargando} >Cancelar</Button>
 		</Modal.Footer>
 	</>
 
 
 
-	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
+	return <Modal {...props} onHide={cerrarModal} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
 				Editar datos de tanda

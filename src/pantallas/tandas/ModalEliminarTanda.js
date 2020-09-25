@@ -9,9 +9,13 @@ import CardTanda from './CardTanda';
 const ModalEliminarTanda = ({ onRespuestaSi, onRespuestaNo, datosTanda, ...props }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado, ejecutarConsulta } = useApiCall('/series', jwt.token)
+	const { resultado, ejecutarConsulta, resetearResultado } = useApiCall('/series', jwt.token)
 
-
+	const cerrarModal = useCallback((respuesta) => {
+		resetearResultado();
+		if (respuesta === true) onRespuestaSi()
+		else onRespuestaNo();
+	}, [onRespuestaNo, onRespuestaSi, resetearResultado]);
 
 	const llamadaEliminarTanda = useCallback(() => {
 
@@ -25,7 +29,7 @@ const ModalEliminarTanda = ({ onRespuestaSi, onRespuestaNo, datosTanda, ...props
 					Ocurrió un error al eliminar la tanda<br/>
 					<code>{error.message}</code>
 				</>);
-				onRespuestaNo();
+				cerrarModal(false);
 				return;
 			}
 
@@ -33,10 +37,11 @@ const ModalEliminarTanda = ({ onRespuestaSi, onRespuestaNo, datosTanda, ...props
 				Se ha eliminado la tanda:
 				<h5 className="text-uppercase mt-3">{datosTanda.name}</h5>
 			</>);
-			onRespuestaSi();
+			cerrarModal(true);
 
 		})
-	}, [datosTanda, ejecutarConsulta, onRespuestaSi, onRespuestaNo]);
+	}, [datosTanda, ejecutarConsulta, cerrarModal]);
+
 
 
 	let contenidoModal = null;
@@ -60,13 +65,13 @@ const ModalEliminarTanda = ({ onRespuestaSi, onRespuestaNo, datosTanda, ...props
 			<Modal.Footer>
 				<span className="font-weight-bold mr-2">¿ Está usted seguro ?</span>
 				<Button variant="danger" type="submit" onClick={llamadaEliminarTanda}>SI, eliminar</Button>
-				<Button variant="outline-dark" onClick={onRespuestaNo}>Cancelar</Button>
+				<Button variant="outline-dark" onClick={cerrarModal}>Cancelar</Button>
 			</Modal.Footer>
 		</>
 	}
 
 
-	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
+	return <Modal {...props} onHide={cerrarModal} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
 				Eliminar tanda

@@ -1,21 +1,18 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
-
-
-
-import { Col, Card, Button, Collapse, Spinner, Alert, Row, Popover, OverlayTrigger, ListGroup, Badge, ListGroupItem } from 'react-bootstrap';
+import { Col, Card, Button, Collapse, Spinner, Alert, Row, Popover, OverlayTrigger, ListGroup, Badge } from 'react-bootstrap';
 import BadgeInfoTanda from './BadgeInfoTanda';
 import { useApiCall } from 'hooks/useApiCall';
-import { FaDownload, FaFileExcel, FaRegEye } from 'react-icons/fa';
+import { FaFileExcel, FaRegEye, FaRegFilePdf } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
-import { MdHighlightOff, MdOpenInNew } from 'react-icons/md';
+
 import useStateLocalStorage from 'hooks/useStateLocalStorage';
 import ModalLecturasTanda from './ModalLecturasTanda';
-import ReactJson from 'react-json-view';
 import { toast } from 'react-toastify';
 
 import ReactExport from "react-data-export";
+import fileDownload from 'js-file-download';
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
@@ -59,13 +56,13 @@ const CardTanda = ({ datosTanda, mostrarBotones, onEditarPulsado, onBorrarPulsad
 				}
 
 				{mostrarBotones && <>
-					<div className="mt-2"></div>
+					<div className="mt-3"></div>
 
-					<div className="float-left mt-2">
+					<div className="float-left">
 						<BotonDetalles mostrandoDetalles={mostrarDatosAvanzados} onPulsado={setMostrarDatosAvanzados} />
 					</div>
 					<div className="float-right">
-
+						<BotonDescargaPdf idTanda={datosTanda.id} />
 						<Button size="sm" className="mx-1" variant="primary" onClick={onEditarPulsado} >Editar</Button>
 						<Button size="sm" className="mx-1" variant="outline-danger" onClick={onBorrarPulsado} >Borrar</Button>
 					</div>
@@ -340,6 +337,49 @@ const BotonDescargaDetalle = ({ idTanda }) => {
 				Descargar detalle de lecturas
 			</Button>
 		</>
+	}
+}
+
+const BotonDescargaPdf = ({ idTanda }) => {
+
+	const { jwt } = useContext(ContextoAplicacion);
+	const { resultado, ejecutarConsulta } = useApiCall('/report/i1/' + idTanda, jwt.token);
+
+	const obtenerInformePDF = useCallback(() => {
+		if (resultado?.datos?.pdf) {
+			let buffer = Buffer.from(resultado.datos.pdf, 'base64');
+			fileDownload(buffer, idTanda + '.pdf');
+			toast.success(<h5>Informe generado con éxito</h5>);
+			return;
+		}
+
+		ejecutarConsulta({}, (error, resultado) => {
+			if (error) {
+				toast.error(<>
+					<h5>
+						Error al generar el informe
+					</h5>
+					{error.message}
+				</>);
+				return;
+			}
+			let buffer = Buffer.from(resultado.pdf, 'base64');
+			fileDownload(buffer, idTanda + '.pdf');
+			toast.success(<h5>Informe generado con éxito</h5>);
+			return;
+		})
+	}, [ejecutarConsulta, idTanda, resultado.datos])
+
+	if (resultado.cargando) {
+		return <Button size="sm" variant="outline-primary" className="px-2" disabled>
+			<Spinner size="sm" animation="border" className="mr-1" />
+			Preparando informe
+		</Button>
+	} else {
+		return <Button size="sm" variant="outline-primary" className="px-2" onClick={obtenerInformePDF} >
+			<Icono icono={FaRegFilePdf} posicion={[18, 2]} className="mr-1" />
+			Generar informe
+		</Button>
 	}
 }
 

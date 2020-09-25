@@ -9,9 +9,13 @@ import CardProveedor from './CardProveedor';
 const ModalEliminarProveedor = ({ onRespuestaSi, onRespuestaNo, datosProveedor, ...props }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado, ejecutarConsulta } = useApiCall('/provider', jwt.token)
+	const { resultado, ejecutarConsulta, resetearResultado } = useApiCall('/provider', jwt.token)
 
-
+	const cerrarModal = useCallback((respuesta) => {
+		resetearResultado();
+		if (respuesta === true) onRespuestaSi()
+		else onRespuestaNo();
+	}, [onRespuestaNo, onRespuestaSi, resetearResultado]);
 
 	const llamadaEliminarProveedor = useCallback(() => {
 
@@ -25,7 +29,7 @@ const ModalEliminarProveedor = ({ onRespuestaSi, onRespuestaNo, datosProveedor, 
 					Ocurrió un error al eliminar el proveedor<br/>
 					<code>{error.message}</code>
 				</>);
-				onRespuestaNo();
+				cerrarModal();
 				return;
 			}
 
@@ -34,10 +38,10 @@ const ModalEliminarProveedor = ({ onRespuestaSi, onRespuestaNo, datosProveedor, 
 				<h5 className="text-uppercase mt-3">{datosProveedor.name}</h5>
 				<small><img alt={datosProveedor.id_country} src={`https://www.countryflags.io/` + datosProveedor.id_country + `/flat/24.png`} className="pr-2" /> {datosProveedor.country_name}</small>
 			</>);
-			onRespuestaSi();
+				cerrarModal(true);
 
 		})
-	}, [datosProveedor, ejecutarConsulta, onRespuestaSi, onRespuestaNo]);
+	}, [datosProveedor, ejecutarConsulta, cerrarModal]);
 
 
 	let contenidoModal = null;
@@ -61,13 +65,13 @@ const ModalEliminarProveedor = ({ onRespuestaSi, onRespuestaNo, datosProveedor, 
 			<Modal.Footer>
 				<span className="font-weight-bold mr-2">¿ Está usted seguro ?</span>
 				<Button variant="danger" type="submit" onClick={llamadaEliminarProveedor}>SI, eliminar</Button>
-				<Button variant="outline-dark" onClick={onRespuestaNo}>Cancelar</Button>
+				<Button variant="outline-dark" onClick={cerrarModal}>Cancelar</Button>
 			</Modal.Footer>
 		</>
 	}
 
 
-	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
+	return <Modal {...props} onHide={cerrarModal} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
 				Eliminar proveedor

@@ -1,11 +1,8 @@
-
-CHANGELOG:
-- Servicio detalle de lecturas para descarga en XLS ¿Necesitas que te remapee en bonito o tu remapeas en frontend para pasar a excel?
-- Servicio detalle tanda, cambio de reads a sumary. Avisame cuando no sea necesario el array reads y lo elimino
 - Servicio dashboard para pagina principal
+
 - Cambios en la opcion de eliminar (marca). No afecta a frontend
 - Filtro estado de las tandas las busquedas de descripcion lo haremos en frontend (tandas, materiales, proveedores, usuarios), debe buscar por todos los campos disponibles
-- Orden de mayor a menor desde el backend en todos los listados
+
 
 - Servicios de usuario:
 --- Creacion
@@ -28,12 +25,12 @@ CHANGELOG:
 
 
 BUGS:
--Al editar una tanda con materiales eliminados, lanzo un error (y todo ok), pero si luego pincho en editar en otra tanda el error no se ha borrado
-
-
-
-W - En detalle tandas sigue apareciento "reads"
-W - Detalle lecturas:
+- Solucionado: Al editar una tanda con materiales eliminados, lanzo un error (y todo ok), pero si luego pincho en editar en otra tanda el error no se ha borrado
+- En detalle tandas ya no es necesario el campo "reads"
+- Detalle de lecturas en XLS - Hecho. En el futuro se puede ver opciones avanzadas de la librería
+    para hacer el excel mas bonito, etc .. por el momento creo que cumple
+- Detalle lecturas:
         - Nombre proveedor
         - deleted a que se refieres ¿a material?
         - "id": "ZW" WTFFF
+

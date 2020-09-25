@@ -9,13 +9,19 @@ import { toast } from 'react-toastify';
 const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ...props }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado, ejecutarConsulta } = useApiCall('/provider', jwt.token)
+	const { resultado, ejecutarConsulta, resetearResultado } = useApiCall('/provider', jwt.token)
 
 	const [paisesCargados, setPaisesCargados] = useState(false);
 
 	const refNombre = useRef();
 	const refCif = useRef();
 	const refPais = useRef();
+
+	const cerrarModal = useCallback((respuesta) => {
+		resetearResultado();
+		if (respuesta === true) onRespuestaSi()
+		else onRespuestaNo();
+	}, [onRespuestaNo, onRespuestaSi, resetearResultado]);
 
 	const ejecutarLlamadaEditarProveedor = useCallback(() => {
 
@@ -37,10 +43,10 @@ const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ..
 					{peticionEditarProveedor.name}
 				</h5>
 			</>);
-			onRespuestaSi();
+			cerrarModal(true);
 		})
 
-	}, [ejecutarConsulta, onRespuestaSi, datosProveedor]);
+	}, [ejecutarConsulta, cerrarModal, datosProveedor]);
 
 
 	let contenidoModal = null;
@@ -90,13 +96,13 @@ const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ..
 		</Modal.Body>
 		<Modal.Footer>
 			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarProveedor} disabled={resultado.cargando || !paisesCargados} >Modificar</Button>
-			<Button variant="outline-dark" onClick={onRespuestaNo} disabled={resultado.cargando} >Cancelar</Button>
+			<Button variant="outline-dark" onClick={cerrarModal} disabled={resultado.cargando} >Cancelar</Button>
 		</Modal.Footer>
 	</>
 
 
 
-	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
+	return <Modal {...props} onHide={cerrarModal} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
 				Añadir nuevo proveedor

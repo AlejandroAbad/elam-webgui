@@ -3,7 +3,6 @@ import { useState, useRef, useCallback } from 'react';
 
 export const useApiCall = (ourl, token) => {
 
-
 	const [resultado, setResultado] = useState({ ok: undefined, datos: null, error: null, cargando: false, respuesta: null, query: null })
 
 	// Para no perder el ultimo resultado entre cargas de mas resultados
@@ -18,6 +17,7 @@ export const useApiCall = (ourl, token) => {
 		let { body, url, ...opcionesHttp } = opciones;
 
 		setResultado({
+			ok: ultimoResultado.current?.ok,
 			datos: ultimoResultado.current?.datos,
 			error: ultimoResultado.current?.error,
 			cargando: true,
@@ -51,10 +51,22 @@ export const useApiCall = (ourl, token) => {
 
 	}, [setResultado, ourl, token])
 
+	const resetearResultado = useCallback( () => {
+		setResultado({
+			ok: undefined,
+			datos: null,
+			error: null,
+			cargando: false,
+			respuesta: null,
+			query: null
+		});
+	}, [setResultado])
+
 	return {
 		ejecutarConsulta,
 		resultado,
-		setResultado
+		setResultado,
+		resetearResultado
 	}
 
 }
