@@ -1,14 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
-import { Col, Card, Button, Collapse, Spinner, Alert, Row, Popover, OverlayTrigger, ListGroup, Badge } from 'react-bootstrap';
+import { Col, Card, Button, Collapse, Spinner, Alert, Row, Popover, OverlayTrigger, ListGroup, Badge, ListGroupItem } from 'react-bootstrap';
 import BadgeInfoTanda from './BadgeInfoTanda';
 import { useApiCall } from 'hooks/useApiCall';
-import { FaRegEye } from 'react-icons/fa';
+import { FaFileExcel, FaRegEye } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
-import {  MdHighlightOff,  MdOpenInNew } from 'react-icons/md';
+import { MdHighlightOff, MdOpenInNew } from 'react-icons/md';
 import useStateLocalStorage from 'hooks/useStateLocalStorage';
 import ModalLecturasTanda from './ModalLecturasTanda';
+import ReactJson from 'react-json-view';
 
 
 const CardTanda = ({ datosTanda, mostrarBotones, onEditarPulsado, onBorrarPulsado }) => {
@@ -86,7 +87,7 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado, ejecutarConsulta } = useApiCall('/', jwt.token);
 
-	const [ mostarLecturas, setMostrarLecturas] = useState(false);
+	const [mostarLecturas, setMostrarLecturas] = useState(false);
 
 	useEffect(() => {
 		if (!resultado.cargando && mostrando && !resultado.datos) {
@@ -110,6 +111,7 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 		let datos = resultado.datos;
 		if (!datos) return null;
 		return <>
+			{/* SUMARIO */}
 			<Row>
 				<Col sm={12} md={4}>
 					<Etiqueta texto="Id:" />
@@ -123,19 +125,16 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 					<Etiqueta texto="Tipo:" />
 					<BadgeInfoTanda texto={datos.type} className="ml-2 mr-1" extendido />
 				</Col>
+
 			</Row>
-			<Row className="mt-3">
+
+			<SumarioTanda sumario={datos.summary} />
+
+			{/* BOTONES */}
+			<Row className="mt-3 mb-3">
 				<Col>
-					{datos.reads.length ?
-						<Button size="sm" variant="info" className="px-2" onClick={() => setMostrarLecturas(true)}>
-							<Icono icono={MdOpenInNew} posicion={[18, 4]} className="mr-1" />
-							Mostrar detalle de lecturas: <Badge variant="light" className="ml-1">{datos.reads.length}</Badge>
-						</Button>
-						:
-						<Button size="sm" variant="outline-secondary" className="px-2" disabled>
-							<Icono icono={MdHighlightOff} posicion={[18, 4]} className="mr-1" />
-							Tanda sin lecturas
-						</Button>
+					{datos.summary.reads_total &&
+						<BotonDescargaDetalle idTanda={datos.id} />
 					}
 					{/*
 					{
@@ -162,8 +161,11 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 					*/}
 				</Col>
 			</Row>
-			<Row className="mt-3">
-				<Col sm={12} lg={4}>
+
+			{/* USUARIOS Y MATERIALES PERMITIDOS */}
+			<Row className="mt-2">
+
+				<Col sm={12} lg={4} className="mt-3 mt-lg-0">
 					<Card>
 						<Card.Header className="m-0 p-2 pl-3 font-weight-bold">Usuarios permitidos</Card.Header>
 						<ListaUsuariosTanda usuarios={datos.assig_users} />
@@ -178,6 +180,9 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 				</Col>
 
 			</Row>
+
+
+
 			<ModalLecturasTanda show={mostarLecturas} onCerrar={() => setMostrarLecturas(false)} datosTanda={datos} />
 
 		</>
@@ -226,10 +231,70 @@ const ListaUsuariosTanda = ({ usuarios }) => {
 	</ListGroup>
 }
 
+const SumarioTanda = ({ sumario }) => {
+	return <>
+		<Row>
+			<Col sm={12} lg={4}>
+
+				<Etiqueta texto="Lecturas:" />
+				<span className={`${sumario.reads_ok ? 'text-success' : 'text-muted'} ml-2`} >{sumario.reads_ok} correctas</span>,
+			<span className={`${sumario.reads_error ? 'text-danger' : 'text-muted'} ml-1`}>{sumario.reads_error} en error</span>
+			</Col>
+
+			<Col sm={12} lg={4}>
+				<Etiqueta texto="Inicio:" />
+				<span className="ml-2">{sumario.start_at}</span>
+			</Col>
+			<Col sm={12} lg={4}>
+				<Etiqueta texto="Fin:" />
+				<span className="ml-2">{sumario.end_at}</span>
+			</Col>
+		</Row>
+
+
+		<Row>
+			{sumario.dates?.length > 0 &&
+
+				<Col xs={12} xl={4}>
+					<Etiqueta texto="Fechas:" />
+					{
+						sumario.dates.map((fecha, i) => {
+							return <Badge variant="secondary" className="ml-2" key={i}>{fecha}</Badge>
+						})
+					}
+				</Col>
+
+			}
+			{sumario.users?.length > 0 &&
+
+				<Col xs={12} xl={8}>
+					<Etiqueta texto="Usuarios:" />
+					{
+						sumario.users.map((usuario, i) => {
+							return <Badge variant="secondary" className="ml-2" key={i}>{usuario}</Badge>
+						})
+					}
+				</Col>
+
+			}
+		</Row>
+	</>
+
+}
+
 const Etiqueta = ({ texto }) => {
 	return <span className="ml-1 font-weight-bold">
 		{texto}
 	</span>
+}
+
+
+
+const BotonDescargaDetalle = ({idTanda}) => {
+	return <Button size="sm" variant="info" className="px-2" onClick={}>
+		<Icono icono={FaFileExcel} posicion={[18, 4]} className="mr-1" />
+							Descargar detalle de lecturas
+	</Button>
 }
 
 export default CardTanda;

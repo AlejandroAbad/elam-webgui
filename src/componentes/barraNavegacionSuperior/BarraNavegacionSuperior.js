@@ -22,7 +22,7 @@ const BarraNavegacionSuperior = () => {
 
     let expandirEn = 'md';
     let temaBarra = "BarraSuperior bg-dark-soft"
-    let titulo = <b>ELAM</b>
+    let titulo = <img src="logo.png" alt="ELAM" style={{height: '32px'}} />
 
     if (!jwt) {
         return (

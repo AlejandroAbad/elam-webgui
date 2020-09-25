@@ -1,0 +1,35 @@
+
+CHANGELOG:
+- Servicio detalle de lecturas para descarga en XLS ¿Necesitas que te remapee en bonito o tu remapeas en frontend para pasar a excel?
+- Servicio detalle tanda, cambio de reads a sumary. Avisame cuando no sea necesario el array reads y lo elimino
+- Servicio dashboard para pagina principal
+- Cambios en la opcion de eliminar (marca). No afecta a frontend
+- Filtro estado de las tandas las busquedas de descripcion lo haremos en frontend (tandas, materiales, proveedores, usuarios), debe buscar por todos los campos disponibles
+- Orden de mayor a menor desde el backend en todos los listados
+
+- Servicios de usuario:
+--- Creacion
+--- Eliminacion
+--- Lista de perfiles
+--- Modificar, ojo en el body omitir el campo pass si no actualiza la clave
+* Cambiando clave (body):
+{
+    "user": "danielo",
+    "name": "prueba daniel 3",
+    "id_profile": "DT",
+    "pass" : "puto2" 
+}
+* Sin cambiar clave (body):
+{
+    "user": "danielo",
+    "name": "prueba daniel 3",
+    "id_profile": "DT"
+}
+
+
+BUGS:
+-Al editar una tanda con materiales eliminados, lanzo un error (y todo ok), pero si luego pincho en editar en otra tanda el error no se ha borrado
+
+
+
+W - En detalle tandas sigue apareciento "reads"
