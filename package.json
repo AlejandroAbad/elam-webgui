@@ -26,6 +26,7 @@
     "react-scripts": "3.4.3",
     "react-select": "^3.1.0",
     "react-toastify": "^6.0.8",
+    "tempa-xlsx": "^0.8.20",
     "xlsx": "^0.16.7"
   },
   "scripts": {
