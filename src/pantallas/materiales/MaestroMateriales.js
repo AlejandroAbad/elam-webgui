@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState, useCallback, useRef } from 'react';
-import { Container, Alert, Button, Navbar, Nav, Form, FormControl, InputGroup } from 'react-bootstrap';
+import { Container, Alert, Button, Navbar, Nav, FormControl, InputGroup } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
 
 import { ContextoAplicacion } from 'contexto';
@@ -166,7 +166,7 @@ const PantallaMaestroMateriales = () => {
 					<Icono icono={FaRedo} posicion={[14, 3]} className="mr-1" />
 					Quitar filtro
 				</Button>
-				<Icono icono={FaFilter} posicion={[20, 2]} /> Filtrando materiales por el texto "<em>{filtroTexto}</em>">
+				<Icono icono={FaFilter} posicion={[20, 2]} /> Filtrando materiales por el texto "<em>{filtroTexto}</em>"
 			</Alert>}
 			{proveedores}
 		</>
