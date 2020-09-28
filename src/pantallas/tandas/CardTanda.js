@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Col, Card, Button, Collapse, Spinner, Alert, Row, Popover, OverlayTrigger, ListGroup, Badge } from 'react-bootstrap';
@@ -8,7 +8,6 @@ import { FaFileExcel, FaRegEye, FaRegFilePdf } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
 
 import useStateLocalStorage from 'hooks/useStateLocalStorage';
-import ModalLecturasTanda from './ModalLecturasTanda';
 import { toast } from 'react-toastify';
 
 import ReactExport from "react-data-export";
@@ -63,8 +62,8 @@ const CardTanda = ({ datosTanda, mostrarBotones, onEditarPulsado, onBorrarPulsad
 					</div>
 					<div className="float-right">
 						<BotonDescargaPdf idTanda={datosTanda.id} />
-						<Button size="sm" className="mx-1" variant="primary" onClick={onEditarPulsado} >Editar</Button>
-						<Button size="sm" className="mx-1" variant="outline-danger" onClick={onBorrarPulsado} >Borrar</Button>
+						<Button size="sm" className="mx-sm-1" variant="primary" onClick={onEditarPulsado} >Editar</Button>
+						<Button size="sm" className="mx-sm-1" variant="outline-danger" onClick={onBorrarPulsado} >Borrar</Button>
 					</div>
 				</>}
 			</Card.Body>
@@ -77,11 +76,11 @@ const CardTanda = ({ datosTanda, mostrarBotones, onEditarPulsado, onBorrarPulsad
 const BotonDetalles = ({ mostrandoDetalles, onPulsado, ...props }) => {
 
 	if (mostrandoDetalles)
-		return <Button {...props} size="sm" className="mx-1" variant="outline-dark" onClick={() => onPulsado(false)}>
+		return <Button {...props} size="sm" className="mx-sm-1" variant="outline-dark" onClick={() => onPulsado(false)}>
 			Ocultar detalles
 		</Button>
 	else
-		return <Button {...props} size="sm" className="mx-1" variant="outline-dark" onClick={() => onPulsado(true)}>
+		return <Button {...props} size="sm" className="mx-sm-1" variant="outline-dark" onClick={() => onPulsado(true)}>
 			Mostar detalles
 		</Button>
 
@@ -91,9 +90,7 @@ const BotonDetalles = ({ mostrandoDetalles, onPulsado, ...props }) => {
 const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado, ejecutarConsulta } = useApiCall('/', jwt.token);
-
-	const [mostarLecturas, setMostrarLecturas] = useState(false);
+	const { resultado, ejecutarConsulta } = useApiCall('/series/<idTanda>', jwt.token);
 
 	useEffect(() => {
 		if (!resultado.cargando && mostrando && !resultado.datos) {
@@ -161,10 +158,6 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 				</Col>
 
 			</Row>
-
-
-
-			<ModalLecturasTanda show={mostarLecturas} onCerrar={() => setMostrarLecturas(false)} datosTanda={datos} />
 
 		</>
 	}
@@ -322,14 +315,13 @@ const BotonDescargaDetalle = ({ idTanda }) => {
 					<ExcelColumn label="USUARIO" value="user" />
 					<ExcelColumn label="FECHA" value="date_time" />
 					<ExcelColumn label="ESTADO" value="status" />
-					<ExcelColumn label="EAN LEÍDO" value="ean_read" />
 					<ExcelColumn label="EAN" value="ean" />
 					<ExcelColumn label="CN" value="cn" />
 					<ExcelColumn label="NOMBRE ORIGEN" value="name_origin" />
 					<ExcelColumn label="NOMBRE NACIONAL" value="name_spain" />
-					<ExcelColumn label="PROVEEDOR" value="name_origin" />
-					<ExcelColumn label="CIF PROVEEDOR" value="cif" />
-					<ExcelColumn label="PAIS" value="id_country" />
+					<ExcelColumn label="PROVEEDOR" value="prov_name" />
+					<ExcelColumn label="CIF PROVEEDOR" value="prov_cif" />
+					<ExcelColumn label="PAIS" value="prov_country" />
 				</ExcelSheet>
 			</ExcelFile>
 			<Button size="sm" variant="primary" className="px-2" onClick={obtenerExcelLeturas} >
@@ -371,12 +363,12 @@ const BotonDescargaPdf = ({ idTanda }) => {
 	}, [ejecutarConsulta, idTanda, resultado.datos])
 
 	if (resultado.cargando) {
-		return <Button size="sm" variant="outline-primary" className="px-2" disabled>
+		return <Button size="sm" variant="outline-primary" className="px-sm-2" disabled>
 			<Spinner size="sm" animation="border" className="mr-1" />
 			Preparando informe
 		</Button>
 	} else {
-		return <Button size="sm" variant="outline-primary" className="px-2" onClick={obtenerInformePDF} >
+		return <Button size="sm" variant="outline-primary" className="px-sm-2" onClick={obtenerInformePDF} >
 			<Icono icono={FaRegFilePdf} posicion={[18, 2]} className="mr-1" />
 			Generar informe
 		</Button>

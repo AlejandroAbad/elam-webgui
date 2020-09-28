@@ -121,19 +121,19 @@ const PantallaMaestroProveedores = () => {
 				<Navbar.Collapse id="basic-navbar-nav">
 					<Nav className="ml-auto">
 
-						<Button size="sm" variant="outline-dark" className="mr-4" onClick={() => setMostrarModalCreacion(true)}>
+						<Button size="sm" variant="outline-dark" className="mr-md-4 mb-2 mb-md-0" onClick={() => setMostrarModalCreacion(true)}>
 							<Icono icono={FaPlus} posicion={[18, 2]} /> Añadir proveedor
 						</Button>
 					</Nav>
 
-					<Form inline>
+					<div className="ml-md-4 mt-2 mt-md-0">
 						<InputGroup>
 							<FormControl size="sm" placeholder="Filtar" defaultValue={filtroTexto} ref={refFiltroTexto} onChange={() => cambiarFiltroTexto(false)} onKeyPress={(e) => { if (e.key === 'Enter') cambiarFiltroTexto(true) }}/>
 							<InputGroup.Append>
 								<Button size="sm" variant="outline-secondary" onClick={() => cambiarFiltroTexto(true)}><Icono icono={FaFilter} posicion={[14, 2]} /></Button>
 							</InputGroup.Append>
 						</InputGroup>
-					</Form>
+					</div>
 				</Navbar.Collapse>
 			</Navbar>
 
@@ -158,11 +158,11 @@ const PantallaMaestroProveedores = () => {
 				onRespuestaSi={() => { setMostrarModalEditar(false); ejecutarConsultaListaProveedores(); }}
 			/>
 			{filtroTexto && <Alert variant="info" className="mt-2 mx-5 py-1">
-				<Icono icono={FaFilter} posicion={[20, 2]} /> Filtrando proveedores por el texto "<em>{filtroTexto}</em>"
 				<Button size="sm" variant="dark" className="float-right py-0" onClick={eliminarFiltroTexto} style={{ marginTop: '1px' }}>
 					<Icono icono={FaRedo} posicion={[14, 3]} className="mr-1" />
 					Quitar filtro
 				</Button>
+				<Icono icono={FaFilter} posicion={[20, 2]} /> Filtrando proveedores por el texto "<em>{filtroTexto}</em>"
 			</Alert>}
 			{proveedores}
 		</>

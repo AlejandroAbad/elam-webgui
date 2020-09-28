@@ -34,6 +34,13 @@
 27 septiembre - 2 horas
 - Añadido filtro de tandas
 
+
+28 septiembre - 2 horas
+- En detalle tandas ya no es necesario el campo "reads", ahora de verdad.
+- Actualizado Excel con los campos del proveedor, etc ...
+- En la lista de usuarios ahora aparece el nombre completo del perfil y parece algo mas bonica
+- Dashboard hecho. Cuando le pinchas en un cuadro de info de tanda, te lleva a la lista y te filtra automaticamente por el tipo que hayas seleccionado.
+- Revisadas vistas en el móvil
+
 PENDIENTE:
-- Servicio dashboard para pagina principal
-- Revisar vistas en modo movil
+- Hay una cosa que me molaría y es que el pdf se cargue en una ventana nueva 

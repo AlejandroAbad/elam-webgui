@@ -36,7 +36,7 @@ const SelectorPerfil = ({ referencia, disabled, onPerfilesCargados, defaultValue
 	} else {
 
 		let opcionesPerfiles = resultado.datos.map((datosPerfil, i) => {
-			return <option key={i} value={datosPerfil.profile} >{datosPerfil.profile} - {datosPerfil.namel}</option>
+			return <option key={i} value={datosPerfil.profile} >{datosPerfil.profile} - {datosPerfil.name}</option>
 		});
 
 		return <Form.Control as="select" ref={referencia} defaultValue={defaultValue} disabled={disabled}>

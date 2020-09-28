@@ -86,7 +86,7 @@ const MenuUsuario = ({ onLogout, ...props }) => {
     if (!jwt) return null;
     return (
         <BotonNavegacion icono={GoPerson} titulo={<>{jwt.name}&nbsp;</>} className="MenuUsuario mr-3 border-lg rounded" esconderEn="md" mostrarEn="lg">
-            <BotonNavegacion titulo="Cuenta" enlace="/usuario" icono={GoInfo} />
+            { /* <BotonNavegacion titulo="Cuenta" enlace="/usuario" icono={GoInfo} /> */ }
             <BotonNavegacion titulo="Cerrar sesión" enlace="#" icono={GoSignOut} onClick={onLogout} />
         </BotonNavegacion>
     )

@@ -14,14 +14,15 @@ const CardUsuario = ({ datosUsuario, mostrarBotones, onEditarPulsado, onBorrarPu
 			<Card.Body>
 				<Card.Title className="float-right"><small className="text-mutted"># <strong>{datosUsuario.id}</strong></small></Card.Title>
 				<Card.Title >
-					<h4 >
+					<h4>
 						<span className="text-uppercase">{datosUsuario.name}</span>
-						<small className="ml-4 text-muted">{datosUsuario.id_profile}</small>
+						<br className="d-sm-none"/>
+						<small className="ml-sm-4 text-muted">{datosUsuario.user}</small>
 					</h4>
 				</Card.Title>
 
 				<Card.Subtitle className="mb-2">
-					{datosUsuario.user}
+					{datosUsuario.profile_name}
 				</Card.Subtitle>
 
 				{mostrarBotones && <>

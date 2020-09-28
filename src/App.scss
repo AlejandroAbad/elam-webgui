@@ -39,3 +39,39 @@ code {
 }
 
 
+.cardInfoTanda {
+	cursor: pointer;
+
+    &:hover {
+		border: 3px solid !important;
+		padding: 14px !important;
+    }
+
+}
+
+.cardInfoTanda-primary {
+    &:hover {
+		border-color: #007bff !important;
+		color: #007bff !important;
+    }
+}
+.cardInfoTanda-secondary {
+    &:hover {
+		border-color: #6c757d !important;
+		color: #6c757d !important;
+    }
+}
+.cardInfoTanda-success {
+    &:hover {
+		border-color: #28a745 !important;
+		color: #28a745 !important;
+    }
+}
+.cardInfoTanda-dark {
+    &:hover {
+		border-color: #343a40 !important;
+		color: #343a40 !important;
+    }
+}
+
+

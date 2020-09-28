@@ -78,21 +78,21 @@ const ModalCrearUsuario = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 				<Form.Group as={Row}>
 					<Form.Label column sm="2">Usuario</Form.Label>
 					<Col sm="6">
-						<Form.Control type="text" placeholder="" ref={refUsuario} disabled={resultado.cargando} autocomplete="off" />
+						<Form.Control type="text" placeholder="" ref={refUsuario} disabled={resultado.cargando} autoComplete="off" />
 					</Col>
 				</Form.Group>
 
 				<Form.Group as={Row}>
 					<Form.Label column sm="2">Nombre</Form.Label>
 					<Col sm="10">
-						<Form.Control type="text" placeholder="" ref={refNombre} disabled={resultado.cargando} name="random" autocomplete="off" />
+						<Form.Control type="text" placeholder="" ref={refNombre} disabled={resultado.cargando} name="random" autoComplete="off" />
 					</Col>
 				</Form.Group>
 
 				<Form.Group as={Row}>
 					<Form.Label column sm="2">Contraseña</Form.Label>
 					<Col sm="10">							
-						<Form.Control type="password" placeholder="" ref={refPasswd} disabled={resultado.cargando} name="random2" autocomplete="off" />
+						<Form.Control type="password" placeholder="" ref={refPasswd} disabled={resultado.cargando} name="random2" autoComplete="off" />
 					</Col>
 				</Form.Group>
 
