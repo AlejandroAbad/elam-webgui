@@ -1,13 +1,15 @@
-## Horas
+# ELAM - WEBGUI
+Interfaz web para gestión de aplicación de lecturas ELAM. Hecha en *React*.
 
-9sep - 1'5h
-9sep - 0'5h
-10sep - 1h
-11sep - 3h
-11sep - 2h
-12sep - 2h
-13sep - 3h
-26 septiembre - 4 horas
+---
+
+## PENDIENTE:
+- Hay una cosa que me molaría y es que el pdf se cargue en una ventana nueva 
+- Control de entradas en los formularios
+
+
+## CHANGELOG
+**26 septiembre**
 - Bug solucionado: Al editar una tanda con materiales eliminados, lanzo un error (y todo ok), pero si luego pincho en editar en otra tanda el error no se ha borrado
 
 - Implementadas descargas de Excel y PDF de las tandas (la de PDF alguna peta porque me devuelves un casque chungo al generar el PDF)
@@ -30,17 +32,25 @@
     - Si escribes 3 o mas letras, te busca automaticamente.
     - Si pulsas en el botón (o la tecla enter), te aplica el filtro aunque sea de menos de 3 letras.
 
-
-27 septiembre - 2 horas
+**27 septiembre**
 - Añadido filtro de tandas
 
 
-28 septiembre - 2 horas
+**28 septiembre**
 - En detalle tandas ya no es necesario el campo "reads", ahora de verdad.
 - Actualizado Excel con los campos del proveedor, etc ...
 - En la lista de usuarios ahora aparece el nombre completo del perfil y parece algo mas bonica
 - Dashboard hecho. Cuando le pinchas en un cuadro de info de tanda, te lleva a la lista y te filtra automaticamente por el tipo que hayas seleccionado.
 - Revisadas vistas en el móvil
 
-PENDIENTE:
-- Hay una cosa que me molaría y es que el pdf se cargue en una ventana nueva 
+
+
+## Horas
+
+- 9sep - 2h
+- 10sep - 1h
+- 11sep - 5h
+- 12sep - 2h
+- 13sep - 3h
+- 26sep - 4h
+- *TOTAL - 18h* 
