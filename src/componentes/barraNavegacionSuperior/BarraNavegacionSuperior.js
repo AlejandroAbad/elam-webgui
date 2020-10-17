@@ -30,10 +30,9 @@ const BarraNavegacionSuperior = () => {
                 <Navbar.Brand >{titulo}</Navbar.Brand>
                 <Navbar.Toggle aria-controls="barraSuperior-navegador" />
                 <Navbar.Collapse id="barraSuperior-navegador" >
-                    <Nav className="ml-auto">
-                        {/*!K.PRODUCCION && <BotonNavegacion icono={GoSettings} titulo="Configuración" esconderEn={expandirEn} />}
-                        <BotonNavegacion icono={GoInfo} titulo="Acerca de" esconderEn={expandirEn} />*/}
-                    </Nav>
+                    {jwt && <Nav className="ml-auto ">
+                        <MenuUsuario onLogout={() => setJwt(null)} jwt={jwt} />
+                    </Nav>}
                 </Navbar.Collapse>
             </Navbar>
         )
