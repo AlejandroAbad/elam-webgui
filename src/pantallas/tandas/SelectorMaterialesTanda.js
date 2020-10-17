@@ -8,15 +8,15 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado: resultadoMaestroMateriales, ejecutarConsulta: ejecutarConsultaMaestroMateriales } = useApiCall('/material', jwt.token);
-	const { ejecutarConsulta: ejecutarConsultaValoresPorDefecto } = useApiCall('/series/' + idTanda, jwt.token);
+	const { ejecutarConsulta: ejecutarConsultaValorPorDefecto } = useApiCall('/series/' + idTanda, jwt.token);
 
-	const [valoresSeleccionados, _setValoresSeleccionados] = useState(null);
-	const setValoresSeleccionados = useCallback((values) => {
-		referencia.current = { value: values ? values.map(v => v.value) : [] };
-		_setValoresSeleccionados(values);
-	}, [referencia, _setValoresSeleccionados]);
+	const [valorSeleccionado, _setValorSeleccionado] = useState(null);
+	const setValorSeleccionado = useCallback((valor) => {
+		referencia.current = { value: valor ? valor.value : null };
+		_setValorSeleccionado(valor);
+	}, [referencia, _setValorSeleccionado]);
 
-	const [valoresPorDefectoCargados, setValoresPorDefectoCargados] = useState(false);
+	const [valoresPorDefectoCargados, setValorPorDefectoCargado] = useState(false);
 	const [maestroMaterialesCargado, setMaestroMaterialesCargado] = useState(false);
 
 	useEffect(() => {
@@ -34,21 +34,26 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 			});
 		}
 
-		if (ejecutarConsultaValoresPorDefecto && idTanda) {
-			ejecutarConsultaValoresPorDefecto({}, (error, res) => {
+		if (ejecutarConsultaValorPorDefecto && idTanda) {
+			ejecutarConsultaValorPorDefecto({}, (error, res) => {
 				if (!error) {
-					let materiales = res.assig_materials ? res.assig_materials.map(mat => { return { value: mat.id_mat, label: <>{mat.cn} - {mat.name_spain}</> }}) : [];
-					setValoresSeleccionados(materiales);
-					setValoresPorDefectoCargados(true);
+					let materialPorDefecto = res.assig_materials?.length ? res.assig_materials[0] : null;
+
+					let valor = materialPorDefecto ? { value: materialPorDefecto.id_mat, label: <>{materialPorDefecto.cn} - {materialPorDefecto.name_spain}</> } : null;
+					setValorSeleccionado(valor);
+					setValorPorDefectoCargado(true);
 				}
 			})
 		} else if (!idTanda) {
-			setValoresSeleccionados([]);
-			setValoresPorDefectoCargados(true);
+			setValorSeleccionado(null);
+			setValorPorDefectoCargado(true);
 		}
 
-	}, [ejecutarConsultaMaestroMateriales, ejecutarConsultaValoresPorDefecto, onMaterialesTandaCargados, setValoresSeleccionados, idTanda]);
+	}, [ejecutarConsultaMaestroMateriales, ejecutarConsultaValorPorDefecto, onMaterialesTandaCargados, setValorSeleccionado, idTanda]);
 
+
+	// Solo debemos mostrar aquellos materiales que están activos !
+	let materialesFiltrados = resultadoMaestroMateriales.datos?.data?.filter( material => material.active === 1);
 
 	if (!valoresPorDefectoCargados || !maestroMaterialesCargado) {
 		return <>
@@ -58,23 +63,33 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 		return <>
 			<small className="text-danger">Ha fallado la carga de materiales.</small> <Button variant="link" onClick={ejecutarConsultaMaestroMateriales} size="sm">Reintentar</Button>
 		</>
-	} else if (!resultadoMaestroMateriales.datos?.data || resultadoMaestroMateriales.datos.data?.length === 0) {
+	} else if (!valorSeleccionado && (!materialesFiltrados || materialesFiltrados.length === 0)) {
 		return <>
-			<small className="text-danger">No se han encontrado materiales.</small> <Button variant="link" onClick={ejecutarConsultaMaestroMateriales} size="sm">Reintentar</Button>
+			<small className="text-danger">No se han encontrado materiales activos.</small> <Button variant="link" onClick={ejecutarConsultaMaestroMateriales} size="sm">Reintentar</Button>
 		</>
 	} else {
+		
+		// Vamos a buscar el valor actualmente seleccionado en la tanda en la lista de materiales disponibles.
+		// Si no lo encontramos, es que ha sido desactivado y por tanto lo añadiremos a la lista
+		let valorSeleccionadoEncontrado = false;
 
-		let opcionesMateriales = resultadoMaestroMateriales.datos.data.map((datosMaterial) => {
+		let opcionesMateriales = materialesFiltrados.map((datosMaterial) => {
+			if (valorSeleccionado?.value === datosMaterial.id)
+				valorSeleccionadoEncontrado = true;
+
 			return { value: datosMaterial.id, label: <>{datosMaterial.cn} - {datosMaterial.name_spain}</> }
 		});
 
+		if (valorSeleccionado && !valorSeleccionadoEncontrado) {
+			opcionesMateriales = [valorSeleccionado, ...opcionesMateriales];
+		}
+
 		return <Select
 			options={opcionesMateriales}
-			isMulti
 			disabled={disabled}
-			value={valoresSeleccionados}
-			onChange={setValoresSeleccionados}
-			placeholder="Selecciona materiales"
+			value={valorSeleccionado}
+			onChange={setValorSeleccionado}
+			placeholder="Selecciona material"
 		/>
 
 	}

@@ -37,7 +37,14 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 			name: refNombre.current.value,
 			id_type: parseInt(refTipo.current.value),
 			id_status: parseInt(refEstado.current.value),
-			assig_materials: refMateriales.current?.value?.map( (val) => {return { id_mat: val }}),
+			assig_materials: [
+				{
+					id_mat: refMateriales.current?.value,
+					batch: "DUMMY",
+					exp_date: "25.10.2025",
+					gtin_req: 0
+				}
+			],
 			assig_users: refUsuarios.current?.value?.map((val) => { return { id_user: val } }),
 		}
 		
