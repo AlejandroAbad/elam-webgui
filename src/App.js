@@ -34,6 +34,8 @@ const App = () => {
 	// mostramos login para refrescar el token
 	if (!jwt || TostadaExpiracionJwt.calculaJwtTTL(jwt) < K.INVALIDAR_JWT_EN) {
 		content = (<FormularioLogin />);
+	} else if (jwt.id_profile === K.ROLES.ALMACEN) {
+		content = <Pantallas.NoAutorizado />;
 	} else {
 		content = (
 			<Switch>

@@ -24,15 +24,15 @@ const BarraNavegacionSuperior = () => {
     let temaBarra = "BarraSuperior bg-dark-soft"
     let titulo = <img src="logo.png" alt="ELAM" style={{height: '32px'}} />
 
-    if (!jwt) {
+    if (!jwt || (jwt && jwt.id_profile === K.ROLES.ALMACEN)) {
         return (
             <Navbar className={temaBarra} collapseOnSelect expand={expandirEn} variant="light" fixed="top">
                 <Navbar.Brand >{titulo}</Navbar.Brand>
                 <Navbar.Toggle aria-controls="barraSuperior-navegador" />
                 <Navbar.Collapse id="barraSuperior-navegador" >
                     <Nav className="ml-auto">
-                        {!K.PRODUCCION && <BotonNavegacion icono={GoSettings} titulo="Configuración" esconderEn={expandirEn} />}
-                        <BotonNavegacion icono={GoInfo} titulo="Acerca de" esconderEn={expandirEn} />
+                        {/*!K.PRODUCCION && <BotonNavegacion icono={GoSettings} titulo="Configuración" esconderEn={expandirEn} />}
+                        <BotonNavegacion icono={GoInfo} titulo="Acerca de" esconderEn={expandirEn} />*/}
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
