@@ -8,11 +8,22 @@ const CardMaterial = ({ datosMaterial, mostrarBotones, onEditarPulsado, onBorrar
 
 	if (!datosMaterial) return null;
 
+	let style = {};
+	if (!datosMaterial.active) {
+		style = {
+			backgroundColor: '#f9f9f9'
+		}
+	}
+
 	return <Col>
 
-		<Card xs={12} className="mt-2">
+		<Card xs={12} className="mt-2" style={style}>
 			<Card.Body>
-				<Card.Title className="float-right"><small className="text-mutted"># <strong>{datosMaterial.id}</strong></small></Card.Title>
+				<Card.Title className="float-right">
+					<small className="text-mutted">
+						# <strong>{datosMaterial.id}</strong>
+					</small>
+				</Card.Title>
 
 				<Row className="no-gutters mb-1">
 					<Col md="auto">
@@ -43,6 +54,7 @@ const CardMaterial = ({ datosMaterial, mostrarBotones, onEditarPulsado, onBorrar
 					</Col>
 				</Row>
 
+				{!datosMaterial.active && <div className="text-danger float-left mt-2">(Material inactivo)</div>}
 				{mostrarBotones && <>
 					<Button size="sm" className="float-right ml-3" variant="outline-danger" onClick={onBorrarPulsado}>Eliminar</Button>
 					<Button size="sm" className="float-right" variant="primary" onClick={onEditarPulsado}>Editar</Button>

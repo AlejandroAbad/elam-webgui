@@ -6,9 +6,17 @@ const CardProveedor = ({ datosProveedor, mostrarBotones, onEditarPulsado, onBorr
 
 	if (!datosProveedor) return null;
 
+
+	let style = {};
+	if (!datosProveedor.active) {
+		style = {
+			backgroundColor: '#f9f9f9'
+		}
+	}
+
 	return <Col>
 
-		<Card xs={12} className="mt-2">
+		<Card xs={12} className="mt-2" style={style}>
 			<Card.Body>
 				<Card.Title className="float-right"><small className="text-mutted"># <strong>{datosProveedor.id}</strong></small></Card.Title>
 				<Card.Title >
@@ -24,6 +32,7 @@ const CardProveedor = ({ datosProveedor, mostrarBotones, onEditarPulsado, onBorr
 					<small className="pl-1">({datosProveedor.id_country})</small>
 				</Card.Subtitle>
 
+				{!datosProveedor.active && <div className="text-danger float-left mt-2">(Proveedor inactivo)</div>}
 				{mostrarBotones && <>
 					<Button size="sm" className="float-right ml-3" variant="outline-danger" onClick={onBorrarPulsado}>Eliminar</Button>
 					<Button size="sm" className="float-right" variant="primary" onClick={onEditarPulsado}>Editar</Button>
