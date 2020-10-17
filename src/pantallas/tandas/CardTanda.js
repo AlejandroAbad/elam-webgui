@@ -319,6 +319,8 @@ const BotonDescargaDetalle = ({ idTanda }) => {
 					<ExcelColumn label="CN" value="cn" />
 					<ExcelColumn label="NOMBRE ORIGEN" value="name_origin" />
 					<ExcelColumn label="NOMBRE NACIONAL" value="name_spain" />
+					<ExcelColumn label="LOTE" value="batch_read" />
+					<ExcelColumn label="CADUCIDAD" value="exp_read" />
 					<ExcelColumn label="PROVEEDOR" value="prov_name" />
 					<ExcelColumn label="CIF PROVEEDOR" value="prov_cif" />
 					<ExcelColumn label="PAIS" value="prov_country" />
