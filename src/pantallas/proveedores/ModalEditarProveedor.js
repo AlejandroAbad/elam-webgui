@@ -1,3 +1,4 @@
+import K from 'K';
 import React, { useContext, useRef, useCallback, useState } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
@@ -16,6 +17,7 @@ const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ..
 	const refNombre = useRef();
 	const refCif = useRef();
 	const refPais = useRef();
+	const refActivo = useRef();
 
 	const cerrarModal = useCallback((respuesta) => {
 		resetearResultado();
@@ -28,7 +30,8 @@ const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ..
 		let peticionEditarProveedor = {
 			name: refNombre.current.value,
 			id_country: refPais.current.value,
-			cif: refCif.current.value
+			cif: refCif.current.value,
+			active: refActivo.current?.checked ? 1 : 0
 		}
 
 		ejecutarConsulta({ url: '/provider/' + datosProveedor.id, method: 'PUT', body: peticionEditarProveedor }, (error, res) => {
@@ -92,7 +95,24 @@ const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ..
 						<SelectorPais referencia={refPais} disabled={resultado.cargando} onPaisesCargados={setPaisesCargados} defaultValue={datosProveedor?.id_country} />
 					</Col>
 				</Form.Group>
-			</Form>
+				
+
+					<Form.Group as={Row}>
+						<Form.Label column sm="2">Activo</Form.Label>
+						<Col sm="6">
+							<Form.Check
+								className="mt-2"
+								type="checkbox"
+								label="Indica si el proveedor podrá ser utilizado"
+								ref={refActivo}
+								disabled={jwt.id_profile !== K.ROLES.DIRECTOR}
+								defaultChecked={datosProveedor?.active ? true : false}
+							/>
+						</Col>
+					</Form.Group>
+				
+
+					</Form>
 		</Modal.Body>
 		<Modal.Footer>
 			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarProveedor} disabled={resultado.cargando || !paisesCargados} >Modificar</Button>

@@ -1,3 +1,4 @@
+import K from 'K';
 import React, { useContext, useRef, useCallback, useState } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
@@ -18,6 +19,7 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 	const refCn = useRef();
 	const refEan = useRef();
 	const refProveedor = useRef();
+	const refActivo = useRef();
 
 	const ejecutarLlamadaCrearMaterial = useCallback(() => {
 
@@ -27,7 +29,7 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 			cn: refCn.current.value,
 			ean: refEan.current.value,
 			id_provider: refProveedor.current.value,
-			
+			active: refActivo.current?.checked ? 1 : 0
 		}
 
 		ejecutarConsulta({ method: 'POST', body: peticionCrearMaterial }, (error, res) => {
@@ -100,9 +102,24 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 				<Form.Group as={Row} className="align-items-center">
 					<Form.Label column sm="3">Proveedor</Form.Label>
 					<Col>
-						<SelectorProveedor referencia={refProveedor} disabled={resultado.cargando} onProveedoresCargados={setProveedoresCargados}/>
+						<SelectorProveedor referencia={refProveedor} disabled={resultado.cargando} onProveedoresCargados={setProveedoresCargados} />
 					</Col>
 				</Form.Group>
+
+				{ jwt.id_profile === K.ROLES.DIRECTOR &&
+				<Form.Group as={Row}>
+					<Form.Label column sm="3">Activo</Form.Label>
+					<Col sm="6">
+						<Form.Check
+							className="mt-2"
+							type="checkbox"
+							label="Indica si el material podrá ser leído en tandas"
+							ref={refActivo}
+						/>
+					</Col>
+				</Form.Group>
+				}
+
 			</Form>
 		</Modal.Body>
 		<Modal.Footer>

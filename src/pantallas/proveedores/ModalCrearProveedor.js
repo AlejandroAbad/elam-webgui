@@ -1,3 +1,4 @@
+import K from 'K';
 import React, { useContext, useRef, useCallback, useState } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
@@ -16,6 +17,7 @@ const ModalCrearProveedor = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 	const refNombre = useRef();
 	const refCif = useRef();
 	const refPais = useRef();
+	const refActivo = useRef();
 
 	const cerrarModal = useCallback((respuesta) => {
 		resetearResultado();
@@ -28,7 +30,8 @@ const ModalCrearProveedor = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 		let peticionCrearProveedor = {
 			name: refNombre.current.value,
 			id_country: refPais.current.value,
-			cif: refCif.current.value
+			cif: refCif.current.value,
+			active: refActivo.current?.checked ? 1 : 0
 		}
 
 		ejecutarConsulta({ method: 'POST', body: peticionCrearProveedor }, (error, res) => {
@@ -92,6 +95,21 @@ const ModalCrearProveedor = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 						<SelectorPais referencia={refPais} disabled={resultado.cargando} onPaisesCargados={setPaisesCargados}/>
 					</Col>
 				</Form.Group>
+
+				{jwt.id_profile === K.ROLES.DIRECTOR &&
+					<Form.Group as={Row}>
+						<Form.Label column sm="2">Activo</Form.Label>
+						<Col sm="6">
+							<Form.Check
+								className="mt-2"
+								type="checkbox"
+								label="Indica si el proveedor podrá ser utilizado"
+								ref={refActivo}
+							/>
+						</Col>
+					</Form.Group>
+				}
+
 			</Form>
 		</Modal.Body>
 		<Modal.Footer>
