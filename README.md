@@ -30,7 +30,21 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 
 
 ## CHANGELOG
-**26 septiembre**
+**17 octubre** v1.4-beta1
+- Control de materiales y proveedores ACTIVADOS/DESACTIVADOS:
+    - Ahora las tarjetas muestran el estado activo del material/proveedor.
+    - Los DTs pueden activar/desactivar materiales y proveedores en los modales de creación y edición.
+    - Los QAs no pueden activar/desactivar materiales y proveedores. Los que crean nuevos estarán desactivados.
+
+- Ahora el rol de usuarios de almacén no tiene acceso a la aplicación web.
+- Eliminados botones no usados en la barra de navegación superior en la pantalla de login.
+
+- Añadidos campos LOTE y CADUCIDAD al Excel de detalle de lecturas de tanda.
+- Ahora el selector de materiales de tanda solo permite elegir un único material.
+- Ahora el selector de materiales de tanda solo muestra los materiales activos o el material actualmente puesto en la tanda.
+
+
+**26 septiembre** v1.3-beta
 - Bug solucionado: Al editar una tanda con materiales eliminados, lanzo un error (y todo ok), pero si luego pincho en editar en otra tanda el error no se ha borrado
 
 - Implementadas descargas de Excel y PDF de las tandas (la de PDF alguna peta porque me devuelves un casque chungo al generar el PDF)
@@ -53,11 +67,11 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
     - Si escribes 3 o mas letras, te busca automaticamente.
     - Si pulsas en el botón (o la tecla enter), te aplica el filtro aunque sea de menos de 3 letras.
 
-**27 septiembre**
+**27 septiembre** v1.1-beta
 - Añadido filtro de tandas
 
 
-**28 septiembre**
+**28 septiembre** v1.0-beta
 - En detalle tandas ya no es necesario el campo "reads", ahora de verdad.
 - Actualizado Excel con los campos del proveedor, etc ...
 - En la lista de usuarios ahora aparece el nombre completo del perfil y parece algo mas bonica
@@ -74,4 +88,5 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 - 12sep - 2h
 - 13sep - 3h
 - 26sep - 4h
-- *TOTAL - 18h* 
+- 17oct - 2h
+- *TOTAL - 20h* 
