@@ -6,6 +6,7 @@ import { Modal, Button, Form, Col, Row, Alert, Spinner } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
 import SelectorProveedor from './SelectorProveedor';
 import { toast } from 'react-toastify';
+import SwitchButton from 'componentes/SwitchButton';
 
 const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 
@@ -19,6 +20,7 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 	const refCn = useRef();
 	const refEan = useRef();
 	const refProveedor = useRef();
+	const refGTIN = useRef();
 	const refActivo = useRef();
 
 	const ejecutarLlamadaCrearMaterial = useCallback(() => {
@@ -29,7 +31,8 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 			cn: refCn.current.value,
 			ean: refEan.current.value,
 			id_provider: refProveedor.current.value,
-			active: refActivo.current?.checked ? 1 : 0
+			active: refActivo.current?.checked ? 1 : 0,
+			gtin: refGTIN.current?.checked ? 1 : 0
 		}
 
 		ejecutarConsulta({ method: 'POST', body: peticionCrearMaterial }, (error, res) => {
@@ -103,6 +106,16 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 					<Form.Label column sm="3">Proveedor</Form.Label>
 					<Col>
 						<SelectorProveedor referencia={refProveedor} disabled={resultado.cargando} onProveedoresCargados={setProveedoresCargados} />
+					</Col>
+				</Form.Group>
+
+				<Form.Group as={Row}>
+					<Form.Label column sm="3">GTIN</Form.Label>
+					<Col sm="9">
+						<SwitchButton
+							innerRef={refGTIN}
+							label="Indica si el material tiene código GTIN"
+						/>
 					</Col>
 				</Form.Group>
 

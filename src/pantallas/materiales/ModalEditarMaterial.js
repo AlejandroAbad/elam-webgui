@@ -1,11 +1,12 @@
 import K from 'K';
-import React, { useContext, useRef, useCallback, useState } from 'react';
+import React, { useContext, useRef, useCallback, useState, useEffect } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Modal, Button, Form, Col, Row, Alert, Spinner } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
 import SelectorProveedor from './SelectorProveedor';
 import { toast } from 'react-toastify';
+import SwitchButton from 'componentes/SwitchButton';
 
 const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...props }) => {
 
@@ -19,6 +20,7 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 	const refCn = useRef();
 	const refEan = useRef();
 	const refProveedor = useRef();
+	const refGTIN = useRef();
 	const refActivo = useRef();
 
 	const ejecutarLlamadaEditarMaterial = useCallback(() => {
@@ -29,7 +31,8 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 			cn: refCn.current.value,
 			ean: refEan.current.value,
 			id_provider: refProveedor.current.value,
-			active: refActivo.current?.checked ? 1 : 0
+			active: refActivo.current?.checked ? 1 : 0,
+			gtin: refGTIN.current?.checked ? 1 : 0
 		}
 		ejecutarConsulta({ url: '/material/' + datosMaterial.id, method: 'PUT', body: peticionEditarMaterial }, (error, res) => {
 			if (error) {
@@ -81,19 +84,19 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 				<Form.Group as={Row}>
 					<Form.Label column lg="3">Nombre en España</Form.Label>
 					<Col lg="9">
-						<Form.Control type="text" placeholder="" ref={refNombreEspana} disabled={resultado.cargando} defaultValue={datosMaterial?.name_spain}/>
+						<Form.Control type="text" placeholder="" ref={refNombreEspana} disabled={resultado.cargando} defaultValue={datosMaterial?.name_spain} />
 					</Col>
 				</Form.Group>
 				<Form.Group as={Row}>
 					<Form.Label column sm="3">CN</Form.Label>
 					<Col sm="4">
-						<Form.Control type="text" placeholder="" ref={refCn} disabled={resultado.cargando} defaultValue={datosMaterial?.cn}/>
+						<Form.Control type="text" placeholder="" ref={refCn} disabled={resultado.cargando} defaultValue={datosMaterial?.cn} />
 					</Col>
 				</Form.Group>
 				<Form.Group as={Row}>
 					<Form.Label column sm="3">EAN</Form.Label>
 					<Col sm="6">
-						<Form.Control type="text" placeholder="" ref={refEan} disabled={resultado.cargando} defaultValue={datosMaterial?.ean}/>
+						<Form.Control type="text" placeholder="" ref={refEan} disabled={resultado.cargando} defaultValue={datosMaterial?.ean} />
 					</Col>
 				</Form.Group>
 
@@ -104,21 +107,32 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 					</Col>
 				</Form.Group>
 
-				
-					<Form.Group as={Row}>
-						<Form.Label column sm="3">Activo</Form.Label>
-						<Col sm="6">
-							<Form.Check
-								className="mt-2"
-								type="checkbox"
-								label="Indica si el material podrá ser leído en tandas"
-								ref={refActivo}
-								disabled={jwt.id_profile !== K.ROLES.DIRECTOR}
-								defaultChecked={datosMaterial?.active ? true : false}
-							/>
-						</Col>
-					</Form.Group>
-				
+				<Form.Group as={Row}>
+					<Form.Label column sm="3">GTIN</Form.Label>
+					<Col sm="9">
+						<SwitchButton
+							innerRef={refGTIN}
+							label="Indica si el material porta códigos GTIN"
+							defaultChecked={datosMaterial?.gtin}
+						/>
+					</Col>
+				</Form.Group>
+
+
+				<Form.Group as={Row}>
+					<Form.Label column sm="3">Activo</Form.Label>
+					<Col sm="6">
+						<Form.Check
+							className="mt-2"
+							type="checkbox"
+							label="Indica si el material podrá ser leído en tandas"
+							ref={refActivo}
+							disabled={jwt.id_profile !== K.ROLES.DIRECTOR}
+							defaultChecked={datosMaterial?.active ? true : false}
+						/>
+					</Col>
+				</Form.Group>
+
 
 			</Form>
 		</Modal.Body>
