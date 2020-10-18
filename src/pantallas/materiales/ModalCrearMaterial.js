@@ -122,12 +122,10 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 				{ jwt.id_profile === K.ROLES.DIRECTOR &&
 				<Form.Group as={Row}>
 					<Form.Label column sm="3">Activo</Form.Label>
-					<Col sm="6">
-						<Form.Check
-							className="mt-2"
-							type="checkbox"
+					<Col sm="9">
+						<SwitchButton
+							innerRef={refActivo}
 							label="Indica si el material podrá ser leído en tandas"
-							ref={refActivo}
 						/>
 					</Col>
 				</Form.Group>

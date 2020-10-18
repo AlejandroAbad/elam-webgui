@@ -1,5 +1,5 @@
 import K from 'K';
-import React, { useContext, useRef, useCallback, useState, useEffect } from 'react';
+import React, { useContext, useRef, useCallback, useState } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Modal, Button, Form, Col, Row, Alert, Spinner } from 'react-bootstrap';
@@ -121,14 +121,12 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 
 				<Form.Group as={Row}>
 					<Form.Label column sm="3">Activo</Form.Label>
-					<Col sm="6">
-						<Form.Check
-							className="mt-2"
-							type="checkbox"
+					<Col sm="9">
+						<SwitchButton
+							innerRef={refActivo}
 							label="Indica si el material podrá ser leído en tandas"
-							ref={refActivo}
+							defaultChecked={datosMaterial?.active}
 							disabled={jwt.id_profile !== K.ROLES.DIRECTOR}
-							defaultChecked={datosMaterial?.active ? true : false}
 						/>
 					</Col>
 				</Form.Group>

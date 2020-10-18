@@ -6,6 +6,7 @@ import { Modal, Button, Form, Col, Row, Alert, Spinner } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
 import SelectorPais from './SelectorPais';
 import { toast } from 'react-toastify';
+import SwitchButton from 'componentes/SwitchButton';
 
 const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ...props }) => {
 
@@ -100,14 +101,12 @@ const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ..
 					<Form.Group as={Row}>
 						<Form.Label column sm="2">Activo</Form.Label>
 						<Col sm="6">
-							<Form.Check
-								className="mt-2"
-								type="checkbox"
-								label="Indica si el proveedor podrá ser utilizado"
-								ref={refActivo}
-								disabled={jwt.id_profile !== K.ROLES.DIRECTOR}
-								defaultChecked={datosProveedor?.active ? true : false}
-							/>
+						<SwitchButton
+							innerRef={refActivo}
+							label="Indica si el proveedor podrá ser asignado"
+							defaultChecked={datosProveedor?.active}
+							disabled={jwt.id_profile !== K.ROLES.DIRECTOR}
+						/>
 						</Col>
 					</Form.Group>
 				

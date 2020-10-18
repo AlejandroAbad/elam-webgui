@@ -3,7 +3,7 @@ import { Col, Row } from 'react-bootstrap';
 import Switch from "react-switch";
 
 
-const SwitchButton = ({ innerRef, onChange, label, defaultChecked }) => {
+const SwitchButton = ({ innerRef, onChange, label, defaultChecked, disabled }) => {
 
 
 	const [swtichStatus, setSwitchStatus] = useState(defaultChecked);
@@ -34,6 +34,7 @@ const SwitchButton = ({ innerRef, onChange, label, defaultChecked }) => {
 				offHandleColor="#999"
 				onHandleColor="#007bff"
 				className="mt-2"
+				disabled={disabled}
 			/>
 		</Col>
 		<Col sm="auto" className="mt-1 ml-3">
