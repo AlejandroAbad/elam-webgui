@@ -113,6 +113,10 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 	} else {
 		let datos = resultado.datos;
 		if (!datos) return null;
+
+		let lote = datos.assig_materials[0]?.batch;
+		let fechaCaducidad = datos.assig_materials[0]?.exp_date;
+
 		return <>
 			{/* SUMARIO */}
 			<Row>
@@ -132,6 +136,23 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 			</Row>
 
 			<SumarioTanda sumario={datos.summary} />
+
+			{/* LOTE Y CADUCIDAD, SI EXISTEN */}
+			{ (lote || fechaCaducidad) &&
+				<Row>
+					<Col sm={12} lg={4}>
+						<Etiqueta texto="Lote:" />
+						<span className="ml-2" >{lote}</span>
+					</Col>
+
+					<Col sm={12} lg={4}>
+						<Etiqueta texto="Caducidad:" />
+						<span className="ml-2">{fechaCaducidad}</span>
+					</Col>
+
+				</Row>
+			}
+
 
 			{/* BOTONES */}
 			{datos.summary.reads_total > 0 && <Row className="mt-3 mb-3">
@@ -273,7 +294,7 @@ const BotonDescargaDetalle = ({ idTanda }) => {
 	const { resultado, ejecutarConsulta } = useApiCall('/series/reads/' + idTanda, jwt.token);
 
 	const obtenerExcelLeturas = useCallback(() => {
-		ejecutarConsulta({}, (error, resultado) => {
+		ejecutarConsulta({}, (error, res) => {
 			if (error) {
 				toast.error(<>
 					<h5>
@@ -347,7 +368,7 @@ const BotonDescargaPdf = ({ idTanda }) => {
 			return;
 		}
 
-		ejecutarConsulta({}, (error, resultado) => {
+		ejecutarConsulta({}, (error, res) => {
 			if (error) {
 				toast.error(<>
 					<h5>
@@ -357,7 +378,7 @@ const BotonDescargaPdf = ({ idTanda }) => {
 				</>);
 				return;
 			}
-			let buffer = Buffer.from(resultado.pdf, 'base64');
+			let buffer = Buffer.from(res.pdf, 'base64');
 			fileDownload(buffer, idTanda + '.pdf');
 			toast.success(<h5>Informe generado con éxito</h5>);
 			return;

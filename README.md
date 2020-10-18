@@ -3,10 +3,6 @@ Interfaz web para gestión de aplicación de lecturas ELAM. Hecha en *React*.
 
 ---
 
-## PENDIENTE:
-- Hay una cosa que me molaría y es que el pdf se cargue en una ventana nueva 
-- Control de entradas en los formularios
-
 ## SCRIPTS
 
 ### `npm start`
@@ -30,6 +26,19 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 
 
 ## CHANGELOG
+**18 octubre** v1.4-beta2
+- Ahora los materiales tienen el campo GTIN (activo/inactivo)
+    - Las cards muestran el estado del GTIN del material
+    - Es posible elegir el GTIN al crear el material
+    - Es posible modificar el GTIN del material
+
+- Los checks de activación de materiales y productos ahora usan el nuevo componente switch
+
+- Ahora las tandas controlan LOTE y la CADUCIDAD:
+    - Al crear/editar tandas, se pide estos dato si el producto seleccionado NO es GTIN
+    - Se muestran los valores en las Cards de tandas
+
+
 **17 octubre** v1.4-beta1
 - Control de materiales y proveedores ACTIVADOS/DESACTIVADOS:
     - Ahora las tarjetas muestran el estado activo del material/proveedor.
@@ -89,4 +98,5 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 - 13sep - 3h
 - 26sep - 4h
 - 17oct - 2h
-- *TOTAL - 20h* 
+- 18oct - 2h
+- *TOTAL - 22h* 

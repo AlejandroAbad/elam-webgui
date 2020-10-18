@@ -1,10 +1,10 @@
 import React, { useEffect, useContext, useState, useCallback } from 'react';
 import { ContextoAplicacion } from 'contexto';
 import { useApiCall } from 'hooks/useApiCall';
-import { Spinner, Button } from 'react-bootstrap';
+import { Spinner, Button, Badge } from 'react-bootstrap';
 import Select from 'react-select'
 
-const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargados, idTanda }) => {
+const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargados, idTanda, onMaterialSeleccionado }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado: resultadoMaestroMateriales, ejecutarConsulta: ejecutarConsultaMaestroMateriales } = useApiCall('/material', jwt.token);
@@ -14,7 +14,10 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 	const setValorSeleccionado = useCallback((valor) => {
 		referencia.current = { value: valor ? valor.value : null };
 		_setValorSeleccionado(valor);
-	}, [referencia, _setValorSeleccionado]);
+
+		if (onMaterialSeleccionado) 
+			onMaterialSeleccionado(valor);
+	}, [referencia, _setValorSeleccionado, onMaterialSeleccionado]);
 
 	const [valoresPorDefectoCargados, setValorPorDefectoCargado] = useState(false);
 	const [maestroMaterialesCargado, setMaestroMaterialesCargado] = useState(false);
@@ -38,8 +41,12 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 			ejecutarConsultaValorPorDefecto({}, (error, res) => {
 				if (!error) {
 					let materialPorDefecto = res.assig_materials?.length ? res.assig_materials[0] : null;
+					let valor = materialPorDefecto ? { 
+						value: materialPorDefecto.id_mat, 
+						label: <>{materialPorDefecto.cn} - {materialPorDefecto.name_spain} <MiniBadgeGtin gtin={materialPorDefecto.gtin} /></>, 
+						gtin: materialPorDefecto.gtin
+					} : null;
 
-					let valor = materialPorDefecto ? { value: materialPorDefecto.id_mat, label: <>{materialPorDefecto.cn} - {materialPorDefecto.name_spain}</> } : null;
 					setValorSeleccionado(valor);
 					setValorPorDefectoCargado(true);
 				}
@@ -77,7 +84,8 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 			if (valorSeleccionado?.value === datosMaterial.id)
 				valorSeleccionadoEncontrado = true;
 
-			return { value: datosMaterial.id, label: <>{datosMaterial.cn} - {datosMaterial.name_spain}</> }
+			return {
+				value: datosMaterial.id, label: <>{datosMaterial.cn} - {datosMaterial.name_spain} <MiniBadgeGtin gtin={datosMaterial.gtin} /></>, gtin: datosMaterial.gtin ? 1 : 0 }
 		});
 
 		if (valorSeleccionado && !valorSeleccionadoEncontrado) {
@@ -97,6 +105,12 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 
 
 }
+
+const MiniBadgeGtin = ({gtin}) => {
+	if (!gtin) return null;
+	return <Badge size="sm" variant="primary" className="font-weight-normal py-1">GTIN</Badge>
+}
+
 
 
 export default SelectorMaterialesTanda;

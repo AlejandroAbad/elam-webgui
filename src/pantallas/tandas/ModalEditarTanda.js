@@ -19,12 +19,15 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 	const [materialesTandaCargados, setMaterialesTandaCargados] = useState(false);
 	const [tiposTandaCargados, setTiposTandaCargados] = useState(false);
 	const [estadosTandaCargados, setEstadosTandaCargados] = useState(false);
+	const [materialSeleccionado, setMaterialSeleccionado] = useState(null);
 
 	const refNombre = useRef();
 	const refTipo = useRef();
 	const refEstado = useRef();
 	const refMateriales = useRef();
 	const refUsuarios = useRef();
+	const refLote = useRef();
+	const refCaducidad = useRef();
 
 
 	const cerrarModal = useCallback((respuesta) => {
@@ -42,10 +45,9 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 			id_status: parseInt(refEstado.current.value),
 			assig_materials: [
 				{
-					id_mat: refMateriales.current?.value,
-					batch: "DUMMY",
-					exp_date: "25.10.2025",
-					gtin_req: 0
+					id_mat: refMateriales.current?.value ,
+					batch: refLote.current?.value || "",
+					exp_date: refCaducidad.current?.value || ""
 				}
 			],
 			assig_users: refUsuarios.current?.value?.map((val) => { return { id_user: val } }),
@@ -91,7 +93,7 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 			<code>{resultado.error.message}</code>
 		</Alert>
 	}
-
+	console.log('materialSeleccionado', materialSeleccionado)
 	contenidoModal = <>
 		<Modal.Body>
 			{alertaSuperior}
@@ -119,7 +121,12 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 				<Form.Group as={Row} className="align-items-center">
 					<Form.Label column sm="2">Materiales</Form.Label>
 					<Col>
-						<SelectorMaterialesTanda referencia={refMateriales} disabled={resultado.cargando} onMaterialesTandaCargados={setMaterialesTandaCargados} idTanda={datosTanda?.id} />
+						<SelectorMaterialesTanda 
+						referencia={refMateriales}
+						disabled={resultado.cargando} 
+						onMaterialesTandaCargados={setMaterialesTandaCargados}
+							onMaterialSeleccionado={setMaterialSeleccionado}
+						idTanda={datosTanda?.id} />
 					</Col>
 				</Form.Group>
 
@@ -130,6 +137,20 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 					</Col>
 				</Form.Group>
 
+				{estadosTandaCargados && materialSeleccionado?.gtin === 0 && <>
+					<Form.Group as={Row}>
+						<Form.Label column sm="2" >Lote</Form.Label>
+						<Col sm="4">
+							<Form.Control type="text" placeholder="" ref={refLote} disabled={resultado.cargando} />
+						</Col>
+					</Form.Group>
+					<Form.Group as={Row}>
+						<Form.Label column sm="2" >Caducidad</Form.Label>
+						<Col sm="4">
+							<Form.Control type="text" placeholder="" ref={refCaducidad} disabled={resultado.cargando} />
+						</Col>
+					</Form.Group>
+				</>}
 
 			</Form>
 		</Modal.Body>

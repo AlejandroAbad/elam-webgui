@@ -18,12 +18,15 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 	const [materialesTandaCargados, setMaterialesTandaCargados] = useState(false);
 	const [tiposTandaCargados, setTiposTandaCargados] = useState(false);
 	const [estadosTandaCargados, setEstadosTandaCargados] = useState(false);
+	const [materialSeleccionado, setMaterialSeleccionado] = useState(null);
 
 	const refNombre = useRef();
 	const refTipo = useRef();
 	const refEstado = useRef();
 	const refMateriales = useRef();
 	const refUsuarios = useRef();
+	const refLote = useRef();
+	const refCaducidad = useRef();
 
 	const cerrarModal = useCallback((respuesta) => {
 		resetearResultado();
@@ -40,14 +43,13 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 			assig_materials: [
 				{
 					id_mat: refMateriales.current?.value,
-					batch: "DUMMY",
-					exp_date: "25.10.2025",
-					gtin_req: 0
+					batch: refLote.current?.value || "",
+					exp_date: refCaducidad.current?.value || ""
 				}
 			],
 			assig_users: refUsuarios.current?.value?.map((val) => { return { id_user: val } }),
 		}
-		
+
 		ejecutarConsulta({ method: 'POST', body: peticionCrearTanda }, (error, res) => {
 			if (error) {
 				return;
@@ -60,7 +62,7 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 			</>);
 			cerrarModal(true);
 		})
-		
+
 	}, [ejecutarConsulta, cerrarModal]);
 
 
@@ -82,7 +84,6 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 			<h6>Error en la creación de la tanda</h6>
 			<code>{resultado.error.message}</code>
 		</Alert>
-
 	}
 
 	contenidoModal = <>
@@ -112,7 +113,12 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 				<Form.Group as={Row} className="align-items-center">
 					<Form.Label column sm="2">Materiales</Form.Label>
 					<Col>
-						<SelectorMaterialesTanda referencia={refMateriales} disabled={resultado.cargando} onMaterialesTandaCargados={setMaterialesTandaCargados} />
+						<SelectorMaterialesTanda
+							referencia={refMateriales}
+							disabled={resultado.cargando}
+							onMaterialesTandaCargados={setMaterialesTandaCargados}
+							onMaterialSeleccionado={setMaterialSeleccionado}
+						/>
 					</Col>
 				</Form.Group>
 
@@ -123,7 +129,22 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 					</Col>
 				</Form.Group>
 
-				
+				{materialSeleccionado?.gtin === 0 && <>
+					<Form.Group as={Row}>
+						<Form.Label column sm="2" >Lote</Form.Label>
+						<Col sm="4">
+							<Form.Control type="text" placeholder="" ref={refLote} disabled={resultado.cargando} />
+						</Col>
+					</Form.Group>
+					<Form.Group as={Row}>
+						<Form.Label column sm="2" >Caducidad</Form.Label>
+						<Col sm="4">
+							<Form.Control type="text" placeholder="" ref={refCaducidad} disabled={resultado.cargando} />
+						</Col>
+					</Form.Group>
+				</>}
+
+
 			</Form>
 		</Modal.Body>
 		<Modal.Footer>
