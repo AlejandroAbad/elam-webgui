@@ -1,6 +1,6 @@
 import Icono from 'componentes/icono/Icono';
 import React from 'react';
-import { Col, Card, Button, Row } from 'react-bootstrap';
+import { Col, Card, Button, Row, Badge } from 'react-bootstrap';
 import { FaBarcode } from 'react-icons/fa';
 
 
@@ -42,7 +42,14 @@ const CardMaterial = ({ datosMaterial, mostrarBotones, onEditarPulsado, onBorrar
 						<h6><span className="text-muted">CN</span> {datosMaterial.cn}</h6>
 					</Col >
 					{datosMaterial.ean && <Col md="auto" className="ml-md-3">
-						<h6><span className="text-muted"><Icono icono={FaBarcode} posicion={[20, 3]} /></span> {datosMaterial.ean}</h6>
+						<h6>
+							<span className="text-muted"><Icono icono={FaBarcode} posicion={[20, 3]} /></span> {datosMaterial.ean}
+							{datosMaterial.gtin ? 
+								<Badge variant="primary" className="ml-2 py-1 font-weight-normal">GTIN activo</Badge> : 
+								<Badge variant="secondary" className="ml-2 py-1 font-weight-normal">GTIN inactivo</Badge>
+							}	
+						</h6>
+						
 					</Col>}
 				</Row>
 
