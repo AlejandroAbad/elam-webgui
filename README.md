@@ -25,7 +25,19 @@ Compila la aplicación para usarse en un servidor de desarrollo.
 La aplicación se generará en el directorio `build-dev` utilizando el entorno definido en el fichero `.env`.
 
 
+## PENDIENTE
+- Hay una cosa que molaría y es que el pdf se cargue en una ventana nueva 
+- Control de entrada en los formularios para evitar campos vacíos
+- Hacer que el selector de fecha de caducidad sea un componente de calendario
+
+
 ## CHANGELOG
+**19 octubre** v1.4-beta3
+- El filtro por estado de tanda, ahora muestra un boton de "Seleccionar todo"
+- Al crear/editar tandas, el selector de materiales indica si el material es o no GTIN
+- Al editar una tanda que tiene asignado un material inactivo o eliminado, aparece marcado como INACTIVO. 
+
+
 **18 octubre** v1.4-beta2
 - Ahora los materiales tienen el campo GTIN (activo/inactivo)
     - Las cards muestran el estado del GTIN del material
@@ -99,4 +111,5 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 - 26sep - 4h
 - 17oct - 2h
 - 18oct - 2h
-- *TOTAL - 22h* 
+- 19oct - 1h
+- *TOTAL - 23h* 
