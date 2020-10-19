@@ -4,11 +4,21 @@ import { useApiCall } from 'hooks/useApiCall';
 import { Spinner, Button, Badge } from 'react-bootstrap';
 import Select from 'react-select'
 
-const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargados, idTanda, onMaterialSeleccionado }) => {
+const generarValorDesdeDatosMaterial = (datosMaterial, inactivo) => {
+	if (!datosMaterial) return null;
+	return {
+		value: datosMaterial.id_mat ?? datosMaterial.id , 
+		label: <>{datosMaterial.cn} - {datosMaterial.name_spain} <MiniBadgeGtin gtin={datosMaterial.gtin} /> {inactivo && <MiniBadgeInactivo/>}</>, 
+		gtin: datosMaterial.gtin ? 1 : 0
+	}
+}
+
+const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargados, onMaterialSeleccionado, datosTanda, modoEdicion }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado: resultadoMaestroMateriales, ejecutarConsulta: ejecutarConsultaMaestroMateriales } = useApiCall('/material', jwt.token);
-	const { resultado: resultadoValorPorDefecto, ejecutarConsulta: ejecutarConsultaValorPorDefecto } = useApiCall('/series/' + idTanda, jwt.token);
+
+	let materialPorDefecto = datosTanda?.assig_materials?.length ? datosTanda.assig_materials[0] : null;
 
 	const [valorSeleccionado, _setValorSeleccionado] = useState(null);
 	const setValorSeleccionado = useCallback((valor) => {
@@ -19,12 +29,16 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 			onMaterialSeleccionado(valor);
 	}, [referencia, _setValorSeleccionado, onMaterialSeleccionado]);
 
-	const [valoresPorDefectoCargados, setValorPorDefectoCargado] = useState(false);
 	const [maestroMaterialesCargado, setMaestroMaterialesCargado] = useState(false);
 
 	useEffect(() => {
-		onMaterialesTandaCargados(valoresPorDefectoCargados && maestroMaterialesCargado);
-	}, [valoresPorDefectoCargados, maestroMaterialesCargado, onMaterialesTandaCargados])
+		if (modoEdicion) {
+			onMaterialesTandaCargados(datosTanda && maestroMaterialesCargado);
+		} else {
+			onMaterialesTandaCargados(maestroMaterialesCargado);
+		}
+	}, [onMaterialesTandaCargados, maestroMaterialesCargado, modoEdicion, datosTanda])
+
 
 	useEffect(() => {
 
@@ -37,33 +51,21 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 			});
 		}
 
-		if (ejecutarConsultaValorPorDefecto && idTanda) {
-			ejecutarConsultaValorPorDefecto({}, (error, res) => {
-				if (!error) {
-					let matPorDefecto = res.assig_materials?.length ? res.assig_materials[0] : null;
-					let valor = matPorDefecto ? {
-						value: matPorDefecto.id_mat,
-						label: <>{matPorDefecto.cn} - {matPorDefecto.name_spain} <MiniBadgeGtin gtin={matPorDefecto.gtin} /></>,
-						gtin: matPorDefecto.gtin
-					} : null;
+	}, [ejecutarConsultaMaestroMateriales, onMaterialesTandaCargados]);
 
-					setValorSeleccionado(valor);
-					setValorPorDefectoCargado(true);
-				}
-			})
-		} else if (!idTanda) {
-			setValorSeleccionado(null);
-			setValorPorDefectoCargado(true);
+
+	useEffect( ()=> {
+		if (modoEdicion && materialPorDefecto) {
+			setValorSeleccionado(generarValorDesdeDatosMaterial(materialPorDefecto))
 		}
-
-	}, [ejecutarConsultaMaestroMateriales, ejecutarConsultaValorPorDefecto, onMaterialesTandaCargados, setValorSeleccionado, idTanda]);
+	}, [modoEdicion, setValorSeleccionado, materialPorDefecto])
 
 
 	// Solo debemos mostrar aquellos materiales que están activos !
 	let materialesFiltrados = resultadoMaestroMateriales.datos?.data?.filter(material => material.active === 1);
-	let materialPorDefecto = resultadoValorPorDefecto.datos?.assig_materials?.length ? resultadoValorPorDefecto.datos.assig_materials[0] : null;
+	
 
-	if (!valoresPorDefectoCargados || !maestroMaterialesCargado) {
+	if ((modoEdicion && !materialPorDefecto) || !maestroMaterialesCargado) {
 		return <>
 			<Spinner animation="grow" size="sm" variant="info" /> <small className="text-info">Cargando materiales</small>
 		</>
@@ -71,7 +73,7 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 		return <>
 			<small className="text-danger">Ha fallado la carga de materiales.</small> <Button variant="link" onClick={ejecutarConsultaMaestroMateriales} size="sm">Reintentar</Button>
 		</>
-	} else if (!valorSeleccionado && (!materialesFiltrados || materialesFiltrados.length === 0)) {
+	} else if (!materialPorDefecto && (!materialesFiltrados || materialesFiltrados.length === 0)) {
 		return <>
 			<small className="text-danger">No se han encontrado materiales activos.</small> <Button variant="link" onClick={ejecutarConsultaMaestroMateriales} size="sm">Reintentar</Button>
 		</>
@@ -81,27 +83,24 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 		// Si no lo encontramos, es que ha sido desactivado y por tanto lo añadiremos a la lista
 		let materialPorDefectoEncontrado = false;
 
-		
+
 		let opcionesMateriales = materialesFiltrados.map((datosMaterial) => {
 			if (materialPorDefecto?.id_mat === datosMaterial.id) {
 				materialPorDefectoEncontrado = true;
 			}
-
-			return {
-				value: datosMaterial.id, label: <>{datosMaterial.cn} - {datosMaterial.name_spain} <MiniBadgeGtin gtin={datosMaterial.gtin} /></>, gtin: datosMaterial.gtin ? 1 : 0
-			}
+			return generarValorDesdeDatosMaterial(datosMaterial);
 		});
 
+
 		if (materialPorDefecto && !materialPorDefectoEncontrado) {
-			let opcionMaterialInactivo = {
-				value: materialPorDefecto.id_mat, label: <>{materialPorDefecto.cn} - {materialPorDefecto.name_spain} <MiniBadgeGtin gtin={materialPorDefecto.gtin} /> <MiniBadgeInactivo /></>, gtin: materialPorDefecto.gtin ? 1 : 0
-			};
-
-			if (valorSeleccionado?.value === materialPorDefecto.id_mat) {
-				valorSeleccionado.label = <>{materialPorDefecto.cn} - {materialPorDefecto.name_spain} <MiniBadgeGtin gtin={materialPorDefecto.gtin} /> <MiniBadgeInactivo/> </>; 
-			}
-
+			// Esto añade la opcion inactiva al inicio de la lista de materiales
+			let opcionMaterialInactivo = generarValorDesdeDatosMaterial(materialPorDefecto, true);
 			opcionesMateriales = [opcionMaterialInactivo, ...opcionesMateriales];
+
+			// Si el valor seleccionado es el material inactivo, añade la marca de inactivo
+			if (valorSeleccionado?.value === materialPorDefecto.id_mat) {
+				valorSeleccionado.label = <>{materialPorDefecto.cn} - {materialPorDefecto.name_spain} <MiniBadgeGtin gtin={materialPorDefecto.gtin} /> <MiniBadgeInactivo /> </>;
+			}
 		}
 
 		return <Select

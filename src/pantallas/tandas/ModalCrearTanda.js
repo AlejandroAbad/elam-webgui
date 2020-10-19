@@ -18,7 +18,6 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 	const [materialesTandaCargados, setMaterialesTandaCargados] = useState(false);
 	const [tiposTandaCargados, setTiposTandaCargados] = useState(false);
 	const [estadosTandaCargados, setEstadosTandaCargados] = useState(false);
-	const [materialSeleccionado, setMaterialSeleccionado] = useState(null);
 
 	const refNombre = useRef();
 	const refTipo = useRef();
@@ -117,7 +116,7 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 							referencia={refMateriales}
 							disabled={resultado.cargando}
 							onMaterialesTandaCargados={setMaterialesTandaCargados}
-							onMaterialSeleccionado={setMaterialSeleccionado}
+							modoEdicion={false}
 						/>
 					</Col>
 				</Form.Group>
@@ -129,20 +128,19 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 					</Col>
 				</Form.Group>
 
-				{materialSeleccionado?.gtin === 0 && <>
-					<Form.Group as={Row}>
-						<Form.Label column sm="2" >Lote</Form.Label>
-						<Col sm="4">
-							<Form.Control type="text" placeholder="" ref={refLote} disabled={resultado.cargando} />
-						</Col>
-					</Form.Group>
-					<Form.Group as={Row}>
-						<Form.Label column sm="2" >Caducidad</Form.Label>
-						<Col sm="4">
-							<Form.Control type="text" placeholder="" ref={refCaducidad} disabled={resultado.cargando} />
-						</Col>
-					</Form.Group>
-				</>}
+				<Form.Group as={Row}>
+					<Form.Label column sm="2" >Lote</Form.Label>
+					<Col sm="4">
+						<Form.Control type="text" placeholder="" ref={refLote} disabled={resultado.cargando} />
+					</Col>
+				</Form.Group>
+				<Form.Group as={Row}>
+					<Form.Label column sm="2" >Caducidad</Form.Label>
+					<Col sm="4">
+						<Form.Control type="text" placeholder="" ref={refCaducidad} disabled={resultado.cargando} />
+					</Col>
+				</Form.Group>
+
 
 
 			</Form>

@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useCallback, useState } from 'react';
+import React, { useContext, useRef, useCallback, useState, useEffect } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Modal, Button, Form, Col, Row, Alert, Spinner } from 'react-bootstrap';
@@ -14,12 +14,14 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado, ejecutarConsulta, resetearResultado } = useApiCall('/series', jwt.token);
 
+	const { resultado: resultadoDatosTanda, ejecutarConsulta: ejecutarConsultaDatosTanda } = useApiCall('/series', jwt.token);
+
 
 	const [usuariosTandaCargados, setUsuariosTandaCargados] = useState(false);
 	const [materialesTandaCargados, setMaterialesTandaCargados] = useState(false);
 	const [tiposTandaCargados, setTiposTandaCargados] = useState(false);
 	const [estadosTandaCargados, setEstadosTandaCargados] = useState(false);
-	const [materialSeleccionado, setMaterialSeleccionado] = useState(null);
+
 
 	const refNombre = useRef();
 	const refTipo = useRef();
@@ -36,6 +38,19 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 		else onRespuestaNo();
 	}, [onRespuestaNo, onRespuestaSi, resetearResultado]);
 
+	useEffect(() => {
+		if (!datosTanda || !props.show) return; 
+		ejecutarConsultaDatosTanda({
+			url: '/series/' + datosTanda.id,
+			method: 'GET'
+		}, (error, res) => {
+			if (error) {
+				toast.error(<>Error al cargar datos de tanda</>);
+				cerrarModal(true);
+			}
+		})
+	}, [ejecutarConsultaDatosTanda, cerrarModal, datosTanda, props.show])
+
 
 	const ejecutarLlamadaEditarTanda = useCallback(() => {
 
@@ -45,15 +60,13 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 			id_status: parseInt(refEstado.current.value),
 			assig_materials: [
 				{
-					id_mat: refMateriales.current?.value ,
+					id_mat: refMateriales.current?.value,
 					batch: refLote.current?.value || "",
 					exp_date: refCaducidad.current?.value || ""
 				}
 			],
 			assig_users: refUsuarios.current?.value?.map((val) => { return { id_user: val } }),
 		}
-
-
 
 		ejecutarConsulta({
 			url: '/series/' + datosTanda.id,
@@ -79,6 +92,8 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 	let contenidoModal = null;
 	let alertaSuperior = null;
 
+	let materialTanda = datosTanda.assig_materials?.length > 0 ? datosTanda.assig_materials[0] : null;
+
 
 	if (resultado.cargando) {
 
@@ -93,7 +108,9 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 			<code>{resultado.error.message}</code>
 		</Alert>
 	}
-	
+
+
+
 	contenidoModal = <>
 		<Modal.Body>
 			{alertaSuperior}
@@ -121,12 +138,13 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 				<Form.Group as={Row} className="align-items-center">
 					<Form.Label column sm="2">Materiales</Form.Label>
 					<Col>
-						<SelectorMaterialesTanda 
-						referencia={refMateriales}
-						disabled={resultado.cargando} 
-						onMaterialesTandaCargados={setMaterialesTandaCargados}
-							onMaterialSeleccionado={setMaterialSeleccionado}
-						idTanda={datosTanda?.id} />
+						<SelectorMaterialesTanda
+							referencia={refMateriales}
+							disabled={resultado.cargando}
+							onMaterialesTandaCargados={setMaterialesTandaCargados}
+							datosTanda={resultadoDatosTanda?.datos} 
+							modoEdicion={true}
+							/>
 					</Col>
 				</Form.Group>
 
@@ -137,20 +155,19 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 					</Col>
 				</Form.Group>
 
-				{estadosTandaCargados && materialSeleccionado?.gtin === 0 && <>
-					<Form.Group as={Row}>
-						<Form.Label column sm="2" >Lote</Form.Label>
-						<Col sm="4">
-							<Form.Control type="text" placeholder="" ref={refLote} disabled={resultado.cargando} />
-						</Col>
-					</Form.Group>
-					<Form.Group as={Row}>
-						<Form.Label column sm="2" >Caducidad</Form.Label>
-						<Col sm="4">
-							<Form.Control type="text" placeholder="" ref={refCaducidad} disabled={resultado.cargando} />
-						</Col>
-					</Form.Group>
-				</>}
+				<Form.Group as={Row}>
+					<Form.Label column sm="2" >Lote</Form.Label>
+					<Col sm="4">
+						<Form.Control type="text" placeholder="" ref={refLote} disabled={resultado.cargando} defaultValue={materialTanda?.batch} />
+					</Col>
+				</Form.Group>
+				<Form.Group as={Row}>
+					<Form.Label column sm="2" >Caducidad</Form.Label>
+					<Col sm="4">
+						<Form.Control type="text" placeholder="" ref={refCaducidad} disabled={resultado.cargando} defaultValue={materialTanda?.exp_date} />
+					</Col>
+				</Form.Group>
+
 
 			</Form>
 		</Modal.Body>
