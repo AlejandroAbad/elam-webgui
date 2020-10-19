@@ -8,14 +8,14 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado: resultadoMaestroMateriales, ejecutarConsulta: ejecutarConsultaMaestroMateriales } = useApiCall('/material', jwt.token);
-	const { ejecutarConsulta: ejecutarConsultaValorPorDefecto } = useApiCall('/series/' + idTanda, jwt.token);
+	const { resultado: resultadoValorPorDefecto, ejecutarConsulta: ejecutarConsultaValorPorDefecto } = useApiCall('/series/' + idTanda, jwt.token);
 
 	const [valorSeleccionado, _setValorSeleccionado] = useState(null);
 	const setValorSeleccionado = useCallback((valor) => {
 		referencia.current = { value: valor ? valor.value : null };
 		_setValorSeleccionado(valor);
 
-		if (onMaterialSeleccionado) 
+		if (onMaterialSeleccionado)
 			onMaterialSeleccionado(valor);
 	}, [referencia, _setValorSeleccionado, onMaterialSeleccionado]);
 
@@ -40,11 +40,11 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 		if (ejecutarConsultaValorPorDefecto && idTanda) {
 			ejecutarConsultaValorPorDefecto({}, (error, res) => {
 				if (!error) {
-					let materialPorDefecto = res.assig_materials?.length ? res.assig_materials[0] : null;
-					let valor = materialPorDefecto ? { 
-						value: materialPorDefecto.id_mat, 
-						label: <>{materialPorDefecto.cn} - {materialPorDefecto.name_spain} <MiniBadgeGtin gtin={materialPorDefecto.gtin} /></>, 
-						gtin: materialPorDefecto.gtin
+					let matPorDefecto = res.assig_materials?.length ? res.assig_materials[0] : null;
+					let valor = matPorDefecto ? {
+						value: matPorDefecto.id_mat,
+						label: <>{matPorDefecto.cn} - {matPorDefecto.name_spain} <MiniBadgeGtin gtin={matPorDefecto.gtin} /></>,
+						gtin: matPorDefecto.gtin
 					} : null;
 
 					setValorSeleccionado(valor);
@@ -60,7 +60,8 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 
 
 	// Solo debemos mostrar aquellos materiales que están activos !
-	let materialesFiltrados = resultadoMaestroMateriales.datos?.data?.filter( material => material.active === 1);
+	let materialesFiltrados = resultadoMaestroMateriales.datos?.data?.filter(material => material.active === 1);
+	let materialPorDefecto = resultadoValorPorDefecto.datos?.assig_materials?.length ? resultadoValorPorDefecto.datos.assig_materials[0] : null;
 
 	if (!valoresPorDefectoCargados || !maestroMaterialesCargado) {
 		return <>
@@ -75,21 +76,32 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 			<small className="text-danger">No se han encontrado materiales activos.</small> <Button variant="link" onClick={ejecutarConsultaMaestroMateriales} size="sm">Reintentar</Button>
 		</>
 	} else {
-		
+
 		// Vamos a buscar el valor actualmente seleccionado en la tanda en la lista de materiales disponibles.
 		// Si no lo encontramos, es que ha sido desactivado y por tanto lo añadiremos a la lista
-		let valorSeleccionadoEncontrado = false;
+		let materialPorDefectoEncontrado = false;
 
+		
 		let opcionesMateriales = materialesFiltrados.map((datosMaterial) => {
-			if (valorSeleccionado?.value === datosMaterial.id)
-				valorSeleccionadoEncontrado = true;
+			if (materialPorDefecto?.id_mat === datosMaterial.id) {
+				materialPorDefectoEncontrado = true;
+			}
 
 			return {
-				value: datosMaterial.id, label: <>{datosMaterial.cn} - {datosMaterial.name_spain} <MiniBadgeGtin gtin={datosMaterial.gtin} /></>, gtin: datosMaterial.gtin ? 1 : 0 }
+				value: datosMaterial.id, label: <>{datosMaterial.cn} - {datosMaterial.name_spain} <MiniBadgeGtin gtin={datosMaterial.gtin} /></>, gtin: datosMaterial.gtin ? 1 : 0
+			}
 		});
 
-		if (valorSeleccionado && !valorSeleccionadoEncontrado) {
-			opcionesMateriales = [valorSeleccionado, ...opcionesMateriales];
+		if (materialPorDefecto && !materialPorDefectoEncontrado) {
+			let opcionMaterialInactivo = {
+				value: materialPorDefecto.id_mat, label: <>{materialPorDefecto.cn} - {materialPorDefecto.name_spain} <MiniBadgeGtin gtin={materialPorDefecto.gtin} /> <MiniBadgeInactivo /></>, gtin: materialPorDefecto.gtin ? 1 : 0
+			};
+
+			if (valorSeleccionado?.value === materialPorDefecto.id_mat) {
+				valorSeleccionado.label = <>{materialPorDefecto.cn} - {materialPorDefecto.name_spain} <MiniBadgeGtin gtin={materialPorDefecto.gtin} /> <MiniBadgeInactivo/> </>; 
+			}
+
+			opcionesMateriales = [opcionMaterialInactivo, ...opcionesMateriales];
 		}
 
 		return <Select
@@ -106,9 +118,13 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 
 }
 
-const MiniBadgeGtin = ({gtin}) => {
+const MiniBadgeGtin = ({ gtin }) => {
 	if (!gtin) return null;
 	return <Badge size="sm" variant="primary" className="font-weight-normal py-1">GTIN</Badge>
+}
+
+const MiniBadgeInactivo = () => {
+	return <Badge size="sm" variant="warning" className="font-weight-normal py-1">INACTIVO</Badge>
 }
 
 
