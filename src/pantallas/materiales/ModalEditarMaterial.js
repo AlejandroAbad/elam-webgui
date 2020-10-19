@@ -113,7 +113,7 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 						<SwitchButton
 							innerRef={refGTIN}
 							label="Indica si el material porta códigos GTIN"
-							defaultChecked={datosMaterial?.gtin}
+							defaultChecked={datosMaterial?.gtin ? true : false}
 						/>
 					</Col>
 				</Form.Group>
@@ -125,7 +125,7 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 						<SwitchButton
 							innerRef={refActivo}
 							label="Indica si el material podrá ser leído en tandas"
-							defaultChecked={datosMaterial?.active}
+							defaultChecked={datosMaterial?.active ? true : false}
 							disabled={jwt.id_profile !== K.ROLES.DIRECTOR}
 						/>
 					</Col>
