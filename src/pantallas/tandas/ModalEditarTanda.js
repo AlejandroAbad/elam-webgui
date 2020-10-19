@@ -39,7 +39,7 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 	}, [onRespuestaNo, onRespuestaSi, resetearResultado]);
 
 	useEffect(() => {
-		if (!datosTanda || !props.show) return; 
+		if (!datosTanda || !props.show) return;
 		ejecutarConsultaDatosTanda({
 			url: '/series/' + datosTanda.id,
 			method: 'GET'
@@ -142,16 +142,22 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 							referencia={refMateriales}
 							disabled={resultado.cargando}
 							onMaterialesTandaCargados={setMaterialesTandaCargados}
-							datosTanda={resultadoDatosTanda?.datos} 
+							datosTanda={resultadoDatosTanda?.datos}
 							modoEdicion={true}
-							/>
+						/>
 					</Col>
 				</Form.Group>
 
 				<Form.Group as={Row} className="align-items-center">
 					<Form.Label column sm="2">Usuarios</Form.Label>
 					<Col>
-						<SelectorUsuariosTanda referencia={refUsuarios} disabled={resultado.cargando} onUsuariosTandaCargados={setUsuariosTandaCargados} idTanda={datosTanda?.id} />
+						<SelectorUsuariosTanda
+							referencia={refUsuarios}
+							disabled={resultado.cargando}
+							onUsuariosTandaCargados={setUsuariosTandaCargados}
+							datosUsuarios={resultadoDatosTanda?.datos?.assig_users}
+							modoEdicion={true}
+						/>
 					</Col>
 				</Form.Group>
 

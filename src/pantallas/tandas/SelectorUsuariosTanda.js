@@ -4,11 +4,22 @@ import { useApiCall } from 'hooks/useApiCall';
 import { Spinner, Button } from 'react-bootstrap';
 import Select from 'react-select' 
 
-const SelectorUsuariosTanda = ({ referencia, disabled, onUsuariosTandaCargados, idTanda }) => {
+const generaValoresDesdeDatosUsuario = (datosUsuario) => {
+	if (!datosUsuario) return null;
+
+	if (datosUsuario.id_user || datosUsuario.id) {
+		return { value: datosUsuario.id_user ?? datosUsuario.id, label: <>{datosUsuario.name}</> }
+	} else if (datosUsuario.map) {
+		return datosUsuario.map( usuario => generaValoresDesdeDatosUsuario(usuario))
+	}
+	return null;
+}
+
+const SelectorUsuariosTanda = ({ referencia, disabled, onUsuariosTandaCargados, datosUsuarios, modoEdicion }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado: resultadoMaestroUsuarios, ejecutarConsulta: ejecutarConsultaMaestroUsuarios, setResultado: setResultadoMaestroUsuarios } = useApiCall('/user', jwt.token);
-	const { ejecutarConsulta: ejecutarConsultaValoresPorDefecto } = useApiCall('/series/' + idTanda, jwt.token);
+	const { resultado: resultadoMaestroUsuarios, ejecutarConsulta: ejecutarConsultaMaestroUsuarios } = useApiCall('/user', jwt.token);
+	
 
 	const [valoresSeleccionados, _setValoresSeleccionados] = useState(null);
 	const setValoresSeleccionados = useCallback((values) => {
@@ -16,12 +27,14 @@ const SelectorUsuariosTanda = ({ referencia, disabled, onUsuariosTandaCargados, 
 		_setValoresSeleccionados(values);
 	}, [referencia, _setValoresSeleccionados]);
 
-	const [valoresPorDefectoCargados, setValoresPorDefectoCargados] = useState(false);
 	const [maestroUsuariosCargado, setMaestroUsuariosCargado] = useState(false);
 
 	useEffect(() => {
-		onUsuariosTandaCargados(valoresPorDefectoCargados && maestroUsuariosCargado);
-	}, [valoresPorDefectoCargados, maestroUsuariosCargado, onUsuariosTandaCargados])
+		if (modoEdicion)
+			onUsuariosTandaCargados(datosUsuarios !== null && maestroUsuariosCargado);
+		else
+			onUsuariosTandaCargados(maestroUsuariosCargado);
+	}, [datosUsuarios, maestroUsuariosCargado, onUsuariosTandaCargados, modoEdicion])
 
 	useEffect(() => {
 		onUsuariosTandaCargados(false);
@@ -34,23 +47,16 @@ const SelectorUsuariosTanda = ({ referencia, disabled, onUsuariosTandaCargados, 
 			});
 		}
 
-		if (ejecutarConsultaValoresPorDefecto && idTanda) {
-			ejecutarConsultaValoresPorDefecto({}, (error, res) => {
-				if (!error) {
-					let materiales = res.assig_users ? res.assig_users.map(u => { return { value: u.id_user, label: <>{u.name}</> } }) : [];
-					setValoresSeleccionados(materiales);
-					setValoresPorDefectoCargados(true);
-				}
-			})
-		} else if (!idTanda) {
-			setValoresSeleccionados([]);
-			setValoresPorDefectoCargados(true);
+	}, [ejecutarConsultaMaestroUsuarios, onUsuariosTandaCargados]);
+
+	useEffect(() => {
+		if (modoEdicion && datosUsuarios !== null) {
+			setValoresSeleccionados(generaValoresDesdeDatosUsuario(datosUsuarios))
 		}
+	}, [modoEdicion, datosUsuarios, setValoresSeleccionados])
 
-	}, [ejecutarConsultaMaestroUsuarios, ejecutarConsultaValoresPorDefecto, onUsuariosTandaCargados, setValoresSeleccionados, idTanda, setResultadoMaestroUsuarios]);
 
-
-	if (!valoresPorDefectoCargados || !maestroUsuariosCargado) {
+	if ( (modoEdicion && datosUsuarios === null) || !maestroUsuariosCargado) {
 		return <>	
 			<Spinner animation="grow" size="sm" variant="info" /> <small className="text-info">Cargando usuarios</small>
 		</>
@@ -64,9 +70,7 @@ const SelectorUsuariosTanda = ({ referencia, disabled, onUsuariosTandaCargados, 
 		</>
 	} else {
 
-		let opcionesUsuarios = resultadoMaestroUsuarios.datos.data.map((datosUsuario) => {
-			return { value: datosUsuario.id, label: <>{datosUsuario.name}</> }
-		});
+		let opcionesUsuarios = generaValoresDesdeDatosUsuario(resultadoMaestroUsuarios.datos.data)
 
 		return <Select
 			options={opcionesUsuarios}

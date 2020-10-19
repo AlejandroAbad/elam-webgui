@@ -124,7 +124,11 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 				<Form.Group as={Row} className="align-items-center">
 					<Form.Label column sm="2">Usuarios</Form.Label>
 					<Col>
-						<SelectorUsuariosTanda referencia={refUsuarios} disabled={resultado.cargando} onUsuariosTandaCargados={setUsuariosTandaCargados} />
+						<SelectorUsuariosTanda 
+							referencia={refUsuarios} 
+							disabled={resultado.cargando} 
+							onUsuariosTandaCargados={setUsuariosTandaCargados} 
+							modoEdicion={false} />
 					</Col>
 				</Form.Group>
 
