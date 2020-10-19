@@ -92,9 +92,7 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 	let contenidoModal = null;
 	let alertaSuperior = null;
 
-	let materialTanda = datosTanda.assig_materials?.length > 0 ? datosTanda.assig_materials[0] : null;
-
-
+	
 	if (resultado.cargando) {
 
 		alertaSuperior = <Alert variant="info">
@@ -164,13 +162,17 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 				<Form.Group as={Row}>
 					<Form.Label column sm="2" >Lote</Form.Label>
 					<Col sm="4">
-						<Form.Control type="text" placeholder="" ref={refLote} disabled={resultado.cargando} defaultValue={materialTanda?.batch} />
+						<InputLote
+							innerRef={refLote}
+							disabled={resultado.cargando}
+							resultadoDatosTanda={resultadoDatosTanda}
+						/>
 					</Col>
 				</Form.Group>
 				<Form.Group as={Row}>
 					<Form.Label column sm="2" >Caducidad</Form.Label>
 					<Col sm="4">
-						<Form.Control type="text" placeholder="" ref={refCaducidad} disabled={resultado.cargando} defaultValue={materialTanda?.exp_date} />
+						<InputCaducidad innerRef={refCaducidad} disabled={resultado.cargando} resultadoDatosTanda={resultadoDatosTanda} />
 					</Col>
 				</Form.Group>
 
@@ -197,5 +199,38 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 
 }
 
+
+
+const InputLote = ({ innerRef, disabled, resultadoDatosTanda }) => {
+	if (resultadoDatosTanda.cargando) {
+		return <>
+			<Spinner animation="grow" size="sm" variant="info" /> <small className="text-info">Cargando lote</small>
+		</>
+	} else if (resultadoDatosTanda.error) {
+		return <>
+			<small className="text-danger">Ha fallado la carga de datos.</small>
+		</>
+	}
+
+	let materialTanda = resultadoDatosTanda?.datos?.assig_materials?.length > 0 ? resultadoDatosTanda?.datos?.assig_materials[0] : null;
+	return <Form.Control type="text" placeholder="" ref={innerRef} disabled={disabled} defaultValue={materialTanda?.batch} />
+}
+
+
+
+const InputCaducidad = ({ innerRef, disabled, resultadoDatosTanda }) => {
+	if (resultadoDatosTanda.cargando) {
+		return <>
+			<Spinner animation="grow" size="sm" variant="info" /> <small className="text-info">Cargando fecha de caducidad</small>
+		</>
+	} else if (resultadoDatosTanda.error) {
+		return <>
+			<small className="text-danger">Ha fallado la carga de datos.</small>
+		</>
+	}
+
+	let materialTanda = resultadoDatosTanda?.datos?.assig_materials?.length > 0 ? resultadoDatosTanda?.datos?.assig_materials[0] : null;
+	return <Form.Control type="text" placeholder="" ref={innerRef} disabled={disabled} defaultValue={materialTanda?.exp_date} />
+}
 
 export default ModalEditarTanda;
