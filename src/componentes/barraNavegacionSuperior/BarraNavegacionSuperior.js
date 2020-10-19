@@ -6,8 +6,8 @@ import './BarraNavegacionSuperior.scss';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
-import { GoInfo, GoSignOut, GoSettings, GoPerson,  } from 'react-icons/go';
-import {   FaBoxes, FaUserCheck, FaParachuteBox, FaDatabase, FaPills } from 'react-icons/fa';
+import { GoSignOut, GoPerson, } from 'react-icons/go';
+import { FaBoxes, FaUserCheck, FaParachuteBox, FaDatabase, FaPills } from 'react-icons/fa';
 
 
 import Icono from 'componentes/icono/Icono';
@@ -22,7 +22,7 @@ const BarraNavegacionSuperior = () => {
 
     let expandirEn = 'md';
     let temaBarra = "BarraSuperior bg-dark-soft"
-    let titulo = <img src="logo.png" alt="ELAM" style={{height: '32px'}} />
+    let titulo = <img src="logo.png" alt="ELAM" style={{ height: '32px' }} />
 
     if (!jwt || (jwt && jwt.id_profile === K.ROLES.ALMACEN)) {
         return (
@@ -48,14 +48,14 @@ const BarraNavegacionSuperior = () => {
             <Navbar.Toggle aria-controls="barraSuperior-navegador" />
             <Navbar.Collapse id="barraSuperior-navegador" >
                 <Nav className="mr-auto ml-10" >
-                    
-                    <BotonNavegacion icono={FaDatabase} titulo="Maestros"  mostrarEn="xl" >
+
+                    <BotonNavegacion icono={FaDatabase} titulo="Maestros" mostrarEn="xl" >
                         <BotonNavegacion enlace="/maestro/materiales" icono={FaPills} titulo="Materiales" />
                         <BotonNavegacion enlace="/maestro/proveedores" icono={FaParachuteBox} titulo="Proveedores" />
                         <BotonNavegacion enlace="/maestro/usuarios" icono={FaUserCheck} titulo="Usuarios" />
                     </BotonNavegacion>
 
-                    <BotonNavegacion enlace="/tandas"  icono={FaBoxes} titulo="Tandas"  mostrarEn="xl" />
+                    <BotonNavegacion enlace="/tandas" icono={FaBoxes} titulo="Tandas" mostrarEn="xl" />
 
                     {/*
                     <BotonNavegacion icono={FaBook} titulo="Informes" mostrarEn="xl" >
@@ -70,7 +70,7 @@ const BarraNavegacionSuperior = () => {
                     <MenuUsuario onLogout={() => setJwt(null)} jwt={jwt} />
                 </Nav>
                 <Nav>
-                    
+
                 </Nav>
             </Navbar.Collapse>
 
@@ -85,7 +85,7 @@ const MenuUsuario = ({ onLogout, ...props }) => {
     if (!jwt) return null;
     return (
         <BotonNavegacion icono={GoPerson} titulo={<>{jwt.name}&nbsp;</>} className="MenuUsuario mr-3 border-lg rounded" esconderEn="md" mostrarEn="lg">
-            { /* <BotonNavegacion titulo="Cuenta" enlace="/usuario" icono={GoInfo} /> */ }
+            { /* <BotonNavegacion titulo="Cuenta" enlace="/usuario" icono={GoInfo} /> */}
             <BotonNavegacion titulo="Cerrar sesión" enlace="#" icono={GoSignOut} onClick={onLogout} />
         </BotonNavegacion>
     )
