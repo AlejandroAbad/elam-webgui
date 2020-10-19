@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, Card, Button } from 'react-bootstrap';
+import { Col, Card, Button, Badge } from 'react-bootstrap';
 
 
 const CardProveedor = ({ datosProveedor, mostrarBotones, onEditarPulsado, onBorrarPulsado }) => {
@@ -10,7 +10,7 @@ const CardProveedor = ({ datosProveedor, mostrarBotones, onEditarPulsado, onBorr
 	let style = {};
 	if (!datosProveedor.active) {
 		style = {
-			backgroundColor: '#f9f9f9'
+			backgroundColor: '#e9e9e9'
 		}
 	}
 
@@ -19,20 +19,27 @@ const CardProveedor = ({ datosProveedor, mostrarBotones, onEditarPulsado, onBorr
 		<Card xs={12} className="mt-2" style={style}>
 			<Card.Body>
 				<Card.Title className="float-right"><small className="text-mutted"># <strong>{datosProveedor.id}</strong></small></Card.Title>
-				<Card.Title >
-					<h4 >
+				<Card.Title className="mb-0" >
+					<h4  >
 						<span className="text-uppercase">{datosProveedor.name}</span>
 						<small className="ml-4 text-muted">{datosProveedor.cif}</small>
 					</h4>
 				</Card.Title>
 
+				<Card.Text>
+					{!datosProveedor.active && <Badge variant="warning" className="mt-lg-n2">PROVEEDOR INACTIVO</Badge>}
+				</Card.Text>
+
+				
+
 				<Card.Subtitle className="mb-2">
+					
 					<img alt={datosProveedor.country_name} src={`https://www.countryflags.io/` + datosProveedor.id_country + `/flat/24.png`} className="pr-2" />
 					{datosProveedor.country_name}
 					<small className="pl-1">({datosProveedor.id_country})</small>
 				</Card.Subtitle>
 
-				{!datosProveedor.active && <div className="text-danger float-left mt-2">(Proveedor inactivo)</div>}
+
 				{mostrarBotones && <>
 					<Button size="sm" className="float-right ml-3" variant="outline-danger" onClick={onBorrarPulsado}>Eliminar</Button>
 					<Button size="sm" className="float-right" variant="primary" onClick={onEditarPulsado}>Editar</Button>

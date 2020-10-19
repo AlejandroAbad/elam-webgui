@@ -11,7 +11,7 @@ const CardMaterial = ({ datosMaterial, mostrarBotones, onEditarPulsado, onBorrar
 	let style = {};
 	if (!datosMaterial.active) {
 		style = {
-			backgroundColor: '#f9f9f9'
+			backgroundColor: '#e9e9e9'
 		}
 	}
 
@@ -34,6 +34,9 @@ const CardMaterial = ({ datosMaterial, mostrarBotones, onEditarPulsado, onBorrar
 					</Col>
 					<Col md="auto">
 						<h4>{datosMaterial.name_origin}</h4>
+					</Col>
+					<Col className="ml-lg-2 mt-0 mb-1" sm="12" lg="auto">
+						{!datosMaterial.active && <Badge variant="warning" className="float-left mt-lg-2">MATERIAL INACTIVO</Badge>}
 					</Col>
 				</Row>
 
@@ -61,7 +64,7 @@ const CardMaterial = ({ datosMaterial, mostrarBotones, onEditarPulsado, onBorrar
 					</Col>
 				</Row>
 
-				{!datosMaterial.active && <div className="text-danger float-left mt-2">(Material inactivo)</div>}
+				
 				{mostrarBotones && <>
 					<Button size="sm" className="float-right ml-3" variant="outline-danger" onClick={onBorrarPulsado}>Eliminar</Button>
 					<Button size="sm" className="float-right" variant="primary" onClick={onEditarPulsado}>Editar</Button>
