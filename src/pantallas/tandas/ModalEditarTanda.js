@@ -93,7 +93,7 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 			<code>{resultado.error.message}</code>
 		</Alert>
 	}
-	console.log('materialSeleccionado', materialSeleccionado)
+	
 	contenidoModal = <>
 		<Modal.Body>
 			{alertaSuperior}

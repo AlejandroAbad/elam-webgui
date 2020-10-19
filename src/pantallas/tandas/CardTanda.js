@@ -94,7 +94,6 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 
 	useEffect(() => {
 		if (!resultado.cargando && mostrando && !resultado.datos) {
-			console.log('consulta avanzado tanda ' + idTanda)
 			ejecutarConsulta({ method: 'GET', url: '/series/' + idTanda })
 		}
 	}, [mostrando, idTanda, resultado, ejecutarConsulta]);
@@ -227,8 +226,6 @@ const ListaUsuariosTanda = ({ usuarios }) => {
 }
 
 const SumarioTanda = ({ sumario }) => {
-	console.log(sumario);
-
 
 	return <>
 		<Row>
