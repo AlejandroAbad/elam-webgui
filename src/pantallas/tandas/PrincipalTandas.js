@@ -5,7 +5,7 @@ import { useApiCall } from 'hooks/useApiCall';
 import { ContextoAplicacion } from 'contexto';
 import PanelCarga from 'componentes/Cargando';
 
-import { FaPlus, FaSync, FaBoxes, FaFilter, FaExclamation, FaCheckSquare, FaSquare } from 'react-icons/fa';
+import { FaPlus, FaSync, FaBoxes, FaFilter, FaExclamation, FaCheckSquare, FaRegSquare, FaPlusSquare } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
 
 
@@ -210,7 +210,7 @@ const PantallaTandas = () => {
 
 
 const CustomMenu = React.forwardRef(
-	({ style, className, 'aria-labelledby': labeledBy, valorRandom, onValorCambiado, valor }, ref) => {
+	({ style, className, 'aria-labelledby': labeledBy, onValorCambiado, valor }, ref) => {
 
 		let mostrarCreadas = valor.includes(1);
 		let mostrarLiberadas = valor.includes(2);
@@ -221,17 +221,18 @@ const CustomMenu = React.forwardRef(
 			let nuevoFiltro = [];
 
 			switch (valorCambiado) {
+				case 0: nuevoFiltro = [true, true, true]; break;
 				case 1: nuevoFiltro = [!mostrarCreadas, mostrarLiberadas, mostrarCerradas]; break;
 				case 2: nuevoFiltro = [mostrarCreadas, !mostrarLiberadas, mostrarCerradas]; break;
 				case 3: nuevoFiltro = [mostrarCreadas, mostrarLiberadas, !mostrarCerradas]; break;
 				default: break;
 			}
 
-			nuevoFiltro = nuevoFiltro.map((valor, i) => {
-				if (valor) return i + 1
+			nuevoFiltro = nuevoFiltro.map((val, i) => {
+				if (val) return i + 1
 				else return null
-			}).filter((valor) => {
-				return valor !== null
+			}).filter((val) => {
+				return val !== null
 			})
 
 			onValorCambiado(nuevoFiltro);
@@ -239,11 +240,15 @@ const CustomMenu = React.forwardRef(
 		}, [onValorCambiado, mostrarCreadas, mostrarLiberadas, mostrarCerradas]);
 
 		let iconoActivo = <Icono icono={FaCheckSquare} posicion={[16,4]} />
-		let iconoInactivo = <Icono icono={FaSquare} posicion={[16, 4]} />
+		let iconoIntermedio = <Icono icono={FaPlusSquare} posicion={[16, 4]} />
+		let iconoInactivo = <Icono icono={FaRegSquare} posicion={[16, 4]} />
 
 		return (
 
 			<div ref={ref} style={style} className={className} aria-labelledby={labeledBy}>
+
+
+				
 
 				<div className="my-1 mx-2">
 					<Button variant='outline-primary' size="sm" className="p-0 px-2 w-100 text-left border-0" onClick={() => { valorFiltroCambiado(1) }}>
@@ -260,8 +265,18 @@ const CustomMenu = React.forwardRef(
 						{mostrarCerradas ? iconoActivo : iconoInactivo}  Finalizadas
 						</Button>
 				</div>
-				<div>{valorRandom}</div>
 
+				<hr className="mb-1 mt-2" />
+				<div className="my-1 mx-2">
+					<Button variant='outline-info' size="sm" className="p-0 px-2 w-100 text-left border-0" onClick={() => { valorFiltroCambiado(0) }}>
+						{(mostrarCreadas && mostrarLiberadas && mostrarCerradas) ?
+							iconoActivo :
+							((mostrarCreadas || mostrarLiberadas || mostrarCerradas) ? iconoIntermedio : iconoInactivo)
+						} Marcar Todo
+						</Button>
+				</div>
+
+	
 			</div>
 
 		);
