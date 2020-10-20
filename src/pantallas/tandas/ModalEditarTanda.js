@@ -8,6 +8,16 @@ import SelectorTipoTanda from './SelectorTipoTanda';
 import SelectorEstadoTanda from './SelectorEstadoTanda';
 import SelectorMaterialesTanda from './SelectorMaterialesTanda';
 import SelectorUsuariosTanda from './SelectorUsuariosTanda';
+import DatePicker from 'react-datepicker';
+import { registerLocale, setDefaultLocale } from "react-datepicker";
+import es from 'date-fns/locale/es';
+import "react-datepicker/dist/react-datepicker.css";
+
+registerLocale('es', es);
+setDefaultLocale('es');
+
+
+
 
 const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }) => {
 
@@ -92,7 +102,7 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 	let contenidoModal = null;
 	let alertaSuperior = null;
 
-	
+
 	if (resultado.cargando) {
 
 		alertaSuperior = <Alert variant="info">
@@ -219,6 +229,36 @@ const InputLote = ({ innerRef, disabled, resultadoDatosTanda }) => {
 
 
 const InputCaducidad = ({ innerRef, disabled, resultadoDatosTanda }) => {
+
+	const [valor, _setValor] = useState(null)
+	const setValor = useCallback((valorNuevo) => {
+		
+		let valorReferencia = null;
+		if (valorNuevo) {
+			valorReferencia= valorNuevo.toLocaleDateString('es-ES').replaceAll('/','.');
+		}
+
+		innerRef.current = { value: valorReferencia };
+		_setValor(valorNuevo);
+	}, [innerRef, _setValor]);
+
+	useEffect( () => {
+		let materialTanda = resultadoDatosTanda?.datos?.assig_materials?.length > 0 ? resultadoDatosTanda?.datos?.assig_materials[0] : null;
+		let caducidadApi = materialTanda?.exp_date;
+		let fechaPorDefecto = null;
+		if (caducidadApi) {
+			let caducidadApiPartes = caducidadApi.split(".");
+			// month is 0-based, that's why we need dataParts[1] - 1
+			fechaPorDefecto = new Date(+caducidadApiPartes[2], caducidadApiPartes[1] - 1, +caducidadApiPartes[0], 0, 0, 0);
+		}
+
+		setValor(fechaPorDefecto)
+
+	}, [resultadoDatosTanda, setValor])
+
+	
+
+
 	if (resultadoDatosTanda.cargando) {
 		return <>
 			<Spinner animation="grow" size="sm" variant="info" /> <small className="text-info">Cargando fecha de caducidad</small>
@@ -229,8 +269,20 @@ const InputCaducidad = ({ innerRef, disabled, resultadoDatosTanda }) => {
 		</>
 	}
 
-	let materialTanda = resultadoDatosTanda?.datos?.assig_materials?.length > 0 ? resultadoDatosTanda?.datos?.assig_materials[0] : null;
-	return <Form.Control type="text" placeholder="" ref={innerRef} disabled={disabled} defaultValue={materialTanda?.exp_date} />
+
+
+	return <DatePicker
+		disabled={disabled}
+		onChange={setValor}
+		selected={valor}
+		isClearable
+		className="form-control"
+		locale="es"
+		dateFormat="dd.MM.yyyy"
+		showYearDropdown
+		showMonthDropdown
+		minDate={new Date()}
+	/>
 }
 
 export default ModalEditarTanda;

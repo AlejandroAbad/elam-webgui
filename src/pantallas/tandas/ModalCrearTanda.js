@@ -8,6 +8,14 @@ import SelectorTipoTanda from './SelectorTipoTanda';
 import SelectorEstadoTanda from './SelectorEstadoTanda';
 import SelectorMaterialesTanda from './SelectorMaterialesTanda';
 import SelectorUsuariosTanda from './SelectorUsuariosTanda';
+import DatePicker from 'react-datepicker';
+import { registerLocale, setDefaultLocale } from "react-datepicker";
+import es from 'date-fns/locale/es';
+import "react-datepicker/dist/react-datepicker.css";
+
+registerLocale('es', es)
+setDefaultLocale('es');
+
 
 const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 
@@ -141,7 +149,7 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 				<Form.Group as={Row}>
 					<Form.Label column sm="2" >Caducidad</Form.Label>
 					<Col sm="4">
-						<Form.Control type="text" placeholder="" ref={refCaducidad} disabled={resultado.cargando} />
+						<InputCaducidad innerRef={refCaducidad} disabled={resultado.cargando} />
 					</Col>
 				</Form.Group>
 
@@ -167,6 +175,36 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 	</Modal>
 
 
+}
+
+
+
+const InputCaducidad = ({ innerRef, disabled }) => {
+
+	const [valor, _setValor] = useState(null)
+	const setValor = useCallback((valorNuevo) => {
+
+		let valorReferencia = null;
+		if (valorNuevo) {
+			valorReferencia = valorNuevo.toLocaleDateString('es-ES').replaceAll('/', '.');
+		}
+
+		innerRef.current = { value: valorReferencia };
+		_setValor(valorNuevo);
+	}, [innerRef, _setValor]);
+
+	return <DatePicker
+		disabled={disabled}
+		onChange={setValor}
+		selected={valor}
+		isClearable
+		className="form-control"
+		locale="es"
+		dateFormat="dd.MM.yyyy"
+		showYearDropdown
+		showMonthDropdown
+		minDate={new Date()}
+	/>
 }
 
 
