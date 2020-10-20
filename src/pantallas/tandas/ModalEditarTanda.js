@@ -75,7 +75,7 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 					exp_date: refCaducidad.current?.value || ""
 				}
 			],
-			assig_users: refUsuarios.current?.value?.map((val) => { return { id_user: val } }),
+			assig_users: refUsuarios.current?.value ? refUsuarios.current.value.map((val) => { return { id_user: val } }) : []
 		}
 
 		ejecutarConsulta({
