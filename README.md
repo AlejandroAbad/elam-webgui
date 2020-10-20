@@ -32,6 +32,10 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 
 
 ## CHANGELOG
+**20 octubre** v1.4-beta5
+- Bug solucionado: Error al crear tandas sin usuarios
+
+
 **20 octubre** v1.4-beta4
 - Cambiado como se muestran los materiales/proveedores inactivos
 - Optimizados los selectores de usuarios y materiales para que no tengan que consultar los datos extendidos de la tanda. En su lugar, es el propio modal quien los consulta una única vez. En realidad, este cambio era necesario para que los datos de LOTE y CADUCIDAD estén disponibles al formulario de edición.
