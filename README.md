@@ -32,6 +32,14 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 
 
 ## CHANGELOG
+**20 octubre** v1.4-beta4
+- Cambiado como se muestran los materiales/proveedores inactivos
+- Optimizados los selectores de usuarios y materiales para que no tengan que consultar los datos extendidos de la tanda. En su lugar, es el propio modal quien los consulta una única vez. En realidad, este cambio era necesario para que los datos de LOTE y CADUCIDAD estén disponibles al formulario de edición.
+- Ahora los inputs de lote y caducidad en el modal de edición de tanda muestran un mensaje de cargando mientras los datos de la tanda a editar no están disponibles.
+- Ahora el selector de fechas de caducidad es un componente DatePicker
+- La lista de materiales permitidos muestra el GTIN del material
+
+
 **19 octubre** v1.4-beta3
 - El filtro por estado de tanda, ahora muestra un boton de "Seleccionar todo"
 - Al crear/editar tandas, el selector de materiales indica si el material es o no GTIN
@@ -112,4 +120,5 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 - 17oct - 2h
 - 18oct - 2h
 - 19oct - 1h
-- *TOTAL - 23h* 
+- 20oct - 3h
+- *TOTAL - 25h* 
