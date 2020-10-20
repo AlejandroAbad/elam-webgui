@@ -203,7 +203,7 @@ const ListaMaterialesTanda = ({ materiales }) => {
 			<OverlayTrigger trigger={["hover", "focus"]} overlay={popover} placement="bottom-start">
 				<Button size="sm" variant="link"><Icono icono={FaRegEye} posicion={[20, 6]} /></Button>
 			</OverlayTrigger>
-			<b>{material.cn}</b> {material.name_spain}
+			<b>{material.ean ?? material.cn}</b> - {material.name_spain} {!material.gtin || <Badge variant="primary" className="font-weight-normal" >GTIN</Badge>}
 		</ListGroup.Item>
 	})
 
