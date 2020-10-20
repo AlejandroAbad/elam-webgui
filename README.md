@@ -28,7 +28,6 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 ## PENDIENTE
 - Hay una cosa que molaría y es que el pdf se cargue en una ventana nueva 
 - Control de entrada en los formularios para evitar campos vacíos
-- Hacer que el selector de fecha de caducidad sea un componente de calendario
 
 
 ## CHANGELOG
