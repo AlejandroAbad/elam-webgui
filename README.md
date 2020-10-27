@@ -27,6 +27,9 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 
 
 ## CHANGELOG
+**27 octubre** v1.4-beta7
+- Corregido error que permitía elegir proveedores inactivos en la creación/edición de materiales.
+
 **27 octubre** v1.4-beta6
 - Se incluye el perfil del Administrador (AD) que puede hacerlo todo.
 - El perfil de DT ya no puede manipular el maestro de usuarios.

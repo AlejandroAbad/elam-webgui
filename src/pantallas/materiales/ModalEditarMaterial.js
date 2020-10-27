@@ -103,7 +103,7 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 				<Form.Group as={Row} className="align-items-center">
 					<Form.Label column sm="3">Proveedor</Form.Label>
 					<Col>
-						<SelectorProveedor referencia={refProveedor} disabled={resultado.cargando} onProveedoresCargados={setProveedoresCargados} defaultValue={datosMaterial?.id_provider} />
+						<SelectorProveedor referencia={refProveedor} disabled={resultado.cargando} onProveedoresCargados={setProveedoresCargados} idProveedorSeleccionado={datosMaterial?.id_provider} />
 					</Col>
 				</Form.Group>
 
