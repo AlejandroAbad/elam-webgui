@@ -128,5 +128,5 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 - 18oct - 2h
 - 19oct - 1h
 - 20oct - 3h
-- 27oct - 0h 30m
-- *TOTAL - 25h 30m* 
+- 27oct - 1h
+- *TOTAL - 26h* 
