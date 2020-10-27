@@ -25,12 +25,13 @@ Compila la aplicación para usarse en un servidor de desarrollo.
 La aplicación se generará en el directorio `build-dev` utilizando el entorno definido en el fichero `.env`.
 
 
-## PENDIENTE
-- Hay una cosa que molaría y es que el pdf se cargue en una ventana nueva 
-- Control de entrada en los formularios para evitar campos vacíos
-
 
 ## CHANGELOG
+**27 octubre** v1.4-beta6
+- Se incluye el perfil del Administrador (AD) que puede hacerlo todo.
+- El perfil de DT ya no puede manipular el maestro de usuarios.
+
+
 **20 octubre** v1.4-beta5
 - Bug solucionado: Error al crear tandas sin usuarios
 
@@ -124,4 +125,5 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 - 18oct - 2h
 - 19oct - 1h
 - 20oct - 3h
-- *TOTAL - 25h* 
+- 27oct - 0h 30m
+- *TOTAL - 25h 30m* 

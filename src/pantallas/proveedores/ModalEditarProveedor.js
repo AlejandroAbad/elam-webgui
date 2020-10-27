@@ -105,7 +105,7 @@ const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ..
 							innerRef={refActivo}
 							label="Indica si el proveedor podrá ser asignado"
 							defaultChecked={datosProveedor?.active ? true : false}
-							disabled={jwt.id_profile !== K.ROLES.DIRECTOR}
+							disabled={jwt.id_profile === K.ROLES.CALIDAD}
 						/>
 						</Col>
 					</Form.Group>

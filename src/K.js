@@ -11,6 +11,7 @@ const K = {
     AVISO_JWT_PROXIMO_A_CADUCAR: 5*60, //
     INVALIDAR_JWT_EN: 60,
     ROLES: {
+        ADMINISTRADOR: 'AD',
         DIRECTOR: 'DT',
         CALIDAD: 'QA',
         ALMACEN: 'WM'

@@ -1,3 +1,4 @@
+import K from 'K';
 import React, { useContext, useEffect } from 'react';
 import { Container, Row, Card, Col, Alert, Spinner } from 'react-bootstrap';
 import Icono from 'componentes/icono/Icono';
@@ -10,6 +11,9 @@ import { useApiCall } from 'hooks/useApiCall';
 
 
 const PantallaBienvenida = () => {
+
+	const { jwt } = useContext(ContextoAplicacion);
+
 	return (
 
 		<Container>
@@ -31,16 +35,18 @@ const PantallaBienvenida = () => {
 						<Card.Header as="h5">Gestión de maestros</Card.Header>
 						<Card.Body>
 							<Row className="d-flex justify-content-center">
-								<Col sm={6} md={4}>
-									<LinkContainer to="/maestro/usuarios" >
-										<Card className="text-center cardBoton">
-											<blockquote className="blockquote mb-0 card-body">
-												<h1><Icono icono={FaUserCheck} posicion={[60]} /></h1>
-												<h5>Usuarios</h5>
-											</blockquote>
-										</Card>
-									</LinkContainer>
-								</Col>
+								{jwt && jwt.id_profile === K.ROLES.ADMINISTRADOR &&
+									<Col sm={6} md={4}>
+										<LinkContainer to="/maestro/usuarios" >
+											<Card className="text-center cardBoton">
+												<blockquote className="blockquote mb-0 card-body">
+													<h1><Icono icono={FaUserCheck} posicion={[60]} /></h1>
+													<h5>Usuarios</h5>
+												</blockquote>
+											</Card>
+										</LinkContainer>
+									</Col>
+								}
 
 								<Col sm={6} md={4}>
 									<LinkContainer to="/maestro/materiales" >
@@ -138,8 +144,8 @@ const CardResumenTanda = ({ tipo, cantidad }) => {
 	let filtro = '[1,2,3]';
 	switch (tipo) {
 		case 'Creada': variante = 'primary'; filtro = '[1]'; break;
-		case 'Liberada': variante = 'success'; filtro = '[2]';break;
-		case 'Finalizada': variante = 'dark'; filtro = '[3]';break;
+		case 'Liberada': variante = 'success'; filtro = '[2]'; break;
+		case 'Finalizada': variante = 'dark'; filtro = '[3]'; break;
 		default: break;
 	}
 
@@ -148,7 +154,7 @@ const CardResumenTanda = ({ tipo, cantidad }) => {
 	}
 
 	return <Col className="mb-3" xs={6} sm={4} >
-		<LinkContainer to="/tandas" onClick={() => { localStorage.setItem('filtroEstadoTanda', filtro);} } >
+		<LinkContainer to="/tandas" onClick={() => { localStorage.setItem('filtroEstadoTanda', filtro); }} >
 			<div className={`rounded border border-${variante} bg-${variante}-soft p-3 cardInfoTanda cardInfoTanda-${variante}`}>
 				<div className="font-weight-bold text-center">{tipo}s</div>
 				<div className="display-4 display-sm-3 text-center">

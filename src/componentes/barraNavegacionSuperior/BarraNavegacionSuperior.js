@@ -52,7 +52,9 @@ const BarraNavegacionSuperior = () => {
                     <BotonNavegacion icono={FaDatabase} titulo="Maestros" mostrarEn="xl" >
                         <BotonNavegacion enlace="/maestro/materiales" icono={FaPills} titulo="Materiales" />
                         <BotonNavegacion enlace="/maestro/proveedores" icono={FaParachuteBox} titulo="Proveedores" />
+                        { (jwt && jwt.id_profile === K.ROLES.ADMINISTRADOR) &&
                         <BotonNavegacion enlace="/maestro/usuarios" icono={FaUserCheck} titulo="Usuarios" />
+                        }
                     </BotonNavegacion>
 
                     <BotonNavegacion enlace="/tandas" icono={FaBoxes} titulo="Tandas" mostrarEn="xl" />

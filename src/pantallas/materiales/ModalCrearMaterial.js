@@ -119,16 +119,16 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 					</Col>
 				</Form.Group>
 
-				{ jwt.id_profile === K.ROLES.DIRECTOR &&
-				<Form.Group as={Row}>
-					<Form.Label column sm="3">Activo</Form.Label>
-					<Col sm="9">
-						<SwitchButton
-							innerRef={refActivo}
-							label="Indica si el material podrá ser leído en tandas"
-						/>
-					</Col>
-				</Form.Group>
+				{jwt.id_profile !== K.ROLES.CALIDAD &&
+					<Form.Group as={Row}>
+						<Form.Label column sm="3">Activo</Form.Label>
+						<Col sm="9">
+							<SwitchButton
+								innerRef={refActivo}
+								label="Indica si el material podrá ser leído en tandas"
+							/>
+						</Col>
+					</Form.Group>
 				}
 
 			</Form>

@@ -97,14 +97,14 @@ const ModalCrearProveedor = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 					</Col>
 				</Form.Group>
 
-				{jwt.id_profile === K.ROLES.DIRECTOR &&
+				{jwt.id_profile !== K.ROLES.CALIDAD &&
 					<Form.Group as={Row}>
 						<Form.Label column sm="2">Activo</Form.Label>
 						<Col sm="6">
-						<SwitchButton
-							innerRef={refActivo}
-							label="Indica si el material podrá ser asignado"
-						/>
+							<SwitchButton
+								innerRef={refActivo}
+								label="Indica si el material podrá ser asignado"
+							/>
 						</Col>
 					</Form.Group>
 				}

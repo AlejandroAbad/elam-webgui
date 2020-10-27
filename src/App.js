@@ -47,8 +47,9 @@ const App = () => {
 
 				<Route path="/maestro/proveedores" render={(props) => <Pantallas.MaestroProveedores {...props} />} />
 				<Route path="/maestro/materiales" render={(props) => <Pantallas.MaestroMateriales {...props} />} />
-				<Route path="/maestro/usuarios" render={(props) => <Pantallas.MaestroUsuarios {...props} />} />
-
+				{ jwt.id_profile === K.ROLES.ADMINISTRADOR &&
+					<Route path="/maestro/usuarios" render={(props) => <Pantallas.MaestroUsuarios {...props} />} />
+				}
 
 				<Route path="/tandas" render={(props) => <Pantallas.Tandas {...props} />} />
 

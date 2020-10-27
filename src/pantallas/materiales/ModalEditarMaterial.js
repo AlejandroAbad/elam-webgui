@@ -126,7 +126,7 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 							innerRef={refActivo}
 							label="Indica si el material podrá ser leído en tandas"
 							defaultChecked={datosMaterial?.active ? true : false}
-							disabled={jwt.id_profile !== K.ROLES.DIRECTOR}
+							disabled={jwt.id_profile === K.ROLES.CALIDAD}
 						/>
 					</Col>
 				</Form.Group>
