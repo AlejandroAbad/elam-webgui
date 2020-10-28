@@ -235,7 +235,9 @@ const InputCaducidad = ({ innerRef, disabled, resultadoDatosTanda }) => {
 		
 		let valorReferencia = null;
 		if (valorNuevo) {
-			valorReferencia= valorNuevo.toLocaleDateString('es-ES').replaceAll('/','.');
+			let dd = valorNuevo.getDate();
+			let mm = valorNuevo.getMonth() + 1; // getMonth() va de 0 a 11
+			valorReferencia = [(dd > 9 ? '' : '0') + dd, (mm > 9 ? '' : '0') + mm, valorNuevo.getFullYear()].join('.');
 		}
 
 		innerRef.current = { value: valorReferencia };

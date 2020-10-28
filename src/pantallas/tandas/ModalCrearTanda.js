@@ -132,10 +132,10 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 				<Form.Group as={Row} className="align-items-center">
 					<Form.Label column sm="2">Usuarios</Form.Label>
 					<Col>
-						<SelectorUsuariosTanda 
-							referencia={refUsuarios} 
-							disabled={resultado.cargando} 
-							onUsuariosTandaCargados={setUsuariosTandaCargados} 
+						<SelectorUsuariosTanda
+							referencia={refUsuarios}
+							disabled={resultado.cargando}
+							onUsuariosTandaCargados={setUsuariosTandaCargados}
 							modoEdicion={false} />
 					</Col>
 				</Form.Group>
@@ -186,7 +186,9 @@ const InputCaducidad = ({ innerRef, disabled }) => {
 
 		let valorReferencia = null;
 		if (valorNuevo) {
-			valorReferencia = valorNuevo.toLocaleDateString('es-ES').replaceAll('/', '.');
+			let dd = valorNuevo.getDate();
+			let mm = valorNuevo.getMonth() + 1; // getMonth() va de 0 a 11
+			valorReferencia = [(dd > 9 ? '' : '0') + dd, (mm > 9 ? '' : '0') + mm, valorNuevo.getFullYear()].join('.');
 		}
 
 		innerRef.current = { value: valorReferencia };
