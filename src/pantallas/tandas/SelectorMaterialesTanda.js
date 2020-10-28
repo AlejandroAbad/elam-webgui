@@ -8,7 +8,7 @@ const generarValorDesdeDatosMaterial = (datosMaterial, inactivo) => {
 	if (!datosMaterial) return null;
 	return {
 		value: datosMaterial.id_mat ?? datosMaterial.id , 
-		label: <>{datosMaterial.cn} - {datosMaterial.name_spain} <MiniBadgeGtin gtin={datosMaterial.gtin} /> {inactivo && <MiniBadgeInactivo/>}</>, 
+		label: <>{datosMaterial.ean} - {datosMaterial.name_spain} <MiniBadgeGtin gtin={datosMaterial.gtin} /> {inactivo && <MiniBadgeInactivo/>}</>, 
 		gtin: datosMaterial.gtin ? 1 : 0
 	}
 }
@@ -99,7 +99,7 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 
 			// Si el valor seleccionado es el material inactivo, añade la marca de inactivo
 			if (valorSeleccionado?.value === materialPorDefecto.id_mat) {
-				valorSeleccionado.label = <>{materialPorDefecto.cn} - {materialPorDefecto.name_spain} <MiniBadgeGtin gtin={materialPorDefecto.gtin} /> <MiniBadgeInactivo /> </>;
+				valorSeleccionado.label = <>{materialPorDefecto.ean} - {materialPorDefecto.name_spain} <MiniBadgeGtin gtin={materialPorDefecto.gtin} /> <MiniBadgeInactivo /> </>;
 			}
 		}
 

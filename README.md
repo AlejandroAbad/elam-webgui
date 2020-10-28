@@ -27,8 +27,14 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 
 
 ## CHANGELOG
+**27 octubre** v1.4-beta8
+- Ahora las fechas de tanda se mandan con ceros de relleno (antes: '1.1.2021', ahora: '01.01.2021')
+- El selector de materiales de tanda muestra el EAN en lugar del CN
+
+
 **27 octubre** v1.4-beta7
 - Corregido error que permitía elegir proveedores inactivos en la creación/edición de materiales.
+
 
 **27 octubre** v1.4-beta6
 - Se incluye el perfil del Administrador (AD) que puede hacerlo todo.
