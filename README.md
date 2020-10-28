@@ -27,7 +27,7 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 
 
 ## CHANGELOG
-**27 octubre** v1.4-beta8
+**28 octubre** v1.4-beta8
 - Ahora las fechas de tanda se mandan con ceros de relleno (antes: '1.1.2021', ahora: '01.01.2021')
 - El selector de materiales de tanda muestra el EAN en lugar del CN
 
@@ -135,4 +135,5 @@ La aplicación se generará en el directorio `build-dev` utilizando el entorno d
 - 19oct - 1h
 - 20oct - 3h
 - 27oct - 1h
-- *TOTAL - 26h* 
+- 28oct - 0h 30m
+- *TOTAL - 26h 30m* 
