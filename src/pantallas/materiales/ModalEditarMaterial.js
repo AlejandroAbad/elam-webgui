@@ -1,12 +1,13 @@
 import K from 'K';
-import React, { useContext, useRef, useCallback, useState } from 'react';
+import React, { useContext, useRef, useCallback, useState, useEffect } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Modal, Button, Form, Col, Row, Alert, Spinner } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
-import SelectorProveedor from './SelectorProveedor';
+import SelectorProveedores from './SelectorProveedores';
 import { toast } from 'react-toastify';
 import SwitchButton from 'componentes/SwitchButton';
+import SelectorPais from '../proveedores/SelectorPais';
 
 const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...props }) => {
 
@@ -14,26 +15,39 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 	const { resultado, ejecutarConsulta } = useApiCall('/', jwt.token)
 
 	const [proveedoresCargados, setProveedoresCargados] = useState(false);
+	const [todosProveedores, setTodosProveedores] = useState(true);
+	const [paisesCargados, setPaisesCargados] = useState(false);
 
 	const refNombreOrigen = useRef();
 	const refNombreEspana = useRef();
-	const refCn = useRef();
 	const refEan = useRef();
+	const refPais = useRef();
+	const refTodosProveedores = useRef();
 	const refProveedor = useRef();
 	const refGTIN = useRef();
 	const refActivo = useRef();
+
+	const _onRespuesta = useCallback((respuestaSi) => {
+		if (respuestaSi) onRespuestaSi();
+		else onRespuestaNo();
+	}, [onRespuestaNo, onRespuestaSi]);
 
 	const ejecutarLlamadaEditarMaterial = useCallback(() => {
 
 		let peticionEditarMaterial = {
 			name_origin: refNombreOrigen.current.value,
 			name_spain: refNombreEspana.current.value,
-			cn: refCn.current.value,
 			ean: refEan.current.value,
-			id_provider: refProveedor.current.value,
+			id_country: refPais.current.value,
+			providers: refProveedor.current?.value,
 			active: refActivo.current?.checked ? 1 : 0,
 			gtin: refGTIN.current?.checked ? 1 : 0
 		}
+
+		if (refTodosProveedores.current.checked || !refProveedor.current?.value?.length) {
+			peticionEditarMaterial.providers = [{ id: 0 }];
+		}
+
 		ejecutarConsulta({ url: '/material/' + datosMaterial.id, method: 'PUT', body: peticionEditarMaterial }, (error, res) => {
 			if (error) {
 				return;
@@ -45,10 +59,20 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 					{peticionEditarMaterial.name_spain}
 				</h5>
 			</>);
-			onRespuestaSi();
+			_onRespuesta(true);
 		})
 
-	}, [ejecutarConsulta, onRespuestaSi, datosMaterial]);
+	}, [ejecutarConsulta, _onRespuesta, datosMaterial]);
+
+	useEffect(() => {
+		if (datosMaterial?.providers?.length) {
+			let proveedores = datosMaterial.providers.filter( proveedor => proveedor.id !== 0);
+			setTodosProveedores(proveedores.length === 0);
+		} else {
+			setTodosProveedores(true);
+		}
+	}, [datosMaterial, props.show])
+
 
 
 	let contenidoModal = null;
@@ -88,22 +112,37 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 					</Col>
 				</Form.Group>
 				<Form.Group as={Row}>
-					<Form.Label column sm="3">CN</Form.Label>
-					<Col sm="4">
-						<Form.Control type="text" placeholder="" ref={refCn} disabled={resultado.cargando} defaultValue={datosMaterial?.cn} />
-					</Col>
-				</Form.Group>
-				<Form.Group as={Row}>
 					<Form.Label column sm="3">EAN</Form.Label>
 					<Col sm="6">
 						<Form.Control type="text" placeholder="" ref={refEan} disabled={resultado.cargando} defaultValue={datosMaterial?.ean} />
 					</Col>
 				</Form.Group>
-
 				<Form.Group as={Row} className="align-items-center">
-					<Form.Label column sm="3">Proveedor</Form.Label>
+					<Form.Label column sm="3">País</Form.Label>
 					<Col>
-						<SelectorProveedor referencia={refProveedor} disabled={resultado.cargando} onProveedoresCargados={setProveedoresCargados} idProveedorSeleccionado={datosMaterial?.id_provider} />
+						<SelectorPais referencia={refPais} disabled={resultado.cargando} onPaisesCargados={setPaisesCargados} defaultValue={datosMaterial?.id_country} />
+					</Col>
+				</Form.Group>
+				<Form.Group as={Row} className="align-items-center">
+					<Form.Label column sm="3">Proveedores</Form.Label>
+					<Col>
+						<SwitchButton
+							onChange={setTodosProveedores}
+							innerRef={refTodosProveedores}
+							label="Admitir todos los proveedores"
+							value={todosProveedores}
+
+						/>
+						{todosProveedores ||
+							<SelectorProveedores
+								referencia={refProveedor}
+								disabled={resultado.cargando}
+								onProveedoresCargados={setProveedoresCargados}
+								idProveedorSeleccionado={datosMaterial?.id_provider}
+								datosProveedores={datosMaterial?.providers}
+								modoEdicion={true}
+							/>
+						}
 					</Col>
 				</Form.Group>
 
@@ -135,14 +174,14 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 			</Form>
 		</Modal.Body>
 		<Modal.Footer>
-			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarMaterial} disabled={resultado.cargando || !proveedoresCargados} >Modificar</Button>
-			<Button variant="outline-dark" onClick={onRespuestaNo} disabled={resultado.cargando} >Cancelar</Button>
+			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarMaterial} disabled={resultado.cargando || (!proveedoresCargados && !todosProveedores) || !paisesCargados} >Modificar</Button>
+			<Button variant="outline-dark" onClick={() => _onRespuesta(false)} disabled={resultado.cargando} >Cancelar</Button>
 		</Modal.Footer>
 	</>
 
 
 
-	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
+	return <Modal {...props} onHide={() => _onRespuesta(false)} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
 				Modificar material

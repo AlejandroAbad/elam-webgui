@@ -4,7 +4,8 @@ import { ContextoAplicacion } from 'contexto';
 
 import { Modal, Button, Form, Col, Row, Alert, Spinner } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
-import SelectorProveedor from './SelectorProveedor';
+import SelectorProveedores from './SelectorProveedores';
+import SelectorPais from '../proveedores/SelectorPais';
 import { toast } from 'react-toastify';
 import SwitchButton from 'componentes/SwitchButton';
 
@@ -14,26 +15,40 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 	const { resultado, ejecutarConsulta } = useApiCall('/material', jwt.token)
 
 	const [proveedoresCargados, setProveedoresCargados] = useState(false);
+	const [todosProveedores, setTodosProveedores] = useState(true);
+	const [paisesCargados, setPaisesCargados] = useState(false);
 
 	const refNombreOrigen = useRef();
 	const refNombreEspana = useRef();
-	const refCn = useRef();
 	const refEan = useRef();
+	const refPais = useRef();
+	const refTodosProveedores = useRef();
 	const refProveedor = useRef();
 	const refGTIN = useRef();
 	const refActivo = useRef();
+
+	const _onRespuesta = useCallback((respuestaSi) => {
+		setTodosProveedores(true);
+		if (respuestaSi) onRespuestaSi();
+		else onRespuestaNo();
+	}, [onRespuestaNo, onRespuestaSi, setTodosProveedores]);
 
 	const ejecutarLlamadaCrearMaterial = useCallback(() => {
 
 		let peticionCrearMaterial = {
 			name_origin: refNombreOrigen.current.value,
 			name_spain: refNombreEspana.current.value,
-			cn: refCn.current.value,
 			ean: refEan.current.value,
-			id_provider: refProveedor.current.value,
+			id_country: refPais.current.value,
+			providers: refProveedor.current?.value,
 			active: refActivo.current?.checked ? 1 : 0,
 			gtin: refGTIN.current?.checked ? 1 : 0
 		}
+
+		if (refTodosProveedores.current.checked || !refProveedor.current?.value?.length) {
+			peticionCrearMaterial.providers = [{ id: 0 }];
+		}
+
 
 		ejecutarConsulta({ method: 'POST', body: peticionCrearMaterial }, (error, res) => {
 			if (error) {
@@ -45,12 +60,13 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 				<h5 className="text-uppercase mt-3">
 					{peticionCrearMaterial.name_spain}
 				</h5>
-				CN {peticionCrearMaterial.cn}
+						EAN {peticionCrearMaterial.ean}
 			</>);
-			onRespuestaSi();
+			_onRespuesta(true);
 		})
 
-	}, [ejecutarConsulta, onRespuestaSi]);
+
+	}, [ejecutarConsulta, _onRespuesta]);
 
 
 	let contenidoModal = null;
@@ -90,12 +106,6 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 					</Col>
 				</Form.Group>
 				<Form.Group as={Row}>
-					<Form.Label column sm="3">CN</Form.Label>
-					<Col sm="4">
-						<Form.Control type="text" placeholder="" ref={refCn} disabled={resultado.cargando} />
-					</Col>
-				</Form.Group>
-				<Form.Group as={Row}>
 					<Form.Label column sm="3">EAN</Form.Label>
 					<Col sm="6">
 						<Form.Control type="text" placeholder="" ref={refEan} disabled={resultado.cargando} />
@@ -103,9 +113,28 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 				</Form.Group>
 
 				<Form.Group as={Row} className="align-items-center">
-					<Form.Label column sm="3">Proveedor</Form.Label>
+					<Form.Label column sm="3">País</Form.Label>
 					<Col>
-						<SelectorProveedor referencia={refProveedor} disabled={resultado.cargando} onProveedoresCargados={setProveedoresCargados} />
+						<SelectorPais referencia={refPais} disabled={resultado.cargando} onPaisesCargados={setPaisesCargados} />
+					</Col>
+				</Form.Group>
+
+				<Form.Group as={Row} className="align-items-center">
+					<Form.Label column sm="3">Proveedores</Form.Label>
+					<Col>
+						<SwitchButton
+							onChange={setTodosProveedores}
+							innerRef={refTodosProveedores}
+							label="Admitir todos los proveedores"
+							defaultChecked={todosProveedores}
+						/>
+						{todosProveedores ||
+							<SelectorProveedores
+								referencia={refProveedor}
+								disabled={resultado.cargando}
+								onProveedoresCargados={setProveedoresCargados}
+							/>
+						}
 					</Col>
 				</Form.Group>
 
@@ -134,14 +163,14 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 			</Form>
 		</Modal.Body>
 		<Modal.Footer>
-			<Button variant="success" type="submit" onClick={ejecutarLlamadaCrearMaterial} disabled={resultado.cargando || !proveedoresCargados} >Crear</Button>
-			<Button variant="outline-dark" onClick={onRespuestaNo} disabled={resultado.cargando} >Cancelar</Button>
+			<Button variant="success" type="submit" onClick={ejecutarLlamadaCrearMaterial} disabled={resultado.cargando || (!proveedoresCargados && !todosProveedores) || !paisesCargados} >Crear</Button>
+			<Button variant="outline-dark" onClick={() => _onRespuesta(false)} disabled={resultado.cargando} >Cancelar</Button>
 		</Modal.Footer>
 	</>
 
 
 
-	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
+	return <Modal {...props} onHide={() => _onRespuesta(false)} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
 				Añadir nuevo material
