@@ -3,15 +3,22 @@ import { Col, Row } from 'react-bootstrap';
 import Switch from "react-switch";
 
 
-const SwitchButton = ({ innerRef, onChange, label, defaultChecked, disabled }) => {
+const SwitchButton = ({ innerRef, onChange, label, defaultChecked, disabled, value }) => {
+
 
 
 	const [swtichStatus, setSwitchStatus] = useState(defaultChecked);
 
 	useEffect(() => {
-		innerRef.current = {checked : defaultChecked ? true : false};
+		innerRef.current = {checked : (defaultChecked ? true : false)};
 		setSwitchStatus(innerRef.current.checked)
 	}, [defaultChecked, innerRef])
+
+	useEffect(() => {
+		if (value === true || value === false) {
+			setSwitchStatus(value);
+		}
+	}, [value])
 
 	const onSwitchChanged = useCallback( (newStatus) => {
 		innerRef.current = {checked: newStatus};
