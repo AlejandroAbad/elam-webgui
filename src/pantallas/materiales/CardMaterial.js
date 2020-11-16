@@ -84,7 +84,7 @@ const VisorProveedores = ({ proveedores, activo }) => {
 
 	let componentes = proveedores.map((proveedor, i) => {
 		return <ListGroup.Item style={activo ? {} : { backgroundColor: '#e9e9e9' }} className="py-1" key={i}>
-			<BanderaPais codigoPais={proveedor.id_country} nombrePais={proveedor.name_country} className="mb-1" />
+			<BanderaPais codigoPais={proveedor.id_country} nombrePais={proveedor.name_country} className="mb-1 pr-1" />
 			{proveedor.name}
 			<small className="pl-1 text-capitalize">({proveedor.name_country?.toLowerCase()})</small>
 			{proveedor.active === 0 && <Badge variant="warning" size="sm" className="ml-1">INACTIVO</Badge>}
