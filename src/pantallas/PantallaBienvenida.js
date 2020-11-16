@@ -110,14 +110,14 @@ const RowResumenTandas = () => {
 		</Alert>
 	} else {
 
-		let creadas = 0, liberadas = 0, finalizadas = 0;
+		let creadas = 0, lanzadas = 0, finalizadas = 0;
 
 
 		if (resultado.datos) {
 			resultado.datos.forEach((infoTanda) => {
 				switch (infoTanda.status) {
 					case 'Creada': creadas = infoTanda.tandas; break;
-					case 'Liberada': liberadas = infoTanda.tandas; break;
+					case 'Lanzada': lanzadas = infoTanda.tandas; break;
 					case 'Finalizada': finalizadas = infoTanda.tandas; break;
 					default: break;
 				}
@@ -126,7 +126,7 @@ const RowResumenTandas = () => {
 
 		return <Row className="d-flex justify-content-center">
 			<CardResumenTanda tipo="Creada" cantidad={creadas} />
-			<CardResumenTanda tipo="Liberada" cantidad={liberadas} />
+			<CardResumenTanda tipo="Lanzada" cantidad={lanzadas} />
 			<CardResumenTanda tipo="Finalizada" cantidad={finalizadas} />
 		</Row>
 
@@ -144,7 +144,7 @@ const CardResumenTanda = ({ tipo, cantidad }) => {
 	let filtro = '[1,2,3]';
 	switch (tipo) {
 		case 'Creada': variante = 'primary'; filtro = '[1]'; break;
-		case 'Liberada': variante = 'success'; filtro = '[2]'; break;
+		case 'Lanzada': variante = 'success'; filtro = '[2]'; break;
 		case 'Finalizada': variante = 'dark'; filtro = '[3]'; break;
 		default: break;
 	}

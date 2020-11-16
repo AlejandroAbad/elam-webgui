@@ -15,7 +15,7 @@ const BadgeInfoTanda = ({ texto, extendido, ...props }) => {
 			variante = 'primary';
 			icono = FaAsterisk;
 			break;
-		case 'liberada':
+		case 'lanzada':
 			variante = 'success';
 			icono = FaPlay;
 			break;

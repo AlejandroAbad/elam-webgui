@@ -171,7 +171,7 @@ const PantallaTandas = () => {
 				{filtroEstado.length === 1 &&
 					<><Icono icono={FaFilter} posicion={[20, 2]} /> Mostrando únicamente tandas en estado "<em>
 						{filtroEstado.includes(1) && 'Creada'}
-						{filtroEstado.includes(2) && 'Liberada'}
+						{filtroEstado.includes(2) && 'Lanzada'}
 						{filtroEstado.includes(3) && 'Finalizada'}
 					</em>"</>
 				}
@@ -179,7 +179,7 @@ const PantallaTandas = () => {
 				{filtroEstado.length === 2 &&
 					<><Icono icono={FaFilter} posicion={[20, 2]} /> Ocultando tandas en estado "<em>
 						{filtroEstado.includes(1) || 'Creada'}
-						{filtroEstado.includes(2) || 'Liberada'}
+						{filtroEstado.includes(2) || 'Lanzada'}
 						{filtroEstado.includes(3) || 'Finalizada'}
 					</em>"</>
 				}
@@ -213,7 +213,7 @@ const CustomMenu = React.forwardRef(
 	({ style, className, 'aria-labelledby': labeledBy, onValorCambiado, valor }, ref) => {
 
 		let mostrarCreadas = valor.includes(1);
-		let mostrarLiberadas = valor.includes(2);
+		let mostrarLanzadas = valor.includes(2);
 		let mostrarCerradas = valor.includes(3);
 
 		const valorFiltroCambiado = useCallback((valorCambiado) => {
@@ -222,9 +222,9 @@ const CustomMenu = React.forwardRef(
 
 			switch (valorCambiado) {
 				case 0: nuevoFiltro = [true, true, true]; break;
-				case 1: nuevoFiltro = [!mostrarCreadas, mostrarLiberadas, mostrarCerradas]; break;
-				case 2: nuevoFiltro = [mostrarCreadas, !mostrarLiberadas, mostrarCerradas]; break;
-				case 3: nuevoFiltro = [mostrarCreadas, mostrarLiberadas, !mostrarCerradas]; break;
+				case 1: nuevoFiltro = [!mostrarCreadas, mostrarLanzadas, mostrarCerradas]; break;
+				case 2: nuevoFiltro = [mostrarCreadas, !mostrarLanzadas, mostrarCerradas]; break;
+				case 3: nuevoFiltro = [mostrarCreadas, mostrarLanzadas, !mostrarCerradas]; break;
 				default: break;
 			}
 
@@ -237,7 +237,7 @@ const CustomMenu = React.forwardRef(
 
 			onValorCambiado(nuevoFiltro);
 
-		}, [onValorCambiado, mostrarCreadas, mostrarLiberadas, mostrarCerradas]);
+		}, [onValorCambiado, mostrarCreadas, mostrarLanzadas, mostrarCerradas]);
 
 		let iconoActivo = <Icono icono={FaCheckSquare} posicion={[16,4]} />
 		let iconoIntermedio = <Icono icono={FaPlusSquare} posicion={[16, 4]} />
@@ -257,7 +257,7 @@ const CustomMenu = React.forwardRef(
 				</div>
 				<div className="my-1 mx-2">
 					<Button variant='outline-success' size="sm" className="p-0 px-2 w-100 text-left border-0" onClick={() => { valorFiltroCambiado(2) }}>
-						{mostrarLiberadas ? iconoActivo : iconoInactivo} Liberadas
+						{mostrarLanzadas ? iconoActivo : iconoInactivo} Lanzadas
 						</Button>
 				</div>
 				<div className="my-1 mx-2">
@@ -269,9 +269,9 @@ const CustomMenu = React.forwardRef(
 				<hr className="mb-1 mt-2" />
 				<div className="my-1 mx-2">
 					<Button variant='outline-info' size="sm" className="p-0 px-2 w-100 text-left border-0" onClick={() => { valorFiltroCambiado(0) }}>
-						{(mostrarCreadas && mostrarLiberadas && mostrarCerradas) ?
+						{(mostrarCreadas && mostrarLanzadas && mostrarCerradas) ?
 							iconoActivo :
-							((mostrarCreadas || mostrarLiberadas || mostrarCerradas) ? iconoIntermedio : iconoInactivo)
+							((mostrarCreadas || mostrarLanzadas || mostrarCerradas) ? iconoIntermedio : iconoInactivo)
 						} Marcar Todo
 						</Button>
 				</div>
