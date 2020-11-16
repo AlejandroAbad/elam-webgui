@@ -187,9 +187,9 @@ const InfoMaterialTanda = ({ datosTanda }) => {
 
 	return <div className="m-0 p-0">
 		<div className="border-bottom bg-primary-soft py-2">
-			<span className="ml-2">
-				{datosTanda.mat_name_spain} - <Icono icono={FaBarcode} posicion={[20, 3]} />  <b>{datosTanda.mat_ean}</b>
-			</span>
+			<BanderaPais codigoPais={datosTanda.mat_country_id} nombrePais={datosTanda.mat_country_name} className="mb-1 ml-2 mr-1" />
+			{datosTanda.mat_name_spain} - <Icono icono={FaBarcode} posicion={[20, 3]} />  <b>{datosTanda.mat_ean}</b>
+			<small className="pl-1 text-uppercase">({datosTanda.mat_country_name})</small>
 			{!datosTanda.mat_gtin || <Badge variant="primary" className="font-weight-normal ml-2" >+GTIN</Badge>}
 			{datosTanda.mat_active === 0 && <Badge variant="warning" className="font-weight-normal ml-2" >INACTIVO</Badge>}
 		</div>

@@ -13,7 +13,7 @@ const generarValorDesdeDatosProveedor = (datosProveedor) => {
 		value: datosProveedor.id,
 		label: <>
 			<BanderaPais codigoPais={datosProveedor.id_country} className="mb-1 mr-1" />
-			{datosProveedor.cif} - {datosProveedor.name}
+			<b>{datosProveedor.cif}</b> - {datosProveedor.name}
 			<small className="text-capitalize mx-1">({datosProveedor.country_name.toLowerCase()})</small>
 			{datosProveedor.active === 0 && <MiniBadgeInactivo />}
 		</>
@@ -119,7 +119,7 @@ const SelectorProveedorTanda = ({ referencia, disabled, onProveedoresTandaCargad
 
 			// Si el valor seleccionado es el material inactivo, añade la marca de inactivo
 			if (valorSeleccionado?.value === proveedorPorDefecto.id) {
-				valorSeleccionado.label = <>{proveedorPorDefecto.cif} - {proveedorPorDefecto.name} <MiniBadgeInactivo /> </>;
+				valorSeleccionado.label = <><b>{proveedorPorDefecto.cif}</b> - {proveedorPorDefecto.name} <MiniBadgeInactivo /> </>;
 			}
 		}
 
