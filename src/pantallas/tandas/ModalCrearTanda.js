@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useCallback, useState } from 'react';
+import React, { useContext, useRef, useCallback, useState, useEffect } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Modal, Button, Form, Col, Row, Alert, Spinner } from 'react-bootstrap';
@@ -6,12 +6,15 @@ import { useApiCall } from 'hooks/useApiCall';
 import { toast } from 'react-toastify';
 import SelectorTipoTanda from './SelectorTipoTanda';
 import SelectorEstadoTanda from './SelectorEstadoTanda';
-import SelectorMaterialesTanda from './SelectorMaterialesTanda';
+import SelectorMaterialTanda from './SelectorMaterialTanda';
 import SelectorUsuariosTanda from './SelectorUsuariosTanda';
 import DatePicker from 'react-datepicker';
 import { registerLocale, setDefaultLocale } from "react-datepicker";
 import es from 'date-fns/locale/es';
 import "react-datepicker/dist/react-datepicker.css";
+import SelectorProveedorTanda from './SelectorProveedorTanda';
+import { FaInfoCircle } from 'react-icons/fa';
+import Icono from 'componentes/icono/Icono';
 
 registerLocale('es', es)
 setDefaultLocale('es');
@@ -24,13 +27,18 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 
 	const [usuariosTandaCargados, setUsuariosTandaCargados] = useState(false);
 	const [materialesTandaCargados, setMaterialesTandaCargados] = useState(false);
+	const [proveedoresTandaCargados, setProveedoresTandaCargados] = useState(false);
 	const [tiposTandaCargados, setTiposTandaCargados] = useState(false);
 	const [estadosTandaCargados, setEstadosTandaCargados] = useState(false);
+
+	const [materialSeleccionado, setMaterialSeleccionado] = useState(null);
+	const [proveedorSeleccionado, setProveedorSeleccionado] = useState(null);
 
 	const refNombre = useRef();
 	const refTipo = useRef();
 	const refEstado = useRef();
-	const refMateriales = useRef();
+	const refMaterial = useRef();
+	const refProveedor = useRef();
 	const refUsuarios = useRef();
 	const refLote = useRef();
 	const refCaducidad = useRef();
@@ -47,13 +55,10 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 			name: refNombre.current.value,
 			id_type: parseInt(refTipo.current.value),
 			id_status: parseInt(refEstado.current.value),
-			assig_materials: [
-				{
-					id_mat: refMateriales.current?.value,
-					batch: refLote.current?.value || "",
-					exp_date: refCaducidad.current?.value || ""
-				}
-			],
+			id_mat: refMaterial.current?.value,
+			id_provider: refProveedor.current?.value,
+			batch: refLote.current?.value || "",
+			exp_date: refCaducidad.current?.value || "",
 			assig_users: refUsuarios.current?.value ? refUsuarios.current.value.map((val) => { return { id_user: val } }) : []
 		}
 
@@ -73,6 +78,11 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 	}, [ejecutarConsulta, cerrarModal]);
 
 
+	/** Este effect reinicia el estado de los selecctores de material y proveedor al abrir/cerrar el modal */
+	useEffect ( () => {
+		setMaterialSeleccionado(null);
+		setProveedorSeleccionado(null);
+	}, [props.show])
 
 	let contenidoModal = null;
 	let alertaSuperior = null;
@@ -118,14 +128,33 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 				</Form.Group>
 
 				<Form.Group as={Row} className="align-items-center">
-					<Form.Label column sm="2">Materiales</Form.Label>
+					<Form.Label column sm="2">Material</Form.Label>
 					<Col>
-						<SelectorMaterialesTanda
-							referencia={refMateriales}
+						<SelectorMaterialTanda
+							referencia={refMaterial}
 							disabled={resultado.cargando}
 							onMaterialesTandaCargados={setMaterialesTandaCargados}
 							modoEdicion={false}
+							onMaterialSeleccionado={setMaterialSeleccionado}
 						/>
+					</Col>
+				</Form.Group>
+
+				<Form.Group as={Row} className="align-items-center">
+					<Form.Label column sm="2">Proveedor</Form.Label>
+					<Col>
+						{materialSeleccionado?.value ?
+							<SelectorProveedorTanda
+								referencia={refProveedor}
+								disabled={resultado.cargando}
+								onProveedoresTandaCargados={setProveedoresTandaCargados}
+								modoEdicion={false}
+								materialSeleccionado={materialSeleccionado?.value}
+								onProveedorSeleccionado={setProveedorSeleccionado}
+							/>
+							:
+							<small className="text-muted"><em><Icono icono={FaInfoCircle} posicion={[16,2]} /> Seleccione primero un material</em></small>
+						}
 					</Col>
 				</Form.Group>
 
@@ -158,12 +187,10 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 			</Form>
 		</Modal.Body>
 		<Modal.Footer>
-			<Button variant="success" type="submit" onClick={ejecutarLlamadaCrearTanda} disabled={resultado.cargando || !tiposTandaCargados || !estadosTandaCargados || !materialesTandaCargados || !usuariosTandaCargados} >Crear</Button>
+			<Button variant="success" type="submit" onClick={ejecutarLlamadaCrearTanda} disabled={resultado.cargando || !tiposTandaCargados || !estadosTandaCargados || !materialesTandaCargados || !proveedoresTandaCargados || proveedorSeleccionado == null || !usuariosTandaCargados } >Crear</Button>
 			<Button variant="outline-dark" onClick={cerrarModal} disabled={resultado.cargando} >Cancelar</Button>
 		</Modal.Footer>
 	</>
-
-
 
 	return <Modal {...props} onHide={cerrarModal} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>

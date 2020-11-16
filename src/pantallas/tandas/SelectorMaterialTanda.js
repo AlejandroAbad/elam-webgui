@@ -1,24 +1,36 @@
-import React, { useEffect, useContext, useState, useCallback } from 'react';
+import React, { useEffect, useContext, useState, useCallback, useRef } from 'react';
 import { ContextoAplicacion } from 'contexto';
 import { useApiCall } from 'hooks/useApiCall';
 import { Spinner, Button, Badge } from 'react-bootstrap';
 import Select from 'react-select'
+import BanderaPais from 'componentes/BanderaPais';
 
 const generarValorDesdeDatosMaterial = (datosMaterial, inactivo) => {
 	if (!datosMaterial) return null;
 	return {
-		value: datosMaterial.id_mat ?? datosMaterial.id , 
-		label: <>{datosMaterial.ean} - {datosMaterial.name_spain} <MiniBadgeGtin gtin={datosMaterial.gtin} /> {inactivo && <MiniBadgeInactivo/>}</>, 
+		value: datosMaterial.id_mat ?? datosMaterial.id,
+		label: <>
+			<BanderaPais codigoPais={datosMaterial.id_country} className="mr-1" />
+			<b>{datosMaterial.ean}</b> - {datosMaterial.name_spain} <small>({datosMaterial.country_name})</small> <MiniBadgeGtin gtin={datosMaterial.gtin} />
+			{inactivo && <MiniBadgeInactivo />}</>,
 		gtin: datosMaterial.gtin ? 1 : 0
 	}
 }
 
-const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargados, onMaterialSeleccionado, datosTanda, modoEdicion }) => {
+const SelectorMaterialTanda = ({ referencia, disabled, onMaterialesTandaCargados, onMaterialSeleccionado, datosTanda, modoEdicion }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado: resultadoMaestroMateriales, ejecutarConsulta: ejecutarConsultaMaestroMateriales } = useApiCall('/material', jwt.token);
 
-	let materialPorDefecto = datosTanda?.assig_materials?.length ? datosTanda.assig_materials[0] : null;
+	let materialPorDefecto = datosTanda ? {
+		id: datosTanda.id_mat,
+		ean: datosTanda.mat_ean,
+		name_spain: datosTanda.mat_name_spain,
+		active: datosTanda.mat_active,
+		gtin: datosTanda.mat_gtin,
+		id_country: datosTanda.mat_country_id,
+		country_name: datosTanda.mat_country_name,
+	} : null;
 
 	const [valorSeleccionado, _setValorSeleccionado] = useState(null);
 	const setValorSeleccionado = useCallback((valor) => {
@@ -54,16 +66,16 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 	}, [ejecutarConsultaMaestroMateriales, onMaterialesTandaCargados]);
 
 
-	useEffect( ()=> {
+	useEffect(() => {
 		if (modoEdicion && materialPorDefecto) {
 			setValorSeleccionado(generarValorDesdeDatosMaterial(materialPorDefecto))
 		}
-	}, [modoEdicion, setValorSeleccionado, materialPorDefecto])
+	}, [modoEdicion, setValorSeleccionado, datosTanda])
 
 
 	// Solo debemos mostrar aquellos materiales que están activos !
 	let materialesFiltrados = resultadoMaestroMateriales.datos?.data?.filter(material => material.active === 1);
-	
+
 
 	if ((modoEdicion && !materialPorDefecto) || !maestroMaterialesCargado) {
 		return <>
@@ -85,7 +97,7 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 
 
 		let opcionesMateriales = materialesFiltrados.map((datosMaterial) => {
-			if (materialPorDefecto?.id_mat === datosMaterial.id) {
+			if (materialPorDefecto?.id === datosMaterial.id) {
 				materialPorDefectoEncontrado = true;
 			}
 			return generarValorDesdeDatosMaterial(datosMaterial);
@@ -98,8 +110,11 @@ const SelectorMaterialesTanda = ({ referencia, disabled, onMaterialesTandaCargad
 			opcionesMateriales = [opcionMaterialInactivo, ...opcionesMateriales];
 
 			// Si el valor seleccionado es el material inactivo, añade la marca de inactivo
-			if (valorSeleccionado?.value === materialPorDefecto.id_mat) {
-				valorSeleccionado.label = <>{materialPorDefecto.ean} - {materialPorDefecto.name_spain} <MiniBadgeGtin gtin={materialPorDefecto.gtin} /> <MiniBadgeInactivo /> </>;
+			if (valorSeleccionado?.value === materialPorDefecto.id) {
+				valorSeleccionado.label = <>
+					<BanderaPais codigoPais={materialPorDefecto.id_country} className="mr-1" />
+					<b>{materialPorDefecto.ean}</b> - {materialPorDefecto.name_spain} <small>({materialPorDefecto.country_name})</small> <MiniBadgeGtin gtin={materialPorDefecto.gtin} /><MiniBadgeInactivo />
+				</>;
 			}
 		}
 
@@ -128,4 +143,4 @@ const MiniBadgeInactivo = () => {
 
 
 
-export default SelectorMaterialesTanda;
+export default SelectorMaterialTanda;
