@@ -4,7 +4,7 @@ import { ContextoAplicacion } from 'contexto';
 import { Col, Card, Button, Collapse, Spinner, Alert, Row, Popover, OverlayTrigger, ListGroup, Badge } from 'react-bootstrap';
 import BadgeInfoTanda from './BadgeInfoTanda';
 import { useApiCall } from 'hooks/useApiCall';
-import { FaFileExcel, FaRegEye, FaRegFilePdf } from 'react-icons/fa';
+import { FaBarcode, FaFileExcel, FaRegEye, FaRegFilePdf, FaUser, FaUsers } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
 
 import useStateLocalStorage from 'hooks/useStateLocalStorage';
@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 
 import ReactExport from "react-data-export";
 import fileDownload from 'js-file-download';
+import BanderaPais from 'componentes/BanderaPais';
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
@@ -21,7 +22,7 @@ const CardTanda = ({ datosTanda, mostrarBotones, onEditarPulsado, onBorrarPulsad
 
 
 
-	const [mostrarDatosAvanzados, setMostrarDatosAvanzados] = useStateLocalStorage('detalleTanda.' + datosTanda.id, false, true);
+	const [mostrarDatosAvanzados, setMostrarDatosAvanzados] = useStateLocalStorage('detalleTanda.v1.' + datosTanda.id, false, true);
 
 
 	if (!datosTanda) return null;
@@ -113,8 +114,8 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 		let datos = resultado.datos;
 		if (!datos) return null;
 
-		let lote = datos.assig_materials[0]?.batch;
-		let fechaCaducidad = datos.assig_materials[0]?.exp_date;
+		let lote = datos.batch;
+		let fechaCaducidad = datos.exp_date;
 
 		return <>
 			{/* SUMARIO */}
@@ -162,21 +163,18 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 
 			{/* USUARIOS Y MATERIALES PERMITIDOS */}
 			<Row className="mt-2">
+				<Col sm={12} lg={8} className="mt-2 mt-lg-0">
+					<Card>
+						<InfoMaterialTanda datosTanda={datos} />
+					</Card>
+				</Col>
 
 				<Col sm={12} lg={4} className="mt-3 mt-lg-0">
 					<Card>
-						<Card.Header className="m-0 p-2 pl-3 font-weight-bold">Usuarios permitidos</Card.Header>
+						<Card.Header className="m-0 p-2 pl-3 font-weight-bold bg-info-soft">Usuarios permitidos</Card.Header>
 						<ListaUsuariosTanda usuarios={datos.assig_users} />
 					</Card>
 				</Col>
-
-				<Col sm={12} lg={8} className="mt-2 mt-lg-0">
-					<Card>
-						<Card.Header className="m-0 p-2 pl-3 font-weight-bold">Materiales permitidos</Card.Header>
-						<ListaMaterialesTanda materiales={datos.assig_materials} />
-					</Card>
-				</Col>
-
 			</Row>
 
 		</>
@@ -184,45 +182,50 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 
 }
 
-const ListaMaterialesTanda = ({ materiales }) => {
-	let componentes = materiales.map((material, i) => {
-		const popover = (
-			<Popover id="popover-basic">
+const InfoMaterialTanda = ({ datosTanda }) => {
 
-				<Popover.Content>
-					<Etiqueta texto="CN:" /> {material.cn}<br />
-					<Etiqueta texto="Origen:" /> {material.name_origin}<br />
-					<Etiqueta texto="España:" /> {material.name_spain}<br />
-					{material.ean && <><Etiqueta texto="EAN:" /> {material.ean}<br /></>}
-					<Etiqueta texto="Proveedor:" /> <img alt={material.id_country} src={`https://www.countryflags.io/` + material.id_country + `/flat/16.png`} className="pb-1" /> {material.name}<br />
-				</Popover.Content>
-			</Popover>
-		);
 
-		return <ListGroup.Item key={i} className="m-0 p-1 pt-2">
-			<OverlayTrigger trigger={["hover", "focus"]} overlay={popover} placement="bottom-start">
-				<Button size="sm" variant="link"><Icono icono={FaRegEye} posicion={[20, 6]} /></Button>
-			</OverlayTrigger>
-			<b>{material.ean ?? material.cn}</b> - {material.name_spain} {!material.gtin || <Badge variant="primary" className="font-weight-normal" >GTIN</Badge>}
-		</ListGroup.Item>
-	})
-
-	return <ListGroup variant="flush" >
-		{componentes}
-	</ListGroup>
+	return <div className="m-0 p-0">
+		<div className="border-bottom bg-primary-soft py-2">
+			<span className="ml-2">
+				{datosTanda.mat_name_spain} - <Icono icono={FaBarcode} posicion={[20, 3]} />  <b>{datosTanda.mat_ean}</b>
+			</span>
+			{!datosTanda.mat_gtin || <Badge variant="primary" className="font-weight-normal ml-2" >+GTIN</Badge>}
+			{datosTanda.mat_active === 0 && <Badge variant="warning" className="font-weight-normal ml-2" >INACTIVO</Badge>}
+		</div>
+		<div className="mt-1">
+			<small>
+				<span className="ml-2 text-secondary font-weight-bold">
+					Proveedor:
+				</span>
+				<BanderaPais codigoPais={datosTanda.prov_country_id} nombrePais={datosTanda.prov_country_name} className="mb-1 ml-2 mr-1" />
+				<b>{datosTanda.prov_cif}</b> - {datosTanda.prov_name}
+				<small className="pl-1 text-capitalize">({datosTanda.prov_country_name?.toLowerCase()})</small>
+				{datosTanda.prov_active === 0 && <Badge variant="warning" className="font-weight-normal ml-2" >INACTIVO</Badge>}
+			</small>
+		</div>
+	</div>
 
 }
 
 const ListaUsuariosTanda = ({ usuarios }) => {
-	let componentes = usuarios.map((usuario, i) => {
+
+	let componentes = [
+		<ListGroup.Item className="m-0 p-1 pl-3" key={0}>
+			<Icono icono={FaUsers} posicion={[18, 3]} /> Cualquier usuario
+		</ListGroup.Item>
+	]
+	if (usuarios?.length > 0) {
+	componentes = usuarios.map((usuario, i) => {
 		return <ListGroup.Item className="m-0 p-1 pl-3" key={i}>
-			{usuario.name}
+			<Icono icono={FaUser} posicion={[18, 3]} /> {usuario.name}
 		</ListGroup.Item>
 	})
-
+	}
 	return <ListGroup variant="flush" >
 		{componentes}
 	</ListGroup>
+	
 }
 
 const SumarioTanda = ({ sumario }) => {
@@ -232,8 +235,8 @@ const SumarioTanda = ({ sumario }) => {
 			<Col sm={12} lg={4}>
 
 				<Etiqueta texto="Lecturas:" />
-				<span className={`${sumario.reads_ok ? 'text-success' : 'text-muted'} ml-2`} >{sumario.reads_ok} correctas</span>,
-			<span className={`${sumario.reads_error ? 'text-danger' : 'text-muted'} ml-1`}>{sumario.reads_error} en error</span>
+				<span className={`${sumario.reads_ok ? 'text-success' : 'text-muted'} ml-2`} >{sumario.reads_ok} correctas</span>
+				{sumario.reads_error > 0 && <>, <span className={`${sumario.reads_error ? 'text-danger' : 'text-muted'} ml-1`}>{sumario.reads_error} en error</span></>}
 			</Col>
 
 			<Col sm={12} lg={4}>
