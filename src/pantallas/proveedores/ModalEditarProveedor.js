@@ -7,6 +7,7 @@ import { useApiCall } from 'hooks/useApiCall';
 import SelectorPais from './SelectorPais';
 import { toast } from 'react-toastify';
 import SwitchButton from 'componentes/SwitchButton';
+import BanderaPais from 'componentes/BanderaPais';
 
 const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ...props }) => {
 
@@ -43,7 +44,7 @@ const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ..
 			toast.success(<>
 				Se ha modificado el proveedor
 				<h5 className="text-uppercase mt-3">
-					<img alt={peticionEditarProveedor.id_country} src={`https://www.countryflags.io/` + peticionEditarProveedor.id_country + `/flat/24.png`} className="pr-2" />
+					<BanderaPais codigoPais={peticionEditarProveedor.id_country} className="pr-2" />
 					{peticionEditarProveedor.name}
 				</h5>
 			</>);
@@ -103,7 +104,7 @@ const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ..
 						<Col sm="6">
 						<SwitchButton
 							innerRef={refActivo}
-							label="Indica si el proveedor podrá ser asignado"
+							label="Indica si el proveedor podrá ser asignado a materiales"
 							defaultChecked={datosProveedor?.active ? true : false}
 							disabled={jwt.id_profile === K.ROLES.CALIDAD}
 						/>

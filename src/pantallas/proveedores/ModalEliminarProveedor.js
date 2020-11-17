@@ -5,6 +5,7 @@ import { Modal, Button, Alert, Spinner } from 'react-bootstrap';
 import { useApiCall } from 'hooks/useApiCall';
 import { toast } from 'react-toastify';
 import CardProveedor from './CardProveedor';
+import BanderaPais from 'componentes/BanderaPais';
 
 const ModalEliminarProveedor = ({ onRespuestaSi, onRespuestaNo, datosProveedor, ...props }) => {
 
@@ -36,7 +37,7 @@ const ModalEliminarProveedor = ({ onRespuestaSi, onRespuestaNo, datosProveedor, 
 			toast.success(<>
 				Se ha eliminado el proveedor:
 				<h5 className="text-uppercase mt-3">{datosProveedor.name}</h5>
-				<small><img alt={datosProveedor.id_country} src={`https://www.countryflags.io/` + datosProveedor.id_country + `/flat/24.png`} className="pr-2" /> {datosProveedor.country_name}</small>
+				<small><BanderaPais codigoPais={datosProveedor.id_country} className="pr-2" /> {datosProveedor.country_name}</small>
 			</>);
 				cerrarModal(true);
 

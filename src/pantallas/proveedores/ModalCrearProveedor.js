@@ -7,6 +7,7 @@ import { useApiCall } from 'hooks/useApiCall';
 import SelectorPais from './SelectorPais';
 import { toast } from 'react-toastify';
 import SwitchButton from 'componentes/SwitchButton';
+import BanderaPais from 'componentes/BanderaPais';
 
 const ModalCrearProveedor = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 
@@ -43,7 +44,7 @@ const ModalCrearProveedor = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 			toast.success(<>
 				Se ha creado el proveedor
 				<h5 className="text-uppercase mt-3">
-					<img alt={peticionCrearProveedor.id_country} src={`https://www.countryflags.io/` + peticionCrearProveedor.id_country + `/flat/24.png`} className="pr-2" />
+					<BanderaPais codigoPais={peticionCrearProveedor.id_country} className="pr-2" />
 					{peticionCrearProveedor.name}
 				</h5>
 			</>);
@@ -103,7 +104,7 @@ const ModalCrearProveedor = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 						<Col sm="6">
 							<SwitchButton
 								innerRef={refActivo}
-								label="Indica si el material podrá ser asignado"
+								label="Indica si el material podrá ser asignado a materiales"
 							/>
 						</Col>
 					</Form.Group>
