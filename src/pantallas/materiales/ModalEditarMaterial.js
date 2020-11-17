@@ -124,12 +124,12 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 					</Col>
 				</Form.Group>
 				<Form.Group as={Row} className="align-items-center">
-					<Form.Label column sm="3">Proveedores</Form.Label>
+					<Form.Label column sm="3">Proveedores permitidos</Form.Label>
 					<Col>
 						<SwitchButton
 							onChange={setTodosProveedores}
 							innerRef={refTodosProveedores}
-							label="Admitir todos los proveedores"
+							label="Permitir todos los proveedores"
 							value={todosProveedores}
 
 						/>
@@ -163,7 +163,7 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 					<Col sm="9">
 						<SwitchButton
 							innerRef={refActivo}
-							label="Indica si el material podrá ser leído en tandas"
+							label="Indica si el material podrá ser usado en tandas"
 							defaultChecked={datosMaterial?.active ? true : false}
 							disabled={jwt.id_profile === K.ROLES.CALIDAD}
 						/>
