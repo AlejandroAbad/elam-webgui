@@ -142,12 +142,12 @@ const DatosAvanzadosTanda = ({ mostrando, idTanda }) => {
 				<Row>
 					<Col sm={12} lg={4}>
 						<Etiqueta texto="Lote:" />
-						<span className="ml-2" >{lote}</span>
+						<span className="ml-2" >{lote || <span className="text-muted">n/a</span>}</span>
 					</Col>
 
 					<Col sm={12} lg={4}>
 						<Etiqueta texto="Caducidad:" />
-						<span className="ml-2">{fechaCaducidad}</span>
+					<span className="ml-2">{fechaCaducidad || <span className="text-muted">n/a</span>}</span>
 					</Col>
 
 				</Row>
