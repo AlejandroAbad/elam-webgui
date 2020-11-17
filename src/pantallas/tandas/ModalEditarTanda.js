@@ -255,8 +255,7 @@ const InputLote = ({ innerRef, disabled, resultadoDatosTanda }) => {
 		</>
 	}
 
-	let materialTanda = resultadoDatosTanda?.datos?.assig_materials?.length > 0 ? resultadoDatosTanda?.datos?.assig_materials[0] : null;
-	return <Form.Control type="text" placeholder="" ref={innerRef} disabled={disabled} defaultValue={materialTanda?.batch} />
+	return <Form.Control type="text" placeholder="" ref={innerRef} disabled={disabled} defaultValue={resultadoDatosTanda?.datos?.batch} />
 }
 
 
@@ -278,8 +277,7 @@ const InputCaducidad = ({ innerRef, disabled, resultadoDatosTanda }) => {
 	}, [innerRef, _setValor]);
 
 	useEffect( () => {
-		let materialTanda = resultadoDatosTanda?.datos?.assig_materials?.length > 0 ? resultadoDatosTanda?.datos?.assig_materials[0] : null;
-		let caducidadApi = materialTanda?.exp_date;
+		let caducidadApi = resultadoDatosTanda?.datos?.exp_date;
 		let fechaPorDefecto = null;
 		if (caducidadApi) {
 			let caducidadApiPartes = caducidadApi.split(".");
