@@ -8,6 +8,8 @@ import SelectorProveedores from './SelectorProveedores';
 import { toast } from 'react-toastify';
 import SwitchButton from 'componentes/SwitchButton';
 import SelectorPais from '../proveedores/SelectorPais';
+import { FaInfoCircle } from 'react-icons/fa';
+import Icono from 'componentes/icono/Icono';
 
 const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...props }) => {
 
@@ -90,11 +92,12 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 			<code>{resultado.error.message}</code>
 		</Alert>
 
-	} else if (!datosMaterial?.editable && datosMaterial?.editable_msg) {
+	} else if (!datosMaterial?.editable ) {
 
 		alertaSuperior = <Alert variant="info">
-			<h6>Material bloqueado</h6>
-			<code className="text-dark">{datosMaterial.editable_msg}</code>
+			<h6 className="mt-2">
+				<Icono icono={FaInfoCircle} posicion={[16,2]} className="mr-2"/> {datosMaterial?.editable_msg ? datosMaterial.editable_msg : 'Material no editable'}
+			</h6>
 		</Alert>
 
 	}
