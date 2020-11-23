@@ -49,17 +49,13 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 	const refCaducidad = useRef();
 
 
-	const cerrarModal = useCallback((respuesta) => {
-		resetearResultado();
-		if (respuesta === true) onRespuestaSi()
-		else onRespuestaNo();
-	}, [onRespuestaNo, onRespuestaSi, resetearResultado]);
-
 	/** Este effect reinicia el estado de los selecctores de material y proveedor al abrir/cerrar el modal */
 	useEffect(() => {
 		setMaterialSeleccionado(null);
 		setProveedorSeleccionado(null);
-	}, [props.show])
+		resetearResultado();
+	}, [props.show, resetearResultado, setProveedorSeleccionado, setMaterialSeleccionado])
+
 
 	useEffect(() => {
 		if (!datosTanda || !props.show) return;
@@ -69,10 +65,11 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 		}, (error, res) => {
 			if (error) {
 				toast.error(<>Error al cargar datos de tanda</>);
-				cerrarModal(true);
+				onRespuestaNo();
 			}
 		})
-	}, [ejecutarConsultaDatosTanda, cerrarModal, datosTanda, props.show])
+	}, [ejecutarConsultaDatosTanda, onRespuestaNo, datosTanda, props.show])
+
 
 
 	const ejecutarLlamadaEditarTanda = useCallback(() => {
@@ -102,11 +99,11 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 					{peticionEditarTanda.name}
 				</h5>
 			</>);
-			cerrarModal(true)
+			onRespuestaSi();
 		})
 
 
-	}, [datosTanda, ejecutarConsulta, cerrarModal]);
+	}, [datosTanda, ejecutarConsulta, onRespuestaSi]);
 
 
 	let contenidoModal = null;
@@ -171,8 +168,8 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 				<Form.Group as={Row} className="align-items-center">
 					<Form.Label column sm="2">Proveedor</Form.Label>
 					<Col>
-						{ materialSeleccionado?.value ?
-							
+						{materialSeleccionado?.value ?
+
 							<SelectorProveedorTanda
 								referencia={refProveedor}
 								disabled={resultado.cargando}
@@ -224,13 +221,13 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 		</Modal.Body>
 		<Modal.Footer>
 			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarTanda} disabled={resultado.cargando || !tiposTandaCargados || !estadosTandaCargados || !materialesTandaCargados || !proveedoresTandaCargados || proveedorSeleccionado == null || !usuariosTandaCargados} >Modificar</Button>
-			<Button variant="outline-dark" onClick={cerrarModal} disabled={resultado.cargando} >Cancelar</Button>
+			<Button variant="outline-dark" onClick={onRespuestaNo} disabled={resultado.cargando} >Cancelar</Button>
 		</Modal.Footer>
 	</>
 
 
 
-	return <Modal {...props} onHide={cerrarModal} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
+	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
 				Editar datos de tanda
@@ -264,7 +261,7 @@ const InputCaducidad = ({ innerRef, disabled, resultadoDatosTanda }) => {
 
 	const [valor, _setValor] = useState(null)
 	const setValor = useCallback((valorNuevo) => {
-		
+
 		let valorReferencia = null;
 		if (valorNuevo) {
 			let dd = valorNuevo.getDate();
@@ -276,7 +273,7 @@ const InputCaducidad = ({ innerRef, disabled, resultadoDatosTanda }) => {
 		_setValor(valorNuevo);
 	}, [innerRef, _setValor]);
 
-	useEffect( () => {
+	useEffect(() => {
 		let caducidadApi = resultadoDatosTanda?.datos?.exp_date;
 		let fechaPorDefecto = null;
 		if (caducidadApi) {
@@ -289,7 +286,7 @@ const InputCaducidad = ({ innerRef, disabled, resultadoDatosTanda }) => {
 
 	}, [resultadoDatosTanda, setValor])
 
-	
+
 
 
 	if (resultadoDatosTanda.cargando) {

@@ -12,7 +12,7 @@ import SelectorPais from '../proveedores/SelectorPais';
 const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...props }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado, ejecutarConsulta } = useApiCall('/', jwt.token)
+	const { resultado, ejecutarConsulta, resetearResultado } = useApiCall('/', jwt.token)
 
 	const [proveedoresCargados, setProveedoresCargados] = useState(false);
 	const [todosProveedores, setTodosProveedores] = useState(true);
@@ -27,10 +27,6 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 	const refGTIN = useRef();
 	const refActivo = useRef();
 
-	const _onRespuesta = useCallback((respuestaSi) => {
-		if (respuestaSi) onRespuestaSi();
-		else onRespuestaNo();
-	}, [onRespuestaNo, onRespuestaSi]);
 
 	const ejecutarLlamadaEditarMaterial = useCallback(() => {
 
@@ -59,20 +55,21 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 					{peticionEditarMaterial.name_spain}
 				</h5>
 			</>);
-			_onRespuesta(true);
+			onRespuestaSi();
 		})
 
-	}, [ejecutarConsulta, _onRespuesta, datosMaterial]);
+	}, [ejecutarConsulta, onRespuestaSi, datosMaterial]);
 
+	// Al cambiar el estado visible/invisible se reinicia el estado del modal completo
 	useEffect(() => {
+		resetearResultado();
 		if (datosMaterial?.providers?.length) {
-			let proveedores = datosMaterial.providers.filter( proveedor => proveedor.id !== 0);
+			let proveedores = datosMaterial.providers.filter(proveedor => proveedor.id !== 0);
 			setTodosProveedores(proveedores.length === 0);
 		} else {
 			setTodosProveedores(true);
 		}
-	}, [datosMaterial, props.show])
-
+	}, [props.show, resetearResultado, datosMaterial])
 
 
 	let contenidoModal = null;
@@ -175,13 +172,13 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 		</Modal.Body>
 		<Modal.Footer>
 			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarMaterial} disabled={resultado.cargando || (!proveedoresCargados && !todosProveedores) || !paisesCargados} >Modificar</Button>
-			<Button variant="outline-dark" onClick={() => _onRespuesta(false)} disabled={resultado.cargando} >Cancelar</Button>
+			<Button variant="outline-dark" onClick={onRespuestaNo} disabled={resultado.cargando} >Cancelar</Button>
 		</Modal.Footer>
 	</>
 
 
 
-	return <Modal {...props} onHide={() => _onRespuesta(false)} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
+	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
 				Modificar material

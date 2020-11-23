@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useEffect } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Modal, Button, Alert, Spinner } from 'react-bootstrap';
@@ -10,12 +10,6 @@ const ModalEliminarUsuario = ({ onRespuestaSi, onRespuestaNo, datosUsuario, ...p
 
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado, ejecutarConsulta, resetearResultado } = useApiCall('/user', jwt.token)
-
-	const cerrarModal = useCallback((respuesta) => {
-		resetearResultado();
-		if (respuesta === true) onRespuestaSi()
-		else onRespuestaNo();
-	}, [onRespuestaNo, onRespuestaSi, resetearResultado]);
 
 	const llamadaEliminarUsuario = useCallback(() => {
 
@@ -29,7 +23,7 @@ const ModalEliminarUsuario = ({ onRespuestaSi, onRespuestaNo, datosUsuario, ...p
 					Ocurrió un error al eliminar el usuario<br/>
 					<code>{error.message}</code>
 				</>);
-				cerrarModal();
+				onRespuestaNo();
 				return;
 			}
 
@@ -38,11 +32,15 @@ const ModalEliminarUsuario = ({ onRespuestaSi, onRespuestaNo, datosUsuario, ...p
 				<h5 className="text-uppercase mt-3">{datosUsuario.name}</h5>
 				({datosUsuario.user})
 			</>);
-				cerrarModal(true);
+				onRespuestaSi();
 
 		})
-	}, [datosUsuario, ejecutarConsulta, cerrarModal]);
+	}, [datosUsuario, ejecutarConsulta, onRespuestaSi, onRespuestaNo]);
 
+	// Al cambiar el estado visible/invisible se reinicia el estado del modal completo
+	useEffect(() => {
+		resetearResultado();
+	}, [props.show, resetearResultado])
 
 	let contenidoModal = null;
 
@@ -65,13 +63,13 @@ const ModalEliminarUsuario = ({ onRespuestaSi, onRespuestaNo, datosUsuario, ...p
 			<Modal.Footer>
 				<span className="font-weight-bold mr-2">¿ Está usted seguro ?</span>
 				<Button variant="danger" type="submit" onClick={llamadaEliminarUsuario}>SI, eliminar</Button>
-				<Button variant="outline-dark" onClick={cerrarModal}>Cancelar</Button>
+				<Button variant="outline-dark" onClick={onRespuestaNo}>Cancelar</Button>
 			</Modal.Footer>
 		</>
 	}
 
 
-	return <Modal {...props} onHide={cerrarModal} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
+	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
 				Eliminar usuario

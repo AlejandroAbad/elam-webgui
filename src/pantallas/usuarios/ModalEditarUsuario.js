@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useCallback, useState } from 'react';
+import React, { useContext, useRef, useCallback, useState, useEffect } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Modal, Button, Form, Col, Row, Alert, Spinner, InputGroup } from 'react-bootstrap';
@@ -18,13 +18,6 @@ const ModalEditarUsuario = ({ datosUsuario, onRespuestaSi, onRespuestaNo, ...pro
 	const refNombre = useRef();
 	const refPerfil = useRef();
 	const refPasswd = useRef();
-
-	const cerrarModal = useCallback((respuesta) => {
-		setModificarPasswd(false);
-		resetearResultado();
-		if (respuesta === true) onRespuestaSi()
-		else onRespuestaNo();
-	}, [onRespuestaNo, onRespuestaSi, resetearResultado]);
 
 	const ejecutarLlamadaEditarUsuario = useCallback(() => {
 
@@ -49,12 +42,18 @@ const ModalEditarUsuario = ({ datosUsuario, onRespuestaSi, onRespuestaNo, ...pro
 				</h5>
 
 			</>);
-			cerrarModal(true);
+			onRespuestaSi();
 		})
 		
 
-	}, [ejecutarConsulta, cerrarModal, datosUsuario, modificarPasswd]);
+	}, [ejecutarConsulta, onRespuestaSi, datosUsuario, modificarPasswd]);
 
+
+	// Al cambiar el estado visible/invisible se reinicia el estado del modal completo
+	useEffect(() => {
+		setModificarPasswd(false);
+		resetearResultado();
+	}, [props.show, resetearResultado])
 
 	let contenidoModal = null;
 	let alertaSuperior = null;
@@ -121,13 +120,13 @@ const ModalEditarUsuario = ({ datosUsuario, onRespuestaSi, onRespuestaNo, ...pro
 		</Modal.Body>
 		<Modal.Footer>
 			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarUsuario} disabled={resultado.cargando || !perfilesCargados} >Modificar</Button>
-			<Button variant="outline-dark" onClick={cerrarModal} disabled={resultado.cargando} >Cancelar</Button>
+			<Button variant="outline-dark" onClick={onRespuestaNo} disabled={resultado.cargando} >Cancelar</Button>
 		</Modal.Footer>
 	</>
 
 
 
-	return <Modal {...props} onHide={cerrarModal} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
+	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
 				Editar usuario

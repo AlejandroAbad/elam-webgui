@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useCallback, useState } from 'react';
+import React, { useContext, useRef, useCallback, useState, useEffect } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Modal, Button, Form, Col, Row, Alert, Spinner } from 'react-bootstrap';
@@ -17,12 +17,6 @@ const ModalCrearUsuario = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 	const refNombre = useRef();
 	const refPerfil = useRef();
 	const refPasswd = useRef();
-
-	const cerrarModal = useCallback((respuesta) => {
-		resetearResultado();
-		if (respuesta === true) onRespuestaSi()
-		else onRespuestaNo();
-	}, [onRespuestaNo, onRespuestaSi, resetearResultado]);
 
 	const ejecutarLlamadaCrearUsuario = useCallback(() => {
 
@@ -45,10 +39,15 @@ const ModalCrearUsuario = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 				</h5>
 				({peticionCrearUsuario.user})
 			</>);
-			cerrarModal(true);
+			onRespuestaSi();
 		})
 
-	}, [ejecutarConsulta, cerrarModal]);
+	}, [ejecutarConsulta, onRespuestaSi]);
+
+	// Al cambiar el estado visible/invisible se reinicia el estado del modal completo
+	useEffect(() => {
+		resetearResultado();
+	}, [props.show, resetearResultado])
 
 
 	let contenidoModal = null;

@@ -43,11 +43,6 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 	const refLote = useRef();
 	const refCaducidad = useRef();
 
-	const cerrarModal = useCallback((respuesta) => {
-		resetearResultado();
-		if (respuesta === true) onRespuestaSi()
-		else onRespuestaNo();
-	}, [onRespuestaNo, onRespuestaSi, resetearResultado]);
 
 	const ejecutarLlamadaCrearTanda = useCallback(() => {
 
@@ -72,17 +67,18 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 					{peticionCrearTanda.name}
 				</h5>
 			</>);
-			cerrarModal(true);
+			onRespuestaSi();
 		})
 
-	}, [ejecutarConsulta, cerrarModal]);
+	}, [ejecutarConsulta, onRespuestaSi]);
 
 
 	/** Este effect reinicia el estado de los selecctores de material y proveedor al abrir/cerrar el modal */
 	useEffect ( () => {
 		setMaterialSeleccionado(null);
 		setProveedorSeleccionado(null);
-	}, [props.show])
+		resetearResultado();
+	}, [props.show, resetearResultado, setMaterialSeleccionado, setProveedorSeleccionado])
 
 	let contenidoModal = null;
 	let alertaSuperior = null;
@@ -188,11 +184,11 @@ const ModalCrearTanda = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 		</Modal.Body>
 		<Modal.Footer>
 			<Button variant="success" type="submit" onClick={ejecutarLlamadaCrearTanda} disabled={resultado.cargando || !tiposTandaCargados || !estadosTandaCargados || !materialesTandaCargados || !proveedoresTandaCargados || proveedorSeleccionado == null || !usuariosTandaCargados } >Crear</Button>
-			<Button variant="outline-dark" onClick={cerrarModal} disabled={resultado.cargando} >Cancelar</Button>
+			<Button variant="outline-dark" onClick={onRespuestaNo} disabled={resultado.cargando} >Cancelar</Button>
 		</Modal.Footer>
 	</>
 
-	return <Modal {...props} onHide={cerrarModal} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
+	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
 				Añadir nueva tanda

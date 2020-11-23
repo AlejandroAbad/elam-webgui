@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useEffect } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Modal, Button, Alert, Spinner } from 'react-bootstrap';
@@ -9,7 +9,7 @@ import CardMaterial from './CardMaterial';
 const ModalEliminarMaterial = ({ onRespuestaSi, onRespuestaNo, datosMaterial, ...props }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado, ejecutarConsulta } = useApiCall('/material', jwt.token)
+	const { resultado, ejecutarConsulta, resetearResultado } = useApiCall('/material', jwt.token)
 
 
 
@@ -38,6 +38,11 @@ const ModalEliminarMaterial = ({ onRespuestaSi, onRespuestaNo, datosMaterial, ..
 		})
 	}, [datosMaterial, ejecutarConsulta, onRespuestaSi, onRespuestaNo]);
 
+
+	// Al cambiar el estado visible/invisible se reinicia el estado del modal completo
+	useEffect(() => {
+		resetearResultado();
+	}, [props.show, resetearResultado])
 
 	let contenidoModal = null;
 

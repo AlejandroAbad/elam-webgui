@@ -1,5 +1,5 @@
 import K from 'K';
-import React, { useContext, useRef, useCallback, useState } from 'react';
+import React, { useContext, useRef, useCallback, useState, useEffect } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Modal, Button, Form, Col, Row, Alert, Spinner } from 'react-bootstrap';
@@ -12,7 +12,7 @@ import SwitchButton from 'componentes/SwitchButton';
 const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
-	const { resultado, ejecutarConsulta } = useApiCall('/material', jwt.token)
+	const { resultado, ejecutarConsulta, resetearResultado } = useApiCall('/material', jwt.token)
 
 	const [proveedoresCargados, setProveedoresCargados] = useState(false);
 	const [todosProveedores, setTodosProveedores] = useState(true);
@@ -27,11 +27,7 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 	const refGTIN = useRef();
 	const refActivo = useRef();
 
-	const _onRespuesta = useCallback((respuestaSi) => {
-		setTodosProveedores(true);
-		if (respuestaSi) onRespuestaSi();
-		else onRespuestaNo();
-	}, [onRespuestaNo, onRespuestaSi, setTodosProveedores]);
+
 
 	const ejecutarLlamadaCrearMaterial = useCallback(() => {
 
@@ -62,12 +58,18 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 				</h5>
 						EAN {peticionCrearMaterial.ean}
 			</>);
-			_onRespuesta(true);
+			onRespuestaSi();
 		})
 
 
-	}, [ejecutarConsulta, _onRespuesta]);
+	}, [ejecutarConsulta, onRespuestaSi]);
 
+
+	// Al cambiar el estado visible/invisible se reinicia el estado del modal completo
+	useEffect(() => {
+		setTodosProveedores(true)
+		resetearResultado();
+	}, [props.show, resetearResultado])
 
 	let contenidoModal = null;
 	let alertaSuperior = null;
@@ -164,13 +166,13 @@ const ModalCrearMaterial = ({ onRespuestaSi, onRespuestaNo, ...props }) => {
 		</Modal.Body>
 		<Modal.Footer>
 			<Button variant="success" type="submit" onClick={ejecutarLlamadaCrearMaterial} disabled={resultado.cargando || (!proveedoresCargados && !todosProveedores) || !paisesCargados} >Crear</Button>
-			<Button variant="outline-dark" onClick={() => _onRespuesta(false)} disabled={resultado.cargando} >Cancelar</Button>
+			<Button variant="outline-dark" onClick={onRespuestaNo} disabled={resultado.cargando} >Cancelar</Button>
 		</Modal.Footer>
 	</>
 
 
 
-	return <Modal {...props} onHide={() => _onRespuesta(false)} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
+	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
 				Añadir nuevo material

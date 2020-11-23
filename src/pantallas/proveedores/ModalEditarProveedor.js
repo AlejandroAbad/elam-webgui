@@ -1,5 +1,5 @@
 import K from 'K';
-import React, { useContext, useRef, useCallback, useState } from 'react';
+import React, { useContext, useRef, useCallback, useState, useEffect } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
 import { Modal, Button, Form, Col, Row, Alert, Spinner } from 'react-bootstrap';
@@ -21,11 +21,6 @@ const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ..
 	const refPais = useRef();
 	const refActivo = useRef();
 
-	const cerrarModal = useCallback((respuesta) => {
-		resetearResultado();
-		if (respuesta === true) onRespuestaSi()
-		else onRespuestaNo();
-	}, [onRespuestaNo, onRespuestaSi, resetearResultado]);
 
 	const ejecutarLlamadaEditarProveedor = useCallback(() => {
 
@@ -48,11 +43,15 @@ const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ..
 					{peticionEditarProveedor.name}
 				</h5>
 			</>);
-			cerrarModal(true);
+			onRespuestaSi();
 		})
 
-	}, [ejecutarConsulta, cerrarModal, datosProveedor]);
+	}, [ejecutarConsulta, onRespuestaSi, datosProveedor]);
 
+	// Al cambiar el estado visible/invisible se reinicia el estado del modal completo
+	useEffect(() => {
+		resetearResultado();
+	}, [props.show, resetearResultado])
 
 	let contenidoModal = null;
 	let alertaSuperior = null;
@@ -116,13 +115,13 @@ const ModalEditarProveedor = ({ datosProveedor, onRespuestaSi, onRespuestaNo, ..
 		</Modal.Body>
 		<Modal.Footer>
 			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarProveedor} disabled={resultado.cargando || !paisesCargados} >Modificar</Button>
-			<Button variant="outline-dark" onClick={cerrarModal} disabled={resultado.cargando} >Cancelar</Button>
+			<Button variant="outline-dark" onClick={onRespuestaNo} disabled={resultado.cargando} >Cancelar</Button>
 		</Modal.Footer>
 	</>
 
 
 
-	return <Modal {...props} onHide={cerrarModal} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
+	return <Modal {...props} onHide={onRespuestaNo} size="lg" aria-labelledby="contained-modal-title-vcenter" 	>
 		<Modal.Header closeButton>
 			<Modal.Title id="contained-modal-title-vcenter">
 				Editar proveedor
