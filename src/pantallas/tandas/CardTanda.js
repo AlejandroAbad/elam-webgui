@@ -1,10 +1,10 @@
 import React, { useCallback, useContext, useEffect } from 'react';
 import { ContextoAplicacion } from 'contexto';
 
-import { Col, Card, Button, Collapse, Spinner, Alert, Row, Popover, OverlayTrigger, ListGroup, Badge } from 'react-bootstrap';
+import { Col, Card, Button, Collapse, Spinner, Alert, Row, ListGroup, Badge } from 'react-bootstrap';
 import BadgeInfoTanda from './BadgeInfoTanda';
 import { useApiCall } from 'hooks/useApiCall';
-import { FaBarcode, FaFileExcel, FaRegEye, FaRegFilePdf, FaUser, FaUsers } from 'react-icons/fa';
+import { FaBarcode, FaFileExcel, FaRegFilePdf, FaUser, FaUsers } from 'react-icons/fa';
 import Icono from 'componentes/icono/Icono';
 
 import useStateLocalStorage from 'hooks/useStateLocalStorage';
