@@ -122,6 +122,14 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 			<h6>Error al modificar la tanda</h6>
 			<code>{resultado.error.message}</code>
 		</Alert>
+	} else if (resultadoDatosTanda?.datos?.editable === false ) {
+		
+		alertaSuperior = <Alert variant="info">
+			<h6 className="mt-2"><Icono icono={FaInfoCircle} posicion={[16, 2]} /> {resultadoDatosTanda?.datos?.editable_msg ? 
+			resultadoDatosTanda.datos.editable_msg : 
+			'Algunos campos no se pueden modificar' 
+		}</h6>
+		</Alert>
 	}
 
 
@@ -155,7 +163,7 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 					<Col>
 						<SelectorMaterialTanda
 							referencia={refMaterial}
-							disabled={resultado.cargando}
+							disabled={resultado.cargando || !resultadoDatosTanda?.datos?.editable}
 							onMaterialesTandaCargados={setMaterialesTandaCargados}
 							datosTanda={resultadoDatosTanda?.datos}
 							modoEdicion={true}
@@ -172,7 +180,7 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 
 							<SelectorProveedorTanda
 								referencia={refProveedor}
-								disabled={resultado.cargando}
+								disabled={resultado.cargando || !resultadoDatosTanda?.datos?.editable}
 								onProveedoresTandaCargados={setProveedoresTandaCargados}
 								datosTanda={resultadoDatosTanda?.datos}
 								modoEdicion={true}
@@ -204,7 +212,7 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 					<Col sm="4">
 						<InputLote
 							innerRef={refLote}
-							disabled={resultado.cargando}
+							disabled={resultado.cargando || !resultadoDatosTanda?.datos?.editable}
 							resultadoDatosTanda={resultadoDatosTanda}
 						/>
 					</Col>
@@ -212,7 +220,7 @@ const ModalEditarTanda = ({ datosTanda, onRespuestaSi, onRespuestaNo, ...props }
 				<Form.Group as={Row}>
 					<Form.Label column sm="2" >Caducidad</Form.Label>
 					<Col sm="4">
-						<InputCaducidad innerRef={refCaducidad} disabled={resultado.cargando} resultadoDatosTanda={resultadoDatosTanda} />
+						<InputCaducidad innerRef={refCaducidad} disabled={resultado.cargando || !resultadoDatosTanda?.datos?.editable} resultadoDatosTanda={resultadoDatosTanda} />
 					</Col>
 				</Form.Group>
 
