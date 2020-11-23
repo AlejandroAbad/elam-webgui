@@ -90,6 +90,13 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 			<code>{resultado.error.message}</code>
 		</Alert>
 
+	} else if (!datosMaterial?.editable && datosMaterial?.editable_msg) {
+
+		alertaSuperior = <Alert variant="info">
+			<h6>Material bloqueado</h6>
+			<code className="text-dark">{datosMaterial.editable_msg}</code>
+		</Alert>
+
 	}
 
 	contenidoModal = <>
@@ -99,25 +106,25 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 				<Form.Group as={Row}>
 					<Form.Label column lg="3" >Nombre en Origen</Form.Label>
 					<Col lg="9">
-						<Form.Control type="text" placeholder="" ref={refNombreOrigen} disabled={resultado.cargando} defaultValue={datosMaterial?.name_origin} />
+						<Form.Control type="text" placeholder="" ref={refNombreOrigen} disabled={resultado.cargando || !datosMaterial?.editable} defaultValue={datosMaterial?.name_origin} />
 					</Col>
 				</Form.Group>
 				<Form.Group as={Row}>
 					<Form.Label column lg="3">Nombre en España</Form.Label>
 					<Col lg="9">
-						<Form.Control type="text" placeholder="" ref={refNombreEspana} disabled={resultado.cargando} defaultValue={datosMaterial?.name_spain} />
+						<Form.Control type="text" placeholder="" ref={refNombreEspana} disabled={resultado.cargando || !datosMaterial?.editable} defaultValue={datosMaterial?.name_spain} />
 					</Col>
 				</Form.Group>
 				<Form.Group as={Row}>
 					<Form.Label column sm="3">EAN</Form.Label>
 					<Col sm="6">
-						<Form.Control type="text" placeholder="" ref={refEan} disabled={resultado.cargando} defaultValue={datosMaterial?.ean} />
+						<Form.Control type="text" placeholder="" ref={refEan} disabled={resultado.cargando || !datosMaterial?.editable} defaultValue={datosMaterial?.ean} />
 					</Col>
 				</Form.Group>
 				<Form.Group as={Row} className="align-items-center">
 					<Form.Label column sm="3">País</Form.Label>
 					<Col>
-						<SelectorPais referencia={refPais} disabled={resultado.cargando} onPaisesCargados={setPaisesCargados} defaultValue={datosMaterial?.id_country} />
+						<SelectorPais referencia={refPais} disabled={resultado.cargando || !datosMaterial?.editable} onPaisesCargados={setPaisesCargados} defaultValue={datosMaterial?.id_country} />
 					</Col>
 				</Form.Group>
 				<Form.Group as={Row} className="align-items-center">
@@ -128,12 +135,12 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 							innerRef={refTodosProveedores}
 							label="Permitir todos los proveedores"
 							value={todosProveedores}
-
+							disabled={!datosMaterial?.editable}
 						/>
 						{todosProveedores ||
 							<SelectorProveedores
 								referencia={refProveedor}
-								disabled={resultado.cargando}
+								disabled={resultado.cargando || !datosMaterial?.editable}
 								onProveedoresCargados={setProveedoresCargados}
 								idProveedorSeleccionado={datosMaterial?.id_provider}
 								datosProveedores={datosMaterial?.providers}
@@ -150,6 +157,7 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 							innerRef={refGTIN}
 							label="Indica si el material porta códigos GTIN"
 							defaultChecked={datosMaterial?.gtin ? true : false}
+							disabled={!datosMaterial?.editable}
 						/>
 					</Col>
 				</Form.Group>
@@ -162,7 +170,7 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 							innerRef={refActivo}
 							label="Indica si el material podrá ser usado en tandas"
 							defaultChecked={datosMaterial?.active ? true : false}
-							disabled={jwt.id_profile === K.ROLES.CALIDAD}
+							disabled={jwt.id_profile === K.ROLES.CALIDAD || !datosMaterial?.editable}
 						/>
 					</Col>
 				</Form.Group>
@@ -171,7 +179,7 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 			</Form>
 		</Modal.Body>
 		<Modal.Footer>
-			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarMaterial} disabled={resultado.cargando || (!proveedoresCargados && !todosProveedores) || !paisesCargados} >Modificar</Button>
+			<Button variant="success" type="submit" onClick={ejecutarLlamadaEditarMaterial} disabled={resultado.cargando || !datosMaterial?.editable || (!proveedoresCargados && !todosProveedores) || !paisesCargados} >Modificar</Button>
 			<Button variant="outline-dark" onClick={onRespuestaNo} disabled={resultado.cargando} >Cancelar</Button>
 		</Modal.Footer>
 	</>

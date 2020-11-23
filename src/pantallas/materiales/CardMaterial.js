@@ -2,7 +2,7 @@ import BanderaPais from 'componentes/BanderaPais';
 import Icono from 'componentes/icono/Icono';
 import React from 'react';
 import { Col, Card, Button, Row, Badge, ListGroup } from 'react-bootstrap';
-import { FaBarcode } from 'react-icons/fa';
+import { FaBarcode, FaInfoCircle } from 'react-icons/fa';
 
 
 const CardMaterial = ({ datosMaterial, mostrarBotones, onEditarPulsado, onBorrarPulsado }) => {
@@ -43,7 +43,7 @@ const CardMaterial = ({ datosMaterial, mostrarBotones, onEditarPulsado, onBorrar
 
 				<Row className="no-gutters mb-1">
 
-					
+
 
 					<Col md="auto" className="ml-md-4">
 						<h6>
@@ -68,7 +68,21 @@ const CardMaterial = ({ datosMaterial, mostrarBotones, onEditarPulsado, onBorrar
 
 				{mostrarBotones && <>
 					<Button size="sm" className="float-right ml-3" variant="outline-danger" onClick={onBorrarPulsado}>Eliminar</Button>
-					<Button size="sm" className="float-right" variant="primary" onClick={onEditarPulsado}>Editar</Button>
+
+
+
+					
+					{datosMaterial.editable ?
+						<Button size="sm" className="float-right" variant="primary" onClick={onEditarPulsado}>Editar</Button>
+						:
+						<>
+							<Button size="sm" className="float-right" variant="secondary" onClick={onEditarPulsado}>Visualizar</Button>
+							<small className="float-right mt-1  mr-2 text-secondary">
+								<Icono icono={FaInfoCircle} posicion={[16, 2]} /> Material no editable
+							</small>
+						</>
+					}
+
 				</>}
 
 			</Card.Body>

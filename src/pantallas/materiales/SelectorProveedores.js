@@ -29,8 +29,7 @@ const generaValoresDesdeDatosProveedor = (datosProveedor, incluirInactivo) => {
 
 
 const SelectorProveedores = ({ referencia, disabled, onProveedoresCargados, datosProveedores, modoEdicion }) => {
-
-	console.log("DISABLED", disabled);
+	
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado: resultadoMaestroProveedores, ejecutarConsulta: ejecutarConsultaMaestroProveedores } = useApiCall('/provider', jwt.token);
 
