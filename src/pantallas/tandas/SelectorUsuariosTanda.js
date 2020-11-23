@@ -75,7 +75,7 @@ const SelectorUsuariosTanda = ({ referencia, disabled, onUsuariosTandaCargados, 
 		return <Select
 			options={opcionesUsuarios}
 			isMulti
-			disabled={disabled}
+			isDisabled={disabled}
 			value={valoresSeleccionados}
 			onChange={setValoresSeleccionados}
 			placeholder="Selecciona usuarios"

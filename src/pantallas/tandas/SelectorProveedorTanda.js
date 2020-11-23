@@ -125,7 +125,7 @@ const SelectorProveedorTanda = ({ referencia, disabled, onProveedoresTandaCargad
 
 		return <Select
 			options={opcionesProveedores}
-			disabled={disabled}
+			isDisabled={disabled}
 			value={valorSeleccionado}
 			onChange={setValorSeleccionado}
 			placeholder="Selecciona proveedor"

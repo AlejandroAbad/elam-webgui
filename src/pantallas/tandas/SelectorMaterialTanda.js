@@ -120,7 +120,7 @@ const SelectorMaterialTanda = ({ referencia, disabled, onMaterialesTandaCargados
 
 		return <Select
 			options={opcionesMateriales}
-			disabled={disabled}
+			isDisabled={disabled}
 			value={valorSeleccionado}
 			onChange={setValorSeleccionado}
 			placeholder="Selecciona material"

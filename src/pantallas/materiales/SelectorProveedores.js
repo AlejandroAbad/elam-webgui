@@ -30,6 +30,7 @@ const generaValoresDesdeDatosProveedor = (datosProveedor, incluirInactivo) => {
 
 const SelectorProveedores = ({ referencia, disabled, onProveedoresCargados, datosProveedores, modoEdicion }) => {
 
+	console.log("DISABLED", disabled);
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado: resultadoMaestroProveedores, ejecutarConsulta: ejecutarConsultaMaestroProveedores } = useApiCall('/provider', jwt.token);
 
@@ -99,7 +100,7 @@ const SelectorProveedores = ({ referencia, disabled, onProveedoresCargados, dato
 		return <Select
 			options={opcionesProveedores}
 			isMulti
-			disabled={disabled}
+			isDisabled={disabled}
 			value={valoresSeleccionados}
 			onChange={setValoresSeleccionados}
 			placeholder="Seleccione proveedores"
