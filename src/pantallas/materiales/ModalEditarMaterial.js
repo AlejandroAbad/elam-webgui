@@ -127,7 +127,12 @@ const ModalEditarMaterial = ({ datosMaterial, onRespuestaSi, onRespuestaNo, ...p
 				<Form.Group as={Row} className="align-items-center">
 					<Form.Label column sm="3">País</Form.Label>
 					<Col>
-						<SelectorPais referencia={refPais} disabled={resultado.cargando || !datosMaterial?.editable} onPaisesCargados={setPaisesCargados} defaultValue={datosMaterial?.id_country} />
+						<SelectorPais 
+							referencia={refPais} 
+							disabled={resultado.cargando || !datosMaterial?.editable} 
+							onPaisesCargados={setPaisesCargados} 
+							defaultValue={datosMaterial?.id_country}
+							incluirEMA={true} />
 					</Col>
 				</Form.Group>
 				<Form.Group as={Row} className="align-items-center">

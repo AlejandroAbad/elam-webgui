@@ -1,3 +1,4 @@
+import K from 'K';
 import React, { useEffect, useContext, useState, useCallback } from 'react';
 import { ContextoAplicacion } from 'contexto';
 import { useApiCall } from 'hooks/useApiCall';
@@ -11,7 +12,7 @@ const generarValorDesdeDatosMaterial = (datosMaterial, inactivo) => {
 		value: datosMaterial.id_mat ?? datosMaterial.id,
 		label: <>
 			<BanderaPais codigoPais={datosMaterial.id_country} className="mr-1" />
-			<b>{datosMaterial.ean}</b> - {datosMaterial.name_spain} <small>({datosMaterial.country_name})</small> <MiniBadgeGtin gtin={datosMaterial.gtin} />
+			<b>{datosMaterial.ean}</b> - {datosMaterial.name_spain} <small>({datosMaterial.id_country === K.EMA.CODIGO ? K.EMA.NOMBRE : datosMaterial.country_name})</small> <MiniBadgeGtin gtin={datosMaterial.gtin} />
 			{inactivo && <MiniBadgeInactivo />}</>,
 		gtin: datosMaterial.gtin ? 1 : 0
 	}
@@ -113,7 +114,7 @@ const SelectorMaterialTanda = ({ referencia, disabled, onMaterialesTandaCargados
 			if (valorSeleccionado?.value === materialPorDefecto.id) {
 				valorSeleccionado.label = <>
 					<BanderaPais codigoPais={materialPorDefecto.id_country} className="mr-1" />
-					<b>{materialPorDefecto.ean}</b> - {materialPorDefecto.name_spain} <small>({materialPorDefecto.country_name})</small> <MiniBadgeGtin gtin={materialPorDefecto.gtin} /><MiniBadgeInactivo />
+					<b>{materialPorDefecto.ean}</b> - {materialPorDefecto.name_spain} <small>({materialPorDefecto.country_name === K.EMA.CODIGO ? K.EMA.NOMBRE : materialPorDefecto.country_name})</small> <MiniBadgeGtin gtin={materialPorDefecto.gtin} /><MiniBadgeInactivo />
 				</>;
 			}
 		}

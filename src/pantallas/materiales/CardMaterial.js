@@ -55,7 +55,7 @@ const CardMaterial = ({ datosMaterial, mostrarBotones, onEditarPulsado, onBorrar
 						</h6>
 					</Col>
 					<Col md="auto" className="ml-md-4">
-						<h6><BanderaPais codigoPais={datosMaterial.id_country} nombrePais={datosMaterial.country_name} className="mb-1" /> {datosMaterial.country_name}</h6>
+						<h6><BanderaPais codigoPais={datosMaterial.id_country} nombrePais={datosMaterial.country_name} className="mb-1" incluirNombre /></h6>
 					</Col >
 
 				</Row>

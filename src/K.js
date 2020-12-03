@@ -15,6 +15,12 @@ const K = {
         DIRECTOR: 'DT',
         CALIDAD: 'QA',
         ALMACEN: 'WM'
+    },
+    EMA: {
+        CODIGO: "00",
+        CODIGO_BANDERA: "EU",
+        NOMBRE: "EMA",
+        NOMBRE_LARGO: "EMA - European Medicines Agency"
     }
 }
 

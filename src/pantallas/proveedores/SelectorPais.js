@@ -1,10 +1,11 @@
+import K from 'K';
 import React, { useEffect, useContext } from 'react';
 import { ContextoAplicacion } from 'contexto';
 import { useApiCall } from 'hooks/useApiCall';
 import { Spinner, Form, Button } from 'react-bootstrap';
 
 
-const SelectorPais = ({ referencia, disabled, onPaisesCargados, defaultValue }) => {
+const SelectorPais = ({ referencia, disabled, onPaisesCargados, defaultValue, incluirEMA }) => {
 
 	const { jwt } = useContext(ContextoAplicacion);
 	const { resultado, ejecutarConsulta } = useApiCall('/country', jwt.token);
@@ -35,9 +36,14 @@ const SelectorPais = ({ referencia, disabled, onPaisesCargados, defaultValue }) 
 		</>
 	} else {
 
-		let opcionesPaises = resultado.datos.map((datosPais, i) => {
-			return <option key={i} value={datosPais.id} >{datosPais.name}</option>
+		let opcionesPaises = resultado.datos.filter(datosPais => (datosPais.id !== K.EMA.CODIGO) ).map((datosPais, i) => {
+			return <option key={i+1} value={datosPais.id} >{datosPais.name}</option>
 		});
+
+		if (incluirEMA) {
+			let opcionEMA = <option key={0} value="00">EMA - European Medicines Agency</option>
+			opcionesPaises = [opcionEMA, ...opcionesPaises];
+		}
 
 		return <Form.Control as="select" ref={referencia} defaultValue={defaultValue} disabled={disabled}>
 			{opcionesPaises}
